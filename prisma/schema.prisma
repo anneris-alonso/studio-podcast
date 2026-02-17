@@ -1,0 +1,208 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  SUPER_ADMIN
+  ADMIN
+  CLIENT
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  email     String    @unique
+  name      String
+  password  String
+  role      UserRole  @default(CLIENT)
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  bookings      Booking[]
+  subscriptions Subscription[]
+  ledgerEntries CreditLedger[]
+  invoices      Invoice[]
+
+  @@map("users")
+}
+
+model StudioRoom {
+  id          Int      @id @default(autoincrement())
+  name        String
+  slug        String   @unique
+  description String
+  capacity    Int
+  hourlyRate  Decimal  @map("hourly_rate")
+  imageUrl    String?  @map("image_url")
+  type        String   // 'recording', 'podcast', 'photography'
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  bookings Booking[]
+  packages Package[]
+
+  @@map("studio_rooms")
+}
+
+model Package {
+  id            Int      @id @default(autoincrement())
+  name          String
+  price         Decimal
+  credits       Int
+  validityDays  Int      @map("validity_days")
+  active        Boolean  @default(true)
+  studioRoomId  Int      @map("studio_room_id")
+  
+  studioRoom    StudioRoom @relation(fields: [studioRoomId], references: [id])
+
+  @@map("packages")
+}
+
+model Service {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  price       Decimal
+  durationMin Int?     @default(0) @map("duration_min")
+  active      Boolean  @default(true)
+
+  bookingLineItems BookingLineItem[]
+
+  @@map("services")
+}
+
+model Plan {
+  id               Int      @id @default(autoincrement())
+  name             String
+  monthlyPrice     Decimal  @map("monthly_price")
+  includedCredits  Int      @map("included_credits")
+  description      String?
+
+  subscriptions Subscription[]
+
+  @@map("plans")
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELLED
+  PAST_DUE
+}
+
+model Subscription {
+  id               Int                @id @default(autoincrement())
+  userId           Int                @map("user_id")
+  planId           Int                @map("plan_id")
+  status           SubscriptionStatus
+  currentPeriodEnd DateTime           @map("current_period_end")
+  createdAt        DateTime           @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id])
+  plan Plan @relation(fields: [planId], references: [id])
+
+  invoices Invoice[]
+
+  @@map("subscriptions")
+}
+
+enum TransactionType {
+  PURCHASE
+  BOOKING
+  ADJUSTMENT
+  SUBSCRIPTION
+}
+
+model CreditLedger {
+  id              Int             @id @default(autoincrement())
+  userId          Int             @map("user_id")
+  amount          Int             // Positive for credit, negative for debit
+  transactionType TransactionType @map("transaction_type")
+  referenceId     String?         @map("reference_id") // ID of related booking/invoice
+  description     String?
+  createdAt       DateTime        @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("credit_ledger")
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+}
+
+model Booking {
+  id         Int           @id @default(autoincrement())
+  userId     Int           @map("user_id")
+  roomId     Int           @map("room_id")
+  startTime  DateTime      @map("start_time")
+  endTime    DateTime      @map("end_time")
+  status     BookingStatus @default(PENDING)
+  totalPrice Decimal       @map("total_price")
+  createdAt  DateTime      @default(now()) @map("created_at")
+
+  user User       @relation(fields: [userId], references: [id])
+  room StudioRoom @relation(fields: [roomId], references: [id])
+
+  lineItems BookingLineItem[]
+  invoice   Invoice?
+
+  @@index([roomId, startTime, endTime])
+  @@map("bookings")
+}
+
+model BookingLineItem {
+  id             Int     @id @default(autoincrement())
+  bookingId      Int     @map("booking_id")
+  serviceId      Int     @map("service_id")
+  priceAtBooking Decimal @map("price_at_booking")
+  quantity       Int?    @default(1)
+
+  booking Booking @relation(fields: [bookingId], references: [id])
+  service Service @relation(fields: [serviceId], references: [id])
+
+  @@map("booking_line_items")
+}
+
+enum InvoiceStatus {
+  PAID
+  UNPAID
+  VOID
+}
+
+model Invoice {
+  id             Int           @id @default(autoincrement())
+  userId         Int           @map("user_id")
+  bookingId      Int?          @unique @map("booking_id")
+  subscriptionId Int?          @map("subscription_id")
+  amount         Decimal
+  status         InvoiceStatus
+  pdfUrl         String?       @map("pdf_url")
+  createdAt      DateTime      @default(now()) @map("created_at")
+
+  user         User          @relation(fields: [userId], references: [id])
+  booking      Booking?      @relation(fields: [bookingId], references: [id])
+  subscription Subscription? @relation(fields: [subscriptionId], references: [id])
+
+  @@map("invoices")
+}
+
+enum AssetType {
+  IMAGE
+  DOCUMENT
+  FLOORPLAN
+}
+
+model Asset {
+  id         Int       @id @default(autoincrement())
+  name       String
+  type       AssetType
+  url        String
+  uploadedAt DateTime  @default(now()) @map("uploaded_at")
+
+  @@map("assets")
+}
