@@ -1,162 +1,163 @@
-import { PrismaClient, UserRole, SubscriptionStatus, TransactionType, InvoiceStatus, AssetType, BookingStatus } from "@prisma/client";
+import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log("Seeding database...");
+  console.log('🌱 Seeding database...');
 
-  // 1. Users
-  const superAdmin = await prisma.user.upsert({
-    where: { email: "superadmin@podcaststudio.com" },
+  // Create Studio Rooms
+  const podcastStudio = await prisma.studioRoom.upsert({
+    where: { slug: 'podcast-studio-a' },
     update: {},
     create: {
-      email: "superadmin@podcaststudio.com",
-      name: "Super Admin",
-      password: "securepassword", // In a real app, hash this
-      role: UserRole.SUPER_ADMIN,
-    },
-  });
-
-  const admin = await prisma.user.upsert({
-    where: { email: "admin@podcaststudio.com" },
-    update: {},
-    create: {
-      email: "admin@podcaststudio.com",
-      name: "Admin User",
-      password: "securepassword",
-      role: UserRole.ADMIN,
-    },
-  });
-
-  const client = await prisma.user.upsert({
-    where: { email: "client@example.com" },
-    update: {},
-    create: {
-      email: "client@example.com",
-      name: "John Client",
-      password: "securepassword",
-      role: UserRole.CLIENT,
-    },
-  });
-
-  // 2. Studio Rooms
-  const roomA = await prisma.studioRoom.upsert({
-    where: { slug: "studio-a" },
-    update: {},
-    create: {
-      name: "Studio A - Pro Podcast",
-      slug: "studio-a",
-      description: "Professional podcasting environment with high-end microphones.",
+      name: 'Podcast Studio A',
+      slug: 'podcast-studio-a',
+      description: 'Professional podcast recording studio with soundproofing and premium equipment',
       capacity: 4,
-      hourlyRate: 75.0,
-      type: "podcast",
+      hourlyRate: 250,
+      type: 'podcast',
+      imageUrl: '/images/studios/podcast-a.jpg',
     },
   });
 
-  const roomB = await prisma.studioRoom.studioRoom.upsert({
-    where: { slug: "studio-b" },
+  const recordingStudio = await prisma.studioRoom.upsert({
+    where: { slug: 'recording-studio-pro' },
     update: {},
     create: {
-      name: "Studio B - Video Podcast",
-      slug: "studio-b",
-      description: "Equipped with 4K cameras and professional lighting.",
+      name: 'Recording Studio Pro',
+      slug: 'recording-studio-pro',
+      description: 'State-of-the-art recording studio for music production',
       capacity: 6,
-      hourlyRate: 120.0,
-      type: "recording",
+      hourlyRate: 350,
+      type: 'recording',
+      imageUrl: '/images/studios/recording-pro.jpg',
     },
   });
 
-  // 3. Packages
+  console.log('✅ Created studio rooms');
+
+  // Create Packages
   await prisma.package.upsert({
-    where: { id: 1 },
+    where: { id: '00000000-0000-0000-0000-000000000001' },
     update: {},
     create: {
-      id: 1,
-      name: "Starter Bundle",
-      price: 200.0,
-      credits: 5,
+      id: '00000000-0000-0000-0000-000000000001',
+      name: 'Basic Session',
+      price: 200,
+      credits: 60,
+      durationMinutes: 60,
       validityDays: 30,
-      studioRoomId: roomA.id,
+      active: true,
+      studioRoomId: podcastStudio.id,
     },
   });
 
   await prisma.package.upsert({
-    where: { id: 2 },
+    where: { id: '00000000-0000-0000-0000-000000000002' },
     update: {},
     create: {
-      id: 2,
-      name: "Pro Bundle",
-      price: 500.0,
-      credits: 15,
-      validityDays: 90,
-      studioRoomId: roomA.id,
+      id: '00000000-0000-0000-0000-000000000002',
+      name: 'Extended Session',
+      price: 350,
+      credits: 120,
+      durationMinutes: 120,
+      validityDays: 30,
+      active: true,
+      studioRoomId: podcastStudio.id,
     },
   });
 
-  await prisma.package.upsert({
-    where: { id: 3 },
-    update: {},
-    create: {
-      id: 3,
-      name: "Premium Video Bundle",
-      price: 1000.0,
-      credits: 10,
-      validityDays: 60,
-      studioRoomId: roomB.id,
+  console.log('✅ Created packages');
+
+  // Create Services
+  await prisma.service.create({
+    data: {
+      name: 'Audio Mixing',
+      description: 'Professional audio mixing and mastering',
+      price: 150,
+      durationMin: 60,
+      active: true,
     },
   });
 
-  // 4. Services (Add-ons)
-  const servicesData = [
-    { id: 1, name: "Additional Microphone", price: 10.0, durationMin: 0 },
-    { id: 2, name: "Video Recording (Raw)", price: 30.0, durationMin: 0 },
-    { id: 3, name: "Basic Editing (1hr)", price: 50.0, durationMin: 60 },
-    { id: 4, name: "Pro Editing (1hr)", price: 100.0, durationMin: 60 },
-    { id: 5, name: "Live Streaming Setup", price: 40.0, durationMin: 30 },
-    { id: 6, name: "Guest Remote Connection", price: 15.0, durationMin: 0 },
-    { id: 7, name: "Social Media Clips (3x)", price: 45.0, durationMin: 0 },
-    { id: 8, name: "Teleprompter Usage", price: 20.0, durationMin: 0 },
-  ];
-
-  for (const s of servicesData) {
-    await prisma.service.upsert({
-      where: { id: s.id },
-      update: {},
-      create: s,
-    });
-  }
-
-  // 5. Plans
-  await prisma.plan.upsert({
-    where: { id: 1 },
-    update: {},
-    create: {
-      id: 1,
-      name: "Basic Creator",
-      monthlyPrice: 150.0,
-      includedCredits: 4,
-      description: "Perfect for monthly hobbyist podcasters.",
+  await prisma.service.create({
+    data: {
+      name: 'Video Recording',
+      description: 'Multi-camera video recording setup',
+      price: 200,
+      durationMin: 0,
+      active: true,
     },
   });
 
-  await prisma.plan.upsert({
-    where: { id: 2 },
+  console.log('✅ Created services');
+
+  // Create Subscription Plans
+  const creatorPlan = await prisma.plan.upsert({
+    where: { slug: 'creator' },
     update: {},
     create: {
-      id: 2,
-      name: "Professional Podcaster",
-      monthlyPrice: 400.0,
-      includedCredits: 12,
-      description: "For weekly professional shows.",
+      name: 'Creator Plan',
+      slug: 'creator',
+      monthlyPrice: 99900, // 999.00 AED in minor units
+      includedCredits: 10, // 10 hours per month
+      description: 'Perfect for content creators and podcasters starting out',
+      isActive: true,
     },
   });
 
-  console.log("Seeding complete.");
+  const proPlan = await prisma.plan.upsert({
+    where: { slug: 'pro' },
+    update: {},
+    create: {
+      name: 'Pro Plan',
+      slug: 'pro',
+      monthlyPrice: 199900, // 1999.00 AED in minor units
+      includedCredits: 25, // 25 hours per month
+      description: 'For professional creators who need more studio time',
+      isActive: true,
+    },
+  });
+
+  const businessPlan = await prisma.plan.upsert({
+    where: { slug: 'business' },
+    update: {},
+    create: {
+      name: 'Business Plan',
+      slug: 'business',
+      monthlyPrice: 399900, // 3999.00 AED in minor units
+      includedCredits: 60, // 60 hours per month
+      description: 'Unlimited access for businesses and production companies',
+      isActive: true,
+    },
+  });
+
+  console.log('✅ Created subscription plans');
+  console.log(`   - ${creatorPlan.name}: ${creatorPlan.includedCredits}h/month`);
+  console.log(`   - ${proPlan.name}: ${proPlan.includedCredits}h/month`);
+  console.log(`   - ${businessPlan.name}: ${businessPlan.includedCredits}h/month`);
+
+  // Create a test user
+  const testUser = await prisma.user.upsert({
+    where: { email: 'test@studio.com' },
+    update: {},
+    create: {
+      email: 'test@studio.com',
+      name: 'Test User',
+      password: '$2a$10$YourHashedPasswordHere', // In production, use bcrypt
+      role: 'CLIENT',
+    },
+  });
+
+  console.log('✅ Created test user');
+  console.log(`   - Email: ${testUser.email}`);
+
+  console.log('\n🎉 Seeding completed successfully!');
 }
 
 main()
   .catch((e) => {
-    console.error(e);
+    console.error('❌ Seeding failed:', e);
     process.exit(1);
   })
   .finally(async () => {

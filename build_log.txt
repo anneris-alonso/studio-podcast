@@ -1,0 +1,16 @@
+   ▲ Next.js 15.1.7
+   - Environments: .env
+
+   Creating an optimized production build ...
+Failed to compile.
+
+./src/server/data-access.ts
+Module not found: Can't resolve '@/lib/db'
+
+https://nextjs.org/docs/messages/module-not-found
+
+Import trace for requested module:
+./src/app/api/bookings/route.ts
+
+
+> Build failed because of webpack errors

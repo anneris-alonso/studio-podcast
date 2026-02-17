@@ -13,13 +13,27 @@ enum UserRole {
   CLIENT
 }
 
+enum PackageUnit {
+  HOUR
+  DAY
+  FIXED_MINUTES
+}
+
+enum ServiceUnit {
+  PER_BOOKING
+  PER_HOUR
+  PER_DAY
+  FIXED
+}
+
 model User {
-  id        Int       @id @default(autoincrement())
-  email     String    @unique
-  name      String
-  password  String
-  role      UserRole  @default(CLIENT)
-  createdAt DateTime  @default(now()) @map("created_at")
+  id               String   @id @default(uuid())
+  email            String   @unique
+  name             String
+  password         String
+  role             UserRole @default(CLIENT)
+  stripeCustomerId String?  @unique @map("stripe_customer_id")
+  createdAt        DateTime @default(now()) @map("created_at")
 
   bookings      Booking[]
   subscriptions Subscription[]
@@ -30,7 +44,7 @@ model User {
 }
 
 model StudioRoom {
-  id          Int      @id @default(autoincrement())
+  id          String   @id @default(uuid())
   name        String
   slug        String   @unique
   description String
@@ -47,26 +61,39 @@ model StudioRoom {
 }
 
 model Package {
-  id            Int      @id @default(autoincrement())
-  name          String
-  price         Decimal
-  credits       Int
-  validityDays  Int      @map("validity_days")
-  active        Boolean  @default(true)
-  studioRoomId  Int      @map("studio_room_id")
-  
-  studioRoom    StudioRoom @relation(fields: [studioRoomId], references: [id])
+  id              String   @id @default(uuid())
+  name            String
+  price           Decimal
+  credits         Int
+  durationMinutes Int      @default(60) @map("duration_minutes")
+  validityDays    Int      @map("validity_days")
+  active          Boolean  @default(true)
+  studioRoomId    String?  @map("studio_room_id")
+
+  unit             PackageUnit @default(FIXED_MINUTES)
+  minQuantity      Int         @default(1) @map("min_quantity")
+  maxQuantity      Int         @default(12) @map("max_quantity")
+  stepQuantity     Int         @default(1) @map("step_quantity")
+  pricePerUnitMinor Int         @default(0) @map("price_per_unit_minor")
+
+  studioRoom StudioRoom? @relation(fields: [studioRoomId], references: [id])
 
   @@map("packages")
 }
 
 model Service {
-  id          Int      @id @default(autoincrement())
+  id          String  @id @default(uuid())
   name        String
   description String?
   price       Decimal
-  durationMin Int?     @default(0) @map("duration_min")
-  active      Boolean  @default(true)
+  durationMin Int?    @default(0) @map("duration_min")
+  active      Boolean @default(true)
+
+  unit             ServiceUnit @default(FIXED)
+  priceMinor       Int         @default(0) @map("price_minor")
+  minQuantity      Int         @default(1) @map("min_quantity")
+  maxQuantity      Int         @default(20) @map("max_quantity")
+  stepQuantity     Int         @default(1) @map("step_quantity")
 
   bookingLineItems BookingLineItem[]
 
@@ -74,11 +101,13 @@ model Service {
 }
 
 model Plan {
-  id               Int      @id @default(autoincrement())
-  name             String
-  monthlyPrice     Decimal  @map("monthly_price")
-  includedCredits  Int      @map("included_credits")
-  description      String?
+  id              String  @id @default(uuid())
+  name            String
+  slug            String  @unique
+  monthlyPrice    Int     @map("monthly_price") // Minor units (e.g., 150050 for 1500.50 AED)
+  includedCredits Int     @map("included_credits") // Hours per month
+  description     String?
+  isActive        Boolean @default(true) @map("is_active")
 
   subscriptions Subscription[]
 
@@ -87,17 +116,22 @@ model Plan {
 
 enum SubscriptionStatus {
   ACTIVE
-  CANCELLED
+  CANCELED
   PAST_DUE
 }
 
 model Subscription {
-  id               Int                @id @default(autoincrement())
-  userId           Int                @map("user_id")
-  planId           Int                @map("plan_id")
-  status           SubscriptionStatus
-  currentPeriodEnd DateTime           @map("current_period_end")
-  createdAt        DateTime           @default(now()) @map("created_at")
+  id                   String             @id @default(uuid())
+  userId               String             @map("user_id")
+  planId               String             @map("plan_id")
+  status               SubscriptionStatus
+  stripeCustomerId     String?            @map("stripe_customer_id")
+  stripeSubscriptionId String?            @unique @map("stripe_subscription_id")
+  currentPeriodStart   DateTime?          @map("current_period_start")
+  currentPeriodEnd     DateTime           @map("current_period_end")
+  latestInvoiceId      String?            @map("latest_invoice_id")
+  createdAt            DateTime           @default(now()) @map("created_at")
+  updatedAt            DateTime           @updatedAt @map("updated_at")
 
   user User @relation(fields: [userId], references: [id])
   plan Plan @relation(fields: [planId], references: [id])
@@ -112,13 +146,15 @@ enum TransactionType {
   BOOKING
   ADJUSTMENT
   SUBSCRIPTION
+  GRANT
 }
 
 model CreditLedger {
-  id              Int             @id @default(autoincrement())
-  userId          Int             @map("user_id")
-  amount          Int             // Positive for credit, negative for debit
-  transactionType TransactionType @map("transaction_type")
+  id              String          @id @default(uuid())
+  userId          String          @map("user_id")
+  bookingId       String?         @map("booking_id")
+  amount          Int             // Positive for credit, negative for debit (acts as changeMinutes)
+  transactionType TransactionType @map("transaction_type") // Acts as reason: GRANT, CONSUME, ADJUST
   referenceId     String?         @map("reference_id") // ID of related booking/invoice
   description     String?
   createdAt       DateTime        @default(now()) @map("created_at")
@@ -132,18 +168,27 @@ enum BookingStatus {
   PENDING
   CONFIRMED
   CANCELLED
+  PAID
   COMPLETED
 }
 
 model Booking {
-  id         Int           @id @default(autoincrement())
-  userId     Int           @map("user_id")
-  roomId     Int           @map("room_id")
-  startTime  DateTime      @map("start_time")
-  endTime    DateTime      @map("end_time")
-  status     BookingStatus @default(PENDING)
-  totalPrice Decimal       @map("total_price")
-  createdAt  DateTime      @default(now()) @map("created_at")
+  id                      String        @id @default(uuid())
+  userId                  String        @map("user_id")
+  roomId                  String        @map("room_id")
+  startTime               DateTime      @map("start_time")
+  endTime                 DateTime      @map("end_time")
+  status                  BookingStatus @default(PENDING)
+  totalPrice              Decimal       @map("total_price")
+  totalPriceAedSnapshot   Decimal       @default(0) @map("total_price_aed_snapshot")
+  timeZone                String        @default("Asia/Dubai") @map("time_zone")
+  usedCreditMinutes       Int           @default(0) @map("used_credit_minutes")
+  totalPriceMinorSnapshot Int           @default(0) @map("total_price_minor_snapshot")
+  createdAt               DateTime      @default(now()) @map("created_at")
+
+  stripeCheckoutSessionId String?   @unique @map("stripe_checkout_session_id")
+  stripePaymentIntentId   String?   @unique @map("stripe_payment_intent_id")
+  paidAt                  DateTime? @map("paid_at")
 
   user User       @relation(fields: [userId], references: [id])
   room StudioRoom @relation(fields: [roomId], references: [id])
@@ -156,14 +201,20 @@ model Booking {
 }
 
 model BookingLineItem {
-  id             Int     @id @default(autoincrement())
-  bookingId      Int     @map("booking_id")
-  serviceId      Int     @map("service_id")
-  priceAtBooking Decimal @map("price_at_booking")
-  quantity       Int?    @default(1)
+  id                    String  @id @default(uuid())
+  bookingId             String  @map("booking_id")
+  serviceId             String? @map("service_id")
+  priceAtBooking        Decimal @map("price_at_booking")
+  nameSnapshot          String  @map("name_snapshot")
+  unitPriceAedSnapshot  Decimal @map("unit_price_aed_snapshot")
+  totalPriceAedSnapshot Decimal @map("total_price_aed_snapshot")
+  quantity              Int?    @default(1)
 
-  booking Booking @relation(fields: [bookingId], references: [id])
-  service Service @relation(fields: [serviceId], references: [id])
+  unitPriceMinorSnapshot  Int @default(0) @map("unit_price_minor_snapshot")
+  totalPriceMinorSnapshot Int @default(0) @map("total_price_minor_snapshot")
+
+  booking Booking  @relation(fields: [bookingId], references: [id])
+  service Service? @relation(fields: [serviceId], references: [id])
 
   @@map("booking_line_items")
 }
@@ -175,14 +226,15 @@ enum InvoiceStatus {
 }
 
 model Invoice {
-  id             Int           @id @default(autoincrement())
-  userId         Int           @map("user_id")
-  bookingId      Int?          @unique @map("booking_id")
-  subscriptionId Int?          @map("subscription_id")
-  amount         Decimal
-  status         InvoiceStatus
-  pdfUrl         String?       @map("pdf_url")
-  createdAt      DateTime      @default(now()) @map("created_at")
+  id                    String        @id @default(uuid())
+  userId                String        @map("user_id")
+  bookingId             String?       @unique @map("booking_id")
+  subscriptionId        String?       @map("subscription_id")
+  amount                Decimal
+  status                InvoiceStatus
+  pdfUrl                String?       @map("pdf_url")
+  stripePaymentIntentId String?       @unique @map("stripe_payment_intent_id")
+  createdAt             DateTime      @default(now()) @map("created_at")
 
   user         User          @relation(fields: [userId], references: [id])
   booking      Booking?      @relation(fields: [bookingId], references: [id])
@@ -198,11 +250,18 @@ enum AssetType {
 }
 
 model Asset {
-  id         Int       @id @default(autoincrement())
+  id         String    @id @default(uuid())
   name       String
   type       AssetType
   url        String
   uploadedAt DateTime  @default(now()) @map("uploaded_at")
 
   @@map("assets")
+}
+
+model StripeEventProcessed {
+  id        String   @id
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("stripe_events_processed")
 }

@@ -1,1 +1,10 @@
 node_modules
+.next
+.env
+.env.local
+.DS_Store
+dist
+build
+*.log
+prisma/backups/*.sql
+!prisma/backups/studio_suite_db_backup.sql

@@ -10,28 +10,32 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
-        primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
-        },
-        secondary: {
-          DEFAULT: "hsl(var(--secondary))",
-          foreground: "hsl(var(--secondary-foreground))",
-        },
+        bg: "rgb(var(--bg) / <alpha-value>)",
+        fg: "rgb(var(--fg) / <alpha-value>)",
+        muted: "rgb(var(--muted) / <alpha-value>)",
+        card: "rgb(var(--card) / <alpha-value>)",
+        border: "rgb(var(--border) / <alpha-value>)",
+        ring: "rgb(var(--ring) / <alpha-value>)",
         accent: {
-          DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))",
+          pink: "rgb(var(--accent-pink) / <alpha-value>)",
+          violet: "rgb(var(--accent-violet) / <alpha-value>)",
+          blue: "rgb(var(--accent-blue) / <alpha-value>)",
         },
-        border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
       },
-      backgroundImage: {
-        "glass-gradient": "linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05))",
+      borderRadius: {
+        "r-lg": "var(--r-lg)",
+        "r-xl": "var(--r-xl)",
+      },
+      boxShadow: {
+        soft: "var(--shadow-soft)",
+        glow: "var(--shadow-glow)",
       },
       backdropBlur: {
-        premium: "12px",
+        glass: "var(--glass-blur)",
+      },
+      backgroundImage: {
+        "brand-gradient": "linear-gradient(90deg, rgb(var(--accent-pink)), rgb(var(--accent-violet)), rgb(var(--accent-blue)))",
+        "radial-glow": "radial-gradient(600px circle at var(--x, 50%) var(--y, 30%), rgba(122, 92, 255, 0.22), transparent 60%)",
       },
     },
   },

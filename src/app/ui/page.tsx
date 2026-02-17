@@ -39,24 +39,22 @@ const item = {
 }
 
 export default function UIShowcase() {
-  const [isModalOpen, setIsModalOpen] = React.useState(false)
-
   return (
-    <div className="min-h-screen p-8 bg-background transition-colors duration-500">
+    <div className="min-h-screen p-8 bg-bg transition-colors duration-500">
       <motion.div
         variants={container}
         initial="hidden"
         animate="show"
         className="max-w-5xl mx-auto space-y-16"
       >
-        <motion.header variants={item} className="flex justify-between items-end border-b border-white/10 pb-8">
+        <motion.header variants={item} className="flex justify-between items-end border-b border-border pb-8">
           <div>
-            <Badge variant="secondary" className="mb-4">v1.0.1 (Corrected Theme)</Badge>
+            <Badge variant="ghost" className="mb-4">Official Branding v2.0</Badge>
             <h1 className="text-5xl font-bold premium-gradient-text tracking-tight">
               Studio Suite UI Kit
             </h1>
-            <p className="text-muted-foreground mt-2 text-lg">
-              Refined premium glassmorphism components with correct project branding (Violet/Zinc).
+            <p className="text-muted mt-2 text-lg">
+              Official brand components using mandated HSL tokens and radial gradients.
             </p>
           </div>
           <ThemeToggle />
@@ -64,39 +62,55 @@ export default function UIShowcase() {
 
         {/* Buttons Section */}
         <motion.section variants={item} className="space-y-6">
-          <h2 className="text-2xl font-semibold flex items-center gap-2">
-            Interactive Buttons
-          </h2>
-          <GlassCard className="flex flex-wrap gap-4 items-center">
-            <Button variant="primary">Primary Violet</Button>
-            <Button variant="secondary">Secondary Button</Button>
-            <Button variant="ghost">Ghost Button</Button>
-            <Button variant="glass">Glass Variant</Button>
-            <Button variant="primary" size="lg">Large Button</Button>
-            <Button variant="primary" size="sm">Small Button</Button>
-            <Button disabled>Disabled</Button>
-          </GlassCard>
+          <h2 className="text-2xl font-bold text-fg">Component Variants</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+             <GlassCard className="space-y-6">
+                <h3 className="text-sm font-semibold uppercase tracking-widest text-muted">Brand Buttons</h3>
+                <div className="flex flex-wrap gap-4">
+                  <Button variant="primary">Brand Gradient</Button>
+                  <Button variant="secondary">Dark / Light</Button>
+                  <Button variant="outline">Outline</Button>
+                  <Button variant="ghost">Ghost</Button>
+                </div>
+                <div className="flex flex-wrap gap-4 pt-4 border-t border-border/10">
+                  <Button variant="primary" size="lg">Large Scale</Button>
+                  <Button variant="primary" size="sm">Small Scale</Button>
+                </div>
+             </GlassCard>
+
+             <GlassCard className="space-y-6">
+                <h3 className="text-sm font-semibold uppercase tracking-widest text-muted">Accent Tokens</h3>
+                <div className="flex flex-wrap gap-3">
+                   <div className="px-4 py-2 bg-accent-pink text-white rounded-r-lg text-xs font-bold shadow-glow">PINK</div>
+                   <div className="px-4 py-2 bg-accent-violet text-white rounded-r-lg text-xs font-bold shadow-glow">VIOLET</div>
+                   <div className="px-4 py-2 bg-accent-blue text-white rounded-r-lg text-xs font-bold shadow-glow">BLUE</div>
+                </div>
+                <div className="p-4 rounded-r-lg brand-gradient text-white text-center font-bold">
+                  BRAND GRADIENT UTILITY
+                </div>
+             </GlassCard>
+          </div>
         </motion.section>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Inputs Section */}
           <motion.section variants={item} className="space-y-6">
-            <h2 className="text-2xl font-semibold">Form Elements</h2>
+            <h2 className="text-2xl font-bold text-fg">Form Elements</h2>
             <GlassCard className="space-y-6">
               <div className="space-y-2">
-                <label className="text-sm font-medium opacity-70">Text Input</label>
+                <label className="text-sm font-medium text-muted">Text Input</label>
                 <Input placeholder="Enter your name..." />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium opacity-70">Select Menu</label>
+                <label className="text-sm font-medium text-muted">Select Menu</label>
                 <Select>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select an option" />
+                    <SelectValue placeholder="Select a studio" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="opt1">Podcast Studio A</SelectItem>
-                    <SelectItem value="opt2">Recording Room B</SelectItem>
-                    <SelectItem value="opt3">Editing Suite C</SelectItem>
+                    <SelectItem value="opt1">Zenith Suite</SelectItem>
+                    <SelectItem value="opt2">Acoustic Lounge</SelectItem>
+                    <SelectItem value="opt3">Video Bay</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -105,37 +119,37 @@ export default function UIShowcase() {
 
           {/* Badges & Modals */}
           <motion.section variants={item} className="space-y-6">
-            <h2 className="text-2xl font-semibold">Status & Overlays</h2>
+            <h2 className="text-2xl font-bold text-fg">Status & Overlays</h2>
             <GlassCard className="space-y-8">
               <div className="flex flex-wrap gap-2">
-                <Badge variant="default">Active</Badge>
-                <Badge variant="secondary">Pending</Badge>
-                <Badge variant="outline">Planned</Badge>
-                <Badge variant="ghost">Draft</Badge>
+                <Badge variant="default">Confirmed</Badge>
+                <Badge variant="secondary">Processing</Badge>
+                <Badge variant="outline">Manual Check</Badge>
+                <Badge variant="ghost">Legacy Item</Badge>
               </div>
               
-              <div className="pt-4 border-t border-white/10">
+              <div className="pt-4 border-t border-border">
                 <Modal>
                   <ModalTrigger asChild>
-                    <Button variant="secondary" className="w-full">
-                      Open Glass Modal
+                    <Button variant="outline" className="w-full h-12">
+                      Open Brand Modal
                     </Button>
                   </ModalTrigger>
                   <ModalContent>
                     <ModalHeader>
-                      <ModalTitle>Refined Modal Component</ModalTitle>
+                      <ModalTitle>Verbatim Branding</ModalTitle>
                       <ModalDescription>
-                        Corrected theme colors: Primary is now Violet, reflecting the original project identity.
+                        This modal uses shadow-glow and glass-blur based on official brand tokens.
                       </ModalDescription>
                     </ModalHeader>
-                    <div className="py-4">
-                      <p className="text-sm opacity-80">
-                        Smooth entry/exit animations powered by Radix + Framer CSS animations.
+                    <div className="py-8 text-center bg-accent-violet/5 rounded-r-lg border border-accent-violet/10">
+                      <p className="text-sm text-accent-violet font-bold">
+                        PREMIUM OVERLAY ACTIVE
                       </p>
                     </div>
                     <div className="flex justify-end gap-3 mt-4">
-                      <Button variant="ghost">Cancel</Button>
-                      <Button variant="primary">Confirm Action</Button>
+                      <Button variant="ghost">Close</Button>
+                      <Button variant="primary">Confirm</Button>
                     </div>
                   </ModalContent>
                 </Modal>
@@ -144,32 +158,32 @@ export default function UIShowcase() {
           </motion.section>
         </div>
 
-        {/* Layout Examples */}
+        {/* Typography Section */}
         <motion.section variants={item} className="space-y-6">
-          <h2 className="text-2xl font-semibold">Layout Examples (Glass Cards)</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[1, 2, 3].map((i) => (
-              <GlassCard key={i} className="group cursor-pointer hover:border-primary/30 transition-colors">
-                <div className="h-32 w-full rounded-lg bg-primary/5 mb-4 overflow-hidden">
-                  <div className="w-full h-full bg-gradient-to-br from-primary/20 to-blue-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                </div>
-                <h3 className="font-semibold text-lg group-hover:text-primary transition-colors">
-                  Studio Package {i}
-                </h3>
-                <p className="text-sm text-muted-foreground mt-2">
-                  High-quality recording with professional gear and acoustics.
-                </p>
-                <div className="mt-4 flex justify-between items-center">
-                  <span className="text-lg font-bold tracking-tight">$99/hr</span>
-                  <Badge variant="outline">Available</Badge>
-                </div>
-              </GlassCard>
-            ))}
+          <h2 className="text-2xl font-bold text-fg">Design Tokens</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+             <div className="p-6 rounded-r-lg border border-border bg-card space-y-2">
+                <p className="text-xs text-muted font-bold">BG / FG</p>
+                <div className="h-4 bg-bg rounded w-full border border-border" />
+                <div className="h-4 bg-fg rounded w-full" />
+             </div>
+             <div className="p-6 rounded-r-lg border border-border bg-card space-y-2">
+                <p className="text-xs text-muted font-bold">RADIUS LG (18px)</p>
+                <div className="h-10 bg-accent-violet/20 rounded-r-lg border border-accent-violet/30" />
+             </div>
+             <div className="p-6 rounded-r-lg border border-border bg-card space-y-2">
+                <p className="text-xs text-muted font-bold">RADIUS XL (24px)</p>
+                <div className="h-10 bg-accent-blue/20 rounded-r-xl border border-accent-blue/30" />
+             </div>
+             <div className="p-6 rounded-r-lg border border-border bg-card space-y-2">
+                <p className="text-xs text-muted font-bold">GLOW SHADOW</p>
+                <div className="h-10 bg-accent-pink rounded-r-lg shadow-glow" />
+             </div>
           </div>
         </motion.section>
 
-        <motion.footer variants={item} className="text-center pt-8 border-t border-white/10 text-muted-foreground text-sm">
-          <p>© 2026 Studio Suite. Built with Next.js, Radix, Tailwind and Framer.</p>
+        <motion.footer variants={item} className="text-center pt-8 border-t border-border text-muted text-sm">
+          <p>© 2026 Studio Suite. All UI elements follow the verbatím branding mandate.</p>
         </motion.footer>
       </motion.div>
     </div>

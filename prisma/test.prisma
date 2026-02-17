@@ -1,0 +1,12 @@
+datasource db {
+  provider = "postgresql"
+  url      = "postgresql://studio_admin:tu_password_seguro@localhost:5432/studio_suite_db?schema=public"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Test {
+  id Int @id @default(autoincrement())
+}

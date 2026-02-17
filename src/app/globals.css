@@ -1,0 +1,77 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: 247 248 252;
+  --fg: 10 12 18;
+  --muted: 109 114 128;
+  --card: 255 255 255;
+  --glass: 255 255 255;
+  --border: 17 24 39;
+  --ring: 122 92 255;
+
+  --accent-pink: 255 46 203;
+  --accent-violet: 122 92 255;
+  --accent-blue: 47 123 255;
+
+  --glass-alpha: 0.06;
+  --glass-border-alpha: 0.14;
+  --glass-blur: 18px;
+
+  --shadow-soft: 0 10px 30px rgba(0,0,0,.18);
+  --shadow-glow: 0 0 0 1px rgba(255,255,255,.08), 0 18px 60px rgba(122,92,255,.12);
+
+  --r-lg: 18px;
+  --r-xl: 24px;
+}
+
+.dark {
+  --bg: 5 5 8;
+  --fg: 244 244 245;
+  --muted: 161 161 170;
+  --card: 12 12 16;
+  --glass: 255 255 255;
+  --border: 255 255 255;
+  --ring: 122 92 255;
+
+  --glass-alpha: 0.06;
+  --glass-border-alpha: 0.12;
+  --glass-blur: 22px;
+
+  --shadow-soft: 0 14px 40px rgba(0,0,0,.45);
+  --shadow-glow: 0 0 0 1px rgba(255,255,255,.08), 0 25px 80px rgba(255,46,203,.08);
+}
+
+@layer base {
+  body {
+    @apply bg-bg text-fg antialiased;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+}
+
+@layer utilities {
+  .brand-gradient {
+    background: linear-gradient(90deg, rgb(var(--accent-pink)), rgb(var(--accent-violet)), rgb(var(--accent-blue)));
+  }
+
+  .bg-radial-glow {
+    background: radial-gradient(600px circle at var(--x, 50%) var(--y, 30%), rgba(122, 92, 255, 0.22), transparent 60%);
+  }
+
+  .bg-grain {
+    background-image: url("https://grainy-gradients.vercel.app/noise.svg");
+    opacity: 0.05;
+    pointer-events: none;
+  }
+
+  .glass-card {
+    @apply backdrop-blur-glass border;
+    background-color: rgba(var(--glass), var(--glass-alpha));
+    border-color: rgba(var(--border), var(--glass-border-alpha));
+  }
+
+  .premium-gradient-text {
+    @apply bg-clip-text text-transparent brand-gradient;
+  }
+}
