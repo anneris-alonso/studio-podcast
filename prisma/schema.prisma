@@ -44,15 +44,21 @@ model User {
 }
 
 model StudioRoom {
-  id          String   @id @default(uuid())
-  name        String
-  slug        String   @unique
-  description String
-  capacity    Int
-  hourlyRate  Decimal  @map("hourly_rate")
-  imageUrl    String?  @map("image_url")
-  type        String   // 'recording', 'podcast', 'photography'
-  createdAt   DateTime @default(now()) @map("created_at")
+  id               String   @id @default(uuid())
+  name             String
+  slug             String   @unique
+  description      String
+  capacity         Int
+  equipmentSummary String   @default("") @map("equipment_summary")
+  coverImageUrl    String?  @map("cover_image_url")
+  isActive         Boolean  @default(true) @map("is_active")
+  
+  // Legacy fields kept for backward compatibility if needed, or can be removed if data migration is done
+  hourlyRate       Decimal? @map("hourly_rate") 
+  imageUrl         String?  @map("image_url")
+  type             String?  // 'recording', 'podcast', 'photography'
+
+  createdAt        DateTime @default(now()) @map("created_at")
 
   bookings Booking[]
   packages Package[]
@@ -61,43 +67,62 @@ model StudioRoom {
 }
 
 model Package {
-  id              String   @id @default(uuid())
+  id              String      @id @default(uuid())
+  slug            String      @unique
   name            String
-  price           Decimal
-  credits         Int
-  durationMinutes Int      @default(60) @map("duration_minutes")
-  validityDays    Int      @map("validity_days")
-  active          Boolean  @default(true)
-  studioRoomId    String?  @map("studio_room_id")
+  description     String
+  price           Decimal     // Legacy Decimal
+  durationMinutes Int         @map("duration_minutes")
+  active          Boolean     @default(true)
+  studioRoomId    String?     @map("studio_room_id")
+  
+  // New flexible fields
+  unit            PackageUnit @default(HOUR)
+  minQuantity     Int         @default(1) @map("min_quantity")
+  maxQuantity     Int         @default(1) @map("max_quantity")
+  stepQuantity    Int         @default(1) @map("step_quantity")
+  pricePerUnitMinor Int       @default(0) @map("price_per_unit_minor")
+  isActive        Boolean     @default(true) @map("is_active")
+  
+  // Legacy fields
+  credits         Int         @default(0)
+  validityDays    Int         @default(30) @map("validity_days")
 
-  unit             PackageUnit @default(FIXED_MINUTES)
-  minQuantity      Int         @default(1) @map("min_quantity")
-  maxQuantity      Int         @default(12) @map("max_quantity")
-  stepQuantity     Int         @default(1) @map("step_quantity")
-  pricePerUnitMinor Int         @default(0) @map("price_per_unit_minor")
-
-  studioRoom StudioRoom? @relation(fields: [studioRoomId], references: [id])
-
+  studioRoom      StudioRoom? @relation(fields: [studioRoomId], references: [id])
+  
   @@map("packages")
 }
 
 model Service {
-  id          String  @id @default(uuid())
+  id          String      @id @default(uuid())
+  slug        String      @unique
   name        String
   description String?
-  price       Decimal
-  durationMin Int?    @default(0) @map("duration_min")
-  active      Boolean @default(true)
+  price       Decimal     // Legacy
+  active      Boolean     @default(true)
+  
+  // New flexible fields
+  category    ServiceCategory @default(EXTRA)
+  unit        ServiceUnit     @default(PER_BOOKING)
+  minQuantity Int             @default(1) @map("min_quantity")
+  maxQuantity Int             @default(1) @map("max_quantity")
+  stepQuantity Int            @default(1) @map("step_quantity")
+  priceMinor  Int             @default(0) @map("price_minor")
+  isActive    Boolean         @default(true) @map("is_active")
+  iconAssetKey String?        @map("icon_asset_key")
 
-  unit             ServiceUnit @default(FIXED)
-  priceMinor       Int         @default(0) @map("price_minor")
-  minQuantity      Int         @default(1) @map("min_quantity")
-  maxQuantity      Int         @default(20) @map("max_quantity")
-  stepQuantity     Int         @default(1) @map("step_quantity")
+  // Legacy
+  durationMin Int?    @default(0) @map("duration_min")
 
   bookingLineItems BookingLineItem[]
 
   @@map("services")
+}
+
+enum ServiceCategory {
+  RECORDING
+  EDITING
+  EXTRA
 }
 
 model Plan {
@@ -270,4 +295,24 @@ model StripeEventProcessed {
   createdAt DateTime @default(now()) @map("created_at")
 
   @@map("stripe_events_processed")
+}
+
+model AuditLog {
+  id          String   @id @default(uuid())
+  actorUserId String?  @map("actor_user_id")
+  actorEmail  String?  @map("actor_email")
+  actorRole   String?  @map("actor_role")
+  action      String
+  entity      String?
+  entityId    String?  @map("entity_id")
+  ip          String?
+  userAgent   String?  @map("user_agent")
+  requestId   String?  @map("request_id")
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@index([createdAt])
+  @@index([actorUserId, createdAt])
+  @@index([action, createdAt])
+  @@map("audit_logs")
 }
