@@ -9,14 +9,21 @@ import {
   upsertSubscription,
   applyInvoicePaidGrant
 } from "@/server/data-access";
+import prisma from "@/lib/db";
+import { logger } from "@/lib/logger";
 import Stripe from "stripe";
 import { BookingStatus, SubscriptionStatus } from "@prisma/client";
 
 export async function POST(request: NextRequest) {
+  const requestId = request.headers.get("x-request-id") || "unknown";
   const sig = request.headers.get("stripe-signature");
 
   if (!sig || !process.env.STRIPE_WEBHOOK_SECRET) {
-    return NextResponse.json({ error: "Missing signature or webhook secret" }, { status: 400 });
+    return NextResponse.json({ 
+      error: "bad_request", 
+      message: "Missing signature or webhook secret", 
+      requestId 
+    }, { status: 400 });
   }
 
   const rawBody = await request.text();
@@ -29,21 +36,33 @@ export async function POST(request: NextRequest) {
       process.env.STRIPE_WEBHOOK_SECRET
     );
   } catch (err: any) {
-    console.error(`Webhook signature verification failed: ${err.message}`);
-    return NextResponse.json({ error: `Webhook Error: ${err.message}` }, { status: 400 });
+    logger.warn(`Webhook signature verification failed`, { requestId, error: err.message });
+    return NextResponse.json({ 
+      error: "webhook_verification_failed", 
+      message: err.message, 
+      requestId 
+    }, { status: 400 });
   }
 
   if (await isEventProcessed(event.id)) {
-    console.log(`Event ${event.id} already processed. Skipping.`);
-    return NextResponse.json({ received: true });
+    return NextResponse.json({ received: true, requestId, processed: true });
   }
 
   try {
+    let auditAction = `STRIPE_${event.type.toUpperCase().replace(/\./g, '_')}`;
+    let entity = "StripeEvent";
+    let entityId = event.id;
+    let metadata: any = { type: event.type };
+
     switch (event.type) {
       case "checkout.session.completed": {
         const session = event.data.object as Stripe.Checkout.Session;
+        metadata.sessionId = session.id;
+        metadata.mode = session.mode;
         if (session.mode === "payment") {
           await handlePaymentSuccess(session.metadata?.bookingId, session.payment_intent as string);
+          entity = "Booking";
+          entityId = session.metadata?.bookingId || event.id;
         }
         break;
       }
@@ -51,6 +70,8 @@ export async function POST(request: NextRequest) {
       case "payment_intent.succeeded": {
         const pi = event.data.object as Stripe.PaymentIntent;
         await handlePaymentSuccess(pi.metadata?.bookingId, pi.id);
+        entity = "Booking";
+        entityId = pi.metadata?.bookingId || event.id;
         break;
       }
 
@@ -59,11 +80,13 @@ export async function POST(request: NextRequest) {
       case "customer.subscription.deleted": {
         const subscription = event.data.object as Stripe.Subscription;
         await handleSubscriptionChange(subscription);
+        entity = "Subscription";
+        entityId = subscription.id;
         break;
       }
 
       case "invoice.paid": {
-        const invoice = event.data.object as Stripe.Invoice;
+        const invoice = event.data.object as any;
         if (invoice.subscription) {
           await handleSubscriptionInvoicePaid(event.id, invoice);
         }
@@ -71,22 +94,36 @@ export async function POST(request: NextRequest) {
       }
 
       case "invoice.payment_failed": {
-        const invoice = event.data.object as Stripe.Invoice;
+        const invoice = event.data.object as any;
         if (invoice.subscription) {
           await handleSubscriptionInvoiceFailed(invoice);
         }
         break;
       }
-
-      default:
-        console.log(`Unhandled event type ${event.type}`);
     }
 
+    // Best-effort non-blocking audit log
+    prisma.auditLog.create({
+      data: {
+        action: auditAction,
+        entity,
+        entityId,
+        requestId,
+        metadata,
+        ip: request.headers.get('x-forwarded-for')?.split(',')[0] || null,
+        userAgent: request.headers.get('user-agent'),
+      }
+    }).catch(e => logger.error("Webhook audit failed", { requestId, error: e.message }));
+
     await markEventAsProcessed(event.id);
-    return NextResponse.json({ received: true });
+    return NextResponse.json({ received: true, requestId });
   } catch (err: any) {
-    console.error(`Error processing webhook ${event.id}:`, err);
-    return NextResponse.json({ error: "Webhook process failed" }, { status: 500 });
+    logger.error(`Webhook processing error`, { requestId, eventId: event.id, error: err.message });
+    return NextResponse.json({ 
+      error: "webhook_process_failed", 
+      message: "Internal server error during webhook processing", 
+      requestId 
+    }, { status: 500 });
   }
 }
 
@@ -105,16 +142,16 @@ async function handlePaymentSuccess(bookingId: string | undefined, paymentIntent
   await createBookingInvoice(bookingId, paymentIntentId);
 }
 
-async function handleSubscriptionChange(stripeSub: Stripe.Subscription) {
-  const userId = stripeSub.metadata.userId;
-  const planId = stripeSub.metadata.planId;
+async function handleSubscriptionChange(stripeSub: any) {
+  const userId = stripeSub.metadata?.userId;
+  const planId = stripeSub.metadata?.planId;
 
   if (!userId || !planId) {
     console.error(`Missing metadata in subscription ${stripeSub.id}`);
     return;
   }
 
-  const statusMap: Record<Stripe.Subscription.Status, SubscriptionStatus> = {
+  const statusMap: Record<string, SubscriptionStatus> = {
     active: 'ACTIVE',
     past_due: 'PAST_DUE',
     unpaid: 'CANCELED',
@@ -139,12 +176,12 @@ async function handleSubscriptionChange(stripeSub: Stripe.Subscription) {
   });
 }
 
-async function handleSubscriptionInvoicePaid(eventId: string, invoice: Stripe.Invoice) {
+async function handleSubscriptionInvoicePaid(eventId: string, invoice: any) {
   const stripeSubId = invoice.subscription as string;
-  const stripeSub = await stripe.subscriptions.retrieve(stripeSubId);
+  const stripeSub = await stripe.subscriptions.retrieve(stripeSubId) as any;
   
-  const userId = stripeSub.metadata.userId;
-  const planId = stripeSub.metadata.planId;
+  const userId = stripeSub.metadata?.userId;
+  const planId = stripeSub.metadata?.planId;
 
   if (!userId || !planId) return;
 
@@ -152,12 +189,12 @@ async function handleSubscriptionInvoicePaid(eventId: string, invoice: Stripe.In
   await applyInvoicePaidGrant(eventId, userId, planId);
 }
 
-async function handleSubscriptionInvoiceFailed(invoice: Stripe.Invoice) {
+async function handleSubscriptionInvoiceFailed(invoice: any) {
   const stripeSubId = invoice.subscription as string;
-  const stripeSub = await stripe.subscriptions.retrieve(stripeSubId);
+  const stripeSub = await stripe.subscriptions.retrieve(stripeSubId) as any;
   
-  const userId = stripeSub.metadata.userId;
-  const planId = stripeSub.metadata.planId;
+  const userId = stripeSub.metadata?.userId;
+  const planId = stripeSub.metadata?.planId;
 
   if (!userId || !planId) return;
 
@@ -169,6 +206,6 @@ async function handleSubscriptionInvoiceFailed(invoice: Stripe.Invoice) {
     status: 'PAST_DUE',
     currentPeriodStart: new Date(stripeSub.current_period_start * 1000),
     currentPeriodEnd: new Date(stripeSub.current_period_end * 1000),
-    latestInvoiceId: invoice.id
+    latestInvoiceId: invoice.id as string
   });
 }

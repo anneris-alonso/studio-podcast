@@ -6,7 +6,15 @@ import { ServiceSchema } from '@/lib/validations/admin-catalog';
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
 
+import { headers } from 'next/headers';
+import { logger } from '@/lib/logger';
+
 async function logAudit(action: string, entity: string, entityId: string, actor: any, metadata?: any) {
+  const head = await headers();
+  const requestId = head.get('x-request-id');
+  const ip = head.get('x-forwarded-for')?.split(',')[0] || null;
+  const userAgent = head.get('user-agent');
+
   try {
     await prisma.auditLog.create({
       data: {
@@ -16,10 +24,15 @@ async function logAudit(action: string, entity: string, entityId: string, actor:
         actorUserId: actor.id,
         actorEmail: actor.email,
         actorRole: actor.role,
-        metadata: metadata ? JSON.stringify(metadata) : undefined,
+        requestId,
+        ip,
+        userAgent,
+        metadata: metadata || undefined,
       }
     });
-  } catch (error) { console.error(error); }
+  } catch (error: any) {
+    logger.error("AuditLog failure", { action, requestId, error: error.message });
+  }
 }
 
 export async function createService(data: z.infer<typeof ServiceSchema>) {
