@@ -1,9 +1,12 @@
 import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
 async function main() {
   console.log('🌱 Seeding database...');
+
+  const passwordHash = await bcrypt.hash('password123', 10);
 
   // Create Studio Rooms
   const podcastStudio = await prisma.studioRoom.upsert({
@@ -43,6 +46,8 @@ async function main() {
     create: {
       id: '00000000-0000-0000-0000-000000000001',
       name: 'Basic Session',
+      slug: 'basic-session',
+      description: 'Standard 1-hour recording session',
       price: 200,
       credits: 60,
       durationMinutes: 60,
@@ -58,6 +63,8 @@ async function main() {
     create: {
       id: '00000000-0000-0000-0000-000000000002',
       name: 'Extended Session',
+      slug: 'extended-session',
+      description: 'Extended 2-hour recording & strategy session',
       price: 350,
       credits: 120,
       durationMinutes: 120,
@@ -70,23 +77,34 @@ async function main() {
   console.log('✅ Created packages');
 
   // Create Services
-  await prisma.service.create({
-    data: {
+  await prisma.service.upsert({
+    where: { slug: 'audio-mixing' },
+    update: {},
+    create: {
       name: 'Audio Mixing',
+      slug: 'audio-mixing',
       description: 'Professional audio mixing and mastering',
-      price: 150,
+      price: 150, // Legacy decimal, Prisma handles int/float conversion usually, or use Decimal
       durationMin: 60,
       active: true,
+      category: 'EDITING',
+      unit: 'PER_BOOKING',
+      priceMinor: 15000,
     },
   });
 
-  await prisma.service.create({
-    data: {
+  await prisma.service.upsert({
+    where: { slug: 'video-recording' },
+    update: {},
+    create: {
       name: 'Video Recording',
+      slug: 'video-recording',
       description: 'Multi-camera video recording setup',
       price: 200,
-      durationMin: 0,
       active: true,
+      category: 'RECORDING',
+      unit: 'PER_BOOKING',
+      priceMinor: 20000,
     },
   });
 
@@ -144,13 +162,39 @@ async function main() {
     create: {
       email: 'test@studio.com',
       name: 'Test User',
-      password: '$2a$10$YourHashedPasswordHere', // In production, use bcrypt
+      passwordHash,
       role: 'CLIENT',
     },
   });
 
-  console.log('✅ Created test user');
-  console.log(`   - Email: ${testUser.email}`);
+  // Create Admin user
+  const adminUser = await prisma.user.upsert({
+    where: { email: 'admin@studio.com' },
+    update: {},
+    create: {
+      email: 'admin@studio.com',
+      name: 'Admin User',
+      passwordHash,
+      role: 'ADMIN',
+    },
+  });
+
+  // Create Super Admin user
+  const superUser = await prisma.user.upsert({
+    where: { email: 'super@studio.com' },
+    update: {},
+    create: {
+      email: 'super@studio.com',
+      name: 'Super Admin',
+      passwordHash,
+      role: 'SUPER_ADMIN',
+    },
+  });
+
+  console.log('✅ Created users');
+  console.log(`   - Client: ${testUser.email}`);
+  console.log(`   - Admin: ${adminUser.email}`);
+  console.log(`   - Super Admin: ${superUser.email}`);
 
   console.log('\n🎉 Seeding completed successfully!');
 }

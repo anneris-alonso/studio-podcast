@@ -12,10 +12,11 @@ type FilterType = "UPCOMING" | "PAST" | "CANCELED";
 export default async function BookingsPage({
   searchParams,
 }: {
-  searchParams: { filter?: string };
+  searchParams: Promise<{ filter?: string }>;
 }) {
   const user = await requireUser();
-  const currentFilter = (searchParams.filter?.toUpperCase() as FilterType) || "UPCOMING";
+  const { filter } = await searchParams;
+  const currentFilter = (filter?.toUpperCase() as FilterType) || "UPCOMING";
   
   const bookings = await listUserBookings(user.id, currentFilter);
 

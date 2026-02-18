@@ -1,0 +1,4 @@
+﻿E:\PodcastStudio\Studio-Suite\src\app\(public)\studios\[slug]
+E:\PodcastStudio\Studio-Suite\src\app\account\bookings\[bookingId]
+E:\PodcastStudio\Studio-Suite\src\app\api\assets\[assetId]
+E:\PodcastStudio\Studio-Suite\src\app\api\bookings\[bookingId]

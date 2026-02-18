@@ -3,5 +3,6 @@ import { logout } from "@/lib/auth";
 
 export async function POST(request: NextRequest) {
   await logout();
-  return NextResponse.json({ success: true });
+  // Redirect to login page after logout
+  return NextResponse.redirect(new URL("/login", request.url));
 }

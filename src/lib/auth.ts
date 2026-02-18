@@ -1,7 +1,8 @@
-import { createHash, randomInt } from 'node:crypto';
 import prisma from '@/lib/db';
 import { cookies } from 'next/headers';
 import { logger } from '@/lib/logger';
+import bcrypt from 'bcryptjs';
+import { createHash, randomInt } from 'node:crypto';
 import { sendEmail } from '@/server/email/mailer';
 
 const SESSION_COOKIE_NAME = 'studio_session';
@@ -16,15 +17,20 @@ export function hashToken(token: string): string {
 }
 
 /**
- * Generates a 6-digit OTP, hashes it, and saves it to the DB.
- * Sends the plain code via email.
+ * Generates an OTP for REGISTRATION.
  */
-export async function requestOtp(email: string) {
+export async function requestRegistrationOtp(email: string) {
+  // Check if user already exists
+  const existingUser = await prisma.user.findUnique({ where: { email } });
+  if (existingUser) {
+    return { success: false, error: "user_exists" };
+  }
+
   const otp = randomInt(100000, 999999).toString();
   const hashedOtp = hashToken(otp);
   const expiresAt = new Date(Date.now() + OTP_EXPIRY_MINUTES * 60 * 1000);
 
-  // Clear any existing tokens for this identifier to prevent clutter
+  // Clear existing tokens
   await prisma.verificationToken.deleteMany({
     where: { identifier: email },
   });
@@ -37,24 +43,37 @@ export async function requestOtp(email: string) {
     },
   });
 
-  // Send via SMTP using the existing mailer
-  await sendEmail({
-    to: email,
-    subject: "Your Studio Suite Login Code",
-    text: `Your login code is: ${otp}\n\nThis code expires in ${OTP_EXPIRY_MINUTES} minutes.`,
-    html: `<p>Your login code is: <strong>${otp}</strong></p><p>This code expires in ${OTP_EXPIRY_MINUTES} minutes.</p>`,
-  });
+  // Log OTP (ALWAYS VISIBLE FOR DEBUGGING)
+  console.log("\n\n========================================================");
+  console.log(`🔑 REGISTRATION OTP FOR ${email}: ${otp}`);
+  console.log("========================================================\n\n");
+  logger.info("Generated Use Registration OTP", { email, code: otp });
 
-  logger.info("OTP sent successfully", { email });
+  // Send Email
+  if (process.env.SMTP_HOST) {
+    try {
+      await sendEmail({
+        to: email,
+        subject: "Your Studio Suite Registration Code",
+        text: `Your registration code is: ${otp}\n\nThis code expires in ${OTP_EXPIRY_MINUTES} minutes.`,
+        html: `<p>Your registration code is: <strong>${otp}</strong></p><p>This code expires in ${OTP_EXPIRY_MINUTES} minutes.</p>`,
+      });
+    } catch (err: any) {
+      logger.error("Failed to send Registration OTP", { email, error: err.message });
+       if (process.env.NODE_ENV === 'production') throw err;
+    }
+  }
+
   return { success: true };
 }
 
 /**
- * Validates the OTP, deletes it, and creates a session.
+ * Verifies the OTP and creates the user (without password initially, or we handle password setting in a separate step).
+ * For simplicity in this flow: Verify OTP -> User enters Password -> Create User.
+ * So this function just verifies validity.
  */
-export async function verifyOtp(email: string, otp: string) {
+export async function verifyRegistrationOtpOnly(email: string, otp: string) {
   const hashedOtp = hashToken(otp);
-
   const vt = await prisma.verificationToken.findFirst({
     where: {
       identifier: email,
@@ -63,26 +82,34 @@ export async function verifyOtp(email: string, otp: string) {
     },
   });
 
-  if (!vt) {
-    logger.warn("Invalid or expired OTP attempt", { email });
-    return { success: false, error: "invalid_code" };
-  }
+  if (!vt) return { success: false, error: "invalid_code" };
 
-  // Delete the token immediately after use
-  await prisma.verificationToken.delete({
-    where: { token: hashedOtp },
+  // Valid. Code is good. We don't delete it yet, we delete it when they actually create the account with password.
+  // Or better: Delete it and return a "registration_token" (signed) that allows /api/auth/complete-registration to work.
+  // For simplicity: We will accept the OTP + Password in one "Finalize Registration" call, 
+  // OR we keep it simple: Client sends Email + OTP + Name + Password to /api/auth/register-complete.
+  
+  return { success: true };
+}
+
+/**
+ * Validates the credentials and creates a session.
+ */
+export async function login(email: string, password: string) {
+  const user = await prisma.user.findUnique({ 
+    where: { email } 
   });
 
-  // Ensure user exists or create them (Minimal Onboarding)
-  let user = await prisma.user.findUnique({ where: { email } });
-  if (!user) {
-    user = await prisma.user.create({
-      data: {
-        email,
-        name: email.split('@')[0], // Default name
-        role: 'CLIENT',
-      },
-    });
+  if (!user || !user.passwordHash) {
+    logger.warn("Login attempt failed: User not found or no password set", { email });
+    return { success: false, error: "invalid_credentials" };
+  }
+
+  const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
+
+  if (!isPasswordValid) {
+    logger.warn("Login attempt failed: Invalid password", { email });
+    return { success: false, error: "invalid_credentials" };
   }
 
   // Create Session

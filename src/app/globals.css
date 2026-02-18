@@ -26,7 +26,7 @@
   --r-xl: 24px;
 }
 
-.dark {
+.dark, .dark-theme {
   --bg: 5 5 8;
   --fg: 244 244 245;
   --muted: 161 161 170;

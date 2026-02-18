@@ -73,7 +73,7 @@ export default async function StudiosPage({
               <div className="w-full md:w-48 h-32 md:h-auto bg-white/5 relative">
                   {/* Placeholder for image */}
                   <div className="absolute inset-0 flex items-center justify-center text-muted-foreground/20 text-xs">
-                    {studio.coverImageUrl ? <img src={studio.coverImageUrl} className="w-full h-full object-cover" /> : 'No Image'}
+                    {studio.coverImageUrl ? <img alt={studio.name} src={studio.coverImageUrl} className="w-full h-full object-cover" /> : 'No Image'}
                   </div>
               </div>
               <div className="p-6 flex-1 flex flex-col justify-center">

@@ -3,11 +3,13 @@ import { getBookingById } from "@/server/data-access";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ bookingId: string }> }
 ) {
   try {
-    const { id } = await params;
-    const booking = await getBookingById(Number(id));
+    const { bookingId } = await params;
+    
+    // IDs are strings (cuid/uuid), not numbers.
+    const booking = await getBookingById(bookingId);
 
     if (!booking) {
       return NextResponse.json({ error: "Booking not found" }, { status: 404 });

@@ -20,17 +20,11 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className} antialiased transition-colors duration-500`}>
-        <ThemeProvider
-          attribute="class"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <ToastProvider>
-            <PageTransition>
-              {children}
-            </PageTransition>
-          </ToastProvider>
-        </ThemeProvider>
+        <ToastProvider>
+          <PageTransition>
+            {children}
+          </PageTransition>
+        </ToastProvider>
       </body>
     </html>
   );

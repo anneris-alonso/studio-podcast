@@ -30,6 +30,7 @@ model User {
   id               String   @id @default(uuid())
   email            String   @unique
   name             String
+  passwordHash     String?  @map("password_hash")
   role             UserRole @default(CLIENT)
   stripeCustomerId String?  @unique @map("stripe_customer_id")
   createdAt        DateTime @default(now()) @map("created_at")
