@@ -8,3 +8,4 @@ build
 *.log
 prisma/backups/*.sql
 !prisma/backups/studio_suite_db_backup.sql
+/uploads

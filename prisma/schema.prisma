@@ -195,6 +195,7 @@ model Booking {
 
   lineItems BookingLineItem[]
   invoice   Invoice?
+  assets    Asset[]
 
   @@index([roomId, startTime, endTime])
   @@map("bookings")
@@ -243,18 +244,23 @@ model Invoice {
   @@map("invoices")
 }
 
-enum AssetType {
-  IMAGE
-  DOCUMENT
-  FLOORPLAN
+enum AssetKind {
+  RAW
+  EDIT_V1
+  FINAL
 }
 
 model Asset {
   id         String    @id @default(uuid())
-  name       String
-  type       AssetType
-  url        String
-  uploadedAt DateTime  @default(now()) @map("uploaded_at")
+  bookingId  String    @map("booking_id")
+  kind       AssetKind
+  filename   String
+  mimeType   String    @map("mime_type")
+  sizeBytes  Int       @map("size_bytes")
+  storageKey String    @unique @map("storage_key")
+  createdAt  DateTime  @default(now()) @map("created_at")
+
+  booking    Booking   @relation(fields: [bookingId], references: [id])
 
   @@map("assets")
 }
