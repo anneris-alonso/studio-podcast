@@ -2,12 +2,16 @@ import { NextRequest, NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
 import { getPlanBySlug, getUserById, updateUserStripeCustomerId } from "@/server/data-access";
 
-export async function POST(request: NextRequest) {
-  try {
-    const { planSlug, userId } = await request.json();
+import { requireUser } from "@/lib/auth-guards";
 
-    if (!planSlug || !userId) {
-      return NextResponse.json({ error: "Missing required details" }, { status: 400 });
+export async function POST(request: NextRequest) {
+  const requestId = request.headers.get("x-request-id") || "unknown";
+  try {
+    const user = await requireUser();
+    const { planSlug } = await request.json();
+
+    if (!planSlug) {
+      return NextResponse.json({ error: "Missing required details", requestId }, { status: 400 });
     }
 
     // 1. Validate plan exists
@@ -16,10 +20,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid or inactive plan" }, { status: 404 });
     }
 
-    // 2. Validate user exists
-    const user = await getUserById(userId);
+    // 2. User is already validated by requireUser()
     if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+      return NextResponse.json({ error: "User not found", requestId }, { status: 404 });
     }
 
     // 3. Create or reuse Stripe Customer
@@ -84,9 +87,12 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ url: session.url });
   } catch (error: any) {
+    if (error.message === "unauthorized") return NextResponse.json({ error: "unauthorized", requestId }, { status: 401 });
+    if (error.message === "forbidden") return NextResponse.json({ error: "forbidden", requestId }, { status: 403 });
     console.error("Subscription Checkout Error:", error);
     return NextResponse.json({ 
-      error: error.message || "Failed to create checkout session" 
+      error: error.message || "Failed to create checkout session",
+      requestId 
     }, { status: 500 });
   }
 }

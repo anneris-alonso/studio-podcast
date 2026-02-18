@@ -30,7 +30,6 @@ model User {
   id               String   @id @default(uuid())
   email            String   @unique
   name             String
-  password         String
   role             UserRole @default(CLIENT)
   stripeCustomerId String?  @unique @map("stripe_customer_id")
   createdAt        DateTime @default(now()) @map("created_at")
@@ -39,8 +38,31 @@ model User {
   subscriptions Subscription[]
   ledgerEntries CreditLedger[]
   invoices      Invoice[]
+  sessions      Session[]
 
   @@map("users")
+}
+
+model Session {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique // SHA-256 hashed OTP
+  expiresAt  DateTime @map("expires_at")
+
+  @@unique([identifier, token])
+  @@index([identifier, expiresAt])
+  @@map("verification_tokens")
 }
 
 model StudioRoom {
@@ -209,6 +231,12 @@ model Booking {
   timeZone                String        @default("Asia/Dubai") @map("time_zone")
   usedCreditMinutes       Int           @default(0) @map("used_credit_minutes")
   totalPriceMinorSnapshot Int           @default(0) @map("total_price_minor_snapshot")
+  
+  // Calendar Integration
+  calendarInviteSentAt    DateTime? @map("calendar_invite_sent_at")
+  calendarProvider        String?   @map("calendar_provider") // e.g. "ICS"
+  calendarEventUid        String?   @unique @map("calendar_event_uid")
+
   createdAt               DateTime      @default(now()) @map("created_at")
 
   stripeCheckoutSessionId String?   @unique @map("stripe_checkout_session_id")

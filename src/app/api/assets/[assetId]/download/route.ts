@@ -3,48 +3,30 @@ import prisma from '@/lib/db';
 import { localStorageProvider } from '@/server/storage/localStorage';
 import { UserRole } from '@prisma/client';
 
+import { requireAssetOwnerOrAdmin } from '@/lib/auth-guards';
+
 export async function GET(
   request: NextRequest,
   { params }: { params: { assetId: string } }
 ) {
-  const { assetId } = params;
+  const { assetId } = await params;
 
   try {
-    // 1. Auth check (Placeholder - assumes userId in headers)
-    const userId = request.headers.get('x-user-id');
-    if (!userId) {
-      return new Response('Unauthorized', { status: 401 });
+    try {
+      await requireAssetOwnerOrAdmin(assetId);
+    } catch (e: any) {
+      if (e.message === "unauthorized") return new Response('Unauthorized', { status: 401 });
+      if (e.message === "forbidden") return new Response('Forbidden', { status: 403 });
+      throw e;
     }
 
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-      select: { role: true }
-    });
-
-    if (!user) {
-      return new Response('User not found', { status: 404 });
-    }
-
-    // 2. Fetch Asset & Booking to verify permission
+    // 2. Fetch Asset to get storage key
     const asset = await prisma.asset.findUnique({
-      where: { id: assetId },
-      include: {
-        booking: {
-          select: { userId: true }
-        }
-      }
+      where: { id: assetId }
     });
 
     if (!asset) {
       return new Response('Asset not found', { status: 404 });
-    }
-
-    // Check Authorization BEFORE streaming
-    const isOwner = asset.booking.userId === userId;
-    const isAdmin = user.role === UserRole.ADMIN || user.role === UserRole.SUPER_ADMIN;
-
-    if (!isOwner && !isAdmin) {
-      return new Response('Forbidden', { status: 403 });
     }
 
     // 3. Stream File

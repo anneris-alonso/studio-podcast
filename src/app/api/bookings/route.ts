@@ -3,12 +3,14 @@ import { createBooking } from "@/server/data-access";
 import prisma from "@/lib/db";
 import { logger } from "@/lib/logger";
 
+import { requireUser } from "@/lib/auth-guards";
+
 export async function POST(request: NextRequest) {
   const requestId = request.headers.get("x-request-id") || "unknown";
   try {
+    const user = await requireUser();
     const body = await request.json();
     const { 
-      userId, 
       roomId, 
       packageId, 
       packageQuantity, 
@@ -17,7 +19,9 @@ export async function POST(request: NextRequest) {
       timeZone 
     } = body;
 
-    if (!userId || !roomId || !packageId || !startTime) {
+    const userId = user.id;
+
+    if (!roomId || !packageId || !startTime) {
       return NextResponse.json({ 
         error: "invalid_request", 
         message: "Missing required booking details",
@@ -74,6 +78,12 @@ export async function POST(request: NextRequest) {
       requestId,
     });
   } catch (error: any) {
+    if (error.message === "unauthorized") {
+      return NextResponse.json({ error: "unauthorized", requestId }, { status: 401 });
+    }
+    if (error.message === "forbidden") {
+      return NextResponse.json({ error: "forbidden", requestId }, { status: 403 });
+    }
     logger.error("Booking creation error", { requestId, error: error.message });
     return NextResponse.json({ 
       error: "internal_error",

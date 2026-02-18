@@ -5,7 +5,8 @@ import { useParams, useRouter } from "next/navigation";
 import { AdminUploadComponent } from "@/components/admin/AdminUploadComponent";
 import { GlassCard } from "@/components/ui/glass-card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, FileText, CheckCircle2, Music, Video, Download } from "lucide-react";
+import { ArrowLeft, FileText, CheckCircle2, Music, Video, Download, Calendar, Loader2 } from "lucide-react";
+import { sendBookingCalendarInvite } from "@/server/calendar/actions";
 
 interface Asset {
   id: string;
@@ -23,6 +24,24 @@ export default function AdminBookingPage() {
   const [loading, setLoading] = useState(true);
 
   const userId = "admin-user-uuid"; // Simulated admin auth
+
+  const [resending, setResending] = useState(false);
+
+  const handleResendInvite = async () => {
+    setResending(true);
+    try {
+      const result = await sendBookingCalendarInvite(id as string, true);
+      if (result.success) {
+        alert("Calendar invite resent successfully!");
+      } else {
+        alert("Failed to resend invite: " + result.error);
+      }
+    } catch (err) {
+      alert("An error occurred while resending the invite.");
+    } finally {
+      setResending(false);
+    }
+  };
 
   const fetchAssets = async () => {
     try {
@@ -55,14 +74,26 @@ export default function AdminBookingPage() {
   return (
     <div className="min-h-screen bg-background p-8">
       <div className="max-w-5xl mx-auto space-y-8">
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => router.back()}>
-            <ArrowLeft className="w-5 h-5" />
-          </Button>
-          <div>
-            <h1 className="text-2xl font-bold">Admin: Manage Booking Assets</h1>
-            <p className="text-xs text-muted-foreground uppercase tracking-widest mt-1">ID: {id}</p>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <Button variant="ghost" size="icon" onClick={() => router.back()}>
+              <ArrowLeft className="w-5 h-5" />
+            </Button>
+            <div>
+              <h1 className="text-2xl font-bold">Admin: Manage Booking Assets</h1>
+              <p className="text-xs text-muted-foreground uppercase tracking-widest mt-1">ID: {id}</p>
+            </div>
           </div>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="gap-2" 
+            onClick={handleResendInvite} 
+            disabled={resending}
+          >
+            {resending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Calendar className="w-4 h-4" />}
+            Resend Calendar Invite
+          </Button>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

@@ -140,6 +140,13 @@ async function handlePaymentSuccess(bookingId: string | undefined, paymentIntent
 
   await markBookingAsPaid(bookingId, paymentIntentId);
   await createBookingInvoice(bookingId, paymentIntentId);
+
+  // Step 9: Non-blocking calendar invitation
+  // We use void and catch to ensure it's non-blocking and safe
+  const { sendBookingCalendarInvite } = await import("@/server/calendar/actions");
+  void sendBookingCalendarInvite(bookingId, false).catch(err => {
+    console.error("Non-blocking calendar invite failed", { bookingId, error: err.message });
+  });
 }
 
 async function handleSubscriptionChange(stripeSub: any) {

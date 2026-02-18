@@ -19,40 +19,45 @@ export async function middleware(request: NextRequest) {
   }
 
   const { pathname } = request.nextUrl;
-
+  
   // 2. Selectively Apply Rate Limiting
-  // Sensitive endpoints require stricter limits.
-  const sensitivePaths = [
-    '/api/bookings',
-    '/api/payments/checkout-session',
-    '/api/subscriptions/checkout-session',
-    '/api/subscriptions/customer-portal'
-  ];
-
-  const isSensitive = sensitivePaths.some(p => pathname.startsWith(p)) && request.method === 'POST';
-  const isWebhook = pathname.startsWith('/api/stripe/webhook');
-
-  if (isSensitive || isWebhook) {
-    // Webhooks get a much higher limit to avoid blocking retries
-    const limit = isWebhook ? 1000 : undefined; 
-    const key = `${ip}:${pathname}`;
-    
-    const { limited, retryAfterMs } = await rateLimit(key, limit);
-
+  if (pathname === '/api/auth/otp' && request.method === 'POST') {
+    const { limited, retryAfterMs } = await rateLimit(`otp-ip:${ip}`, 5, 60000);
     if (limited) {
-      return NextResponse.json(
-        { 
-          error: 'rate_limited', 
-          message: 'Too many requests, please try again later.',
-          retryAfterMs,
-          requestId 
-        },
-        { status: 429 }
-      );
+      return NextResponse.json({ 
+        error: 'rate_limited', 
+        message: 'Too many OTP requests. Please wait.',
+        retryAfterMs,
+        requestId 
+      }, { status: 429 });
     }
   }
 
-  // 3. Prepare Response
+  const isWebhook = pathname.startsWith('/api/stripe/webhook');
+  if (isWebhook) {
+    const { limited, retryAfterMs } = await rateLimit(`webhook:${ip}`, 1000, 60000);
+    if (limited) {
+      return NextResponse.json({ error: 'rate_limited', requestId }, { status: 429 });
+    }
+  }
+
+  // 3. Auth Redirects (Pages Only)
+  const isAdminPath = pathname.startsWith('/admin');
+  const isAccountPath = pathname.startsWith('/account');
+  const isLoginPage = pathname === '/login';
+  const sessionCookie = request.cookies.get('studio_session');
+  
+  if (!sessionCookie) {
+    if (isAdminPath || isAccountPath) {
+      const loginUrl = new URL('/login', request.url);
+      loginUrl.searchParams.set('from', pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+  } else if (isLoginPage) {
+    return NextResponse.redirect(new URL('/account/bookings', request.url));
+  }
+
+  // 4. Prepare Response
   const response = NextResponse.next();
 
   // 4. Propagate Request ID
@@ -72,7 +77,9 @@ export async function middleware(request: NextRequest) {
   return response;
 }
 
-// Ensure middleware doesn't run on static assets
+// Match all paths except static assets and next internals
 export const config = {
-  matcher: '/api/:path*',
+  matcher: [
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+  ],
 };

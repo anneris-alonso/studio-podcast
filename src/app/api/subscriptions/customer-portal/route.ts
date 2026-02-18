@@ -2,18 +2,16 @@ import { NextRequest, NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
 import { getUserById } from "@/server/data-access";
 
+import { requireUser } from "@/lib/auth-guards";
+
 export async function POST(request: NextRequest) {
+  const requestId = request.headers.get("x-request-id") || "unknown";
   try {
-    const { userId } = await request.json();
+    const user = await requireUser();
 
-    if (!userId) {
-      return NextResponse.json({ error: "User ID is required" }, { status: 400 });
-    }
-
-    // 1. Get user and their stripeCustomerId
-    const user = await getUserById(userId);
+    // 1. User is already validated by requireUser()
     if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+      return NextResponse.json({ error: "User not found", requestId }, { status: 404 });
     }
 
     if (!user.stripeCustomerId) {
@@ -30,9 +28,12 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ url: session.url });
   } catch (error: any) {
+    if (error.message === "unauthorized") return NextResponse.json({ error: "unauthorized", requestId }, { status: 401 });
+    if (error.message === "forbidden") return NextResponse.json({ error: "forbidden", requestId }, { status: 403 });
     console.error("Customer Portal Error:", error);
     return NextResponse.json({ 
-      error: error.message || "Failed to create billing portal session" 
+      error: error.message || "Failed to create billing portal session",
+      requestId 
     }, { status: 500 });
   }
 }

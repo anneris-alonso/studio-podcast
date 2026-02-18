@@ -3,15 +3,19 @@ import { stripe } from "@/lib/stripe";
 import { getBookingById, updateBookingStripeSession } from "@/server/data-access";
 import { BookingStatus } from "@prisma/client";
 
+import { requireBookingOwnerOrAdmin } from "@/lib/auth-guards";
+
 export async function POST(request: NextRequest) {
+  const requestId = request.headers.get("x-request-id") || "unknown";
   try {
     const { bookingId } = await request.json();
 
     if (!bookingId) {
-      return NextResponse.json({ error: "Booking ID is required" }, { status: 400 });
+      return NextResponse.json({ error: "Booking ID is required", requestId }, { status: 400 });
     }
 
-    // 1. Fetch booking and validate
+    // 1. Fetch booking and validate ownership
+    await requireBookingOwnerOrAdmin(bookingId);
     const booking = await getBookingById(bookingId);
 
     if (!booking) {
@@ -71,7 +75,9 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ url: session.url });
   } catch (error: any) {
+    if (error.message === "unauthorized") return NextResponse.json({ error: "unauthorized", requestId }, { status: 401 });
+    if (error.message === "forbidden") return NextResponse.json({ error: "forbidden", requestId }, { status: 403 });
     console.error("Stripe Checkout Error:", error);
-    return NextResponse.json({ error: error.message || "Failed to create checkout session" }, { status: 500 });
+    return NextResponse.json({ error: error.message || "Failed to create checkout session", requestId }, { status: 500 });
   }
 }
