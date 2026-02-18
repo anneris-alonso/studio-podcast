@@ -6,7 +6,14 @@ export async function middleware(request: NextRequest) {
   const requestId = request.headers.get('x-request-id') || crypto.randomUUID();
   const startTime = Date.now();
 
-  // 1. Determine Client IP (TRUST_PROXY check)
+  const { pathname } = request.nextUrl;
+
+  // 1. Force HTTPS in production
+  if (process.env.NODE_ENV === 'production' && request.headers.get('x-forwarded-proto') !== 'https') {
+    return NextResponse.redirect(`https://${request.headers.get('host')}${pathname}`, 301);
+  }
+
+  // 2. Determine Client IP (TRUST_PROXY check)
   const trustProxy = process.env.TRUST_PROXY === 'true';
   let ip = '127.0.0.1';
   
@@ -18,9 +25,7 @@ export async function middleware(request: NextRequest) {
     ip = forwardedFor?.split(',')[0].trim() || '127.0.0.1';
   }
 
-  const { pathname } = request.nextUrl;
-  
-  // 2. Selectively Apply Rate Limiting
+  // 3. Selectively Apply Rate Limiting
   if (pathname === '/api/auth/otp' && request.method === 'POST') {
     const { limited, retryAfterMs } = await rateLimit(`otp-ip:${ip}`, 5, 60000);
     if (limited) {

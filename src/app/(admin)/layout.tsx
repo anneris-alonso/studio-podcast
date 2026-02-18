@@ -18,9 +18,9 @@ export default async function AdminLayout({
   ];
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex">
+    <div className="min-h-screen bg-bg text-fg flex">
       {/* Sidebar */}
-      <aside className="w-64 border-r border-white/10 bg-black/50 backdrop-blur-xl p-6 flex flex-col gap-8 fixed h-full z-10">
+      <aside className="w-64 border-r border-border/10 bg-card/50 backdrop-blur-xl p-6 flex flex-col gap-8 fixed h-full z-10">
         <div className="flex items-center gap-3 px-2">
           <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center">
             <LayoutDashboard className="w-4 h-4 text-white" />
@@ -31,7 +31,7 @@ export default async function AdminLayout({
         <nav className="flex flex-col gap-2">
           {navItems.map((item) => (
             <Link key={item.href} href={item.href}>
-              <div className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 transition-all text-sm font-medium text-muted-foreground hover:text-white hover:pl-5 group">
+              <div className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-fg/5 transition-all text-sm font-medium text-muted hover:text-fg hover:pl-5 group">
                 <span className="opacity-70 group-hover:opacity-100 group-hover:text-primary transition-colors">
                   {item.icon}
                 </span>
@@ -41,14 +41,14 @@ export default async function AdminLayout({
           ))}
         </nav>
 
-        <div className="mt-auto pt-6 border-t border-white/10 px-2">
+        <div className="mt-auto pt-6 border-t border-border/10 px-2">
           <div className="flex items-center gap-3">
              <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center text-xs font-bold text-primary">
                 {user.email?.[0].toUpperCase() || 'A'}
              </div>
              <div className="flex flex-col">
                 <span className="text-xs font-bold truncate max-w-[120px]">{user.name}</span>
-                <span className="text-[10px] text-muted-foreground uppercase">{user.role}</span>
+                <span className="text-[10px] text-muted uppercase">{user.role}</span>
              </div>
           </div>
         </div>

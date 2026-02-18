@@ -48,12 +48,12 @@ export default async function StudiosPage({
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <form>
-             <input 
-               name="q" 
-               defaultValue={q} 
-               placeholder="Search studios..." 
-               className="w-full bg-black/20 border border-white/10 rounded-md pl-9 pr-4 py-2 text-sm focus:outline-none focus:border-primary/50"
-             />
+            <input 
+              name="q" 
+              defaultValue={q} 
+              placeholder="Search studios..." 
+              className="w-full bg-black/20 border border-white/10 rounded-md pl-9 pr-4 py-2 text-sm focus:outline-none focus:border-primary/50"
+            />
           </form>
         </div>
         <div className="flex gap-2">
@@ -70,50 +70,50 @@ export default async function StudiosPage({
         ) : (
           studios.map(studio => (
             <GlassCard key={studio.id} className="p-0 overflow-hidden flex flex-col md:flex-row border-white/5 group bg-black/20">
-               <div className="w-full md:w-48 h-32 md:h-auto bg-white/5 relative">
+              <div className="w-full md:w-48 h-32 md:h-auto bg-white/5 relative">
                   {/* Placeholder for image */}
                   <div className="absolute inset-0 flex items-center justify-center text-muted-foreground/20 text-xs">
-                     {studio.coverImageUrl ? <img src={studio.coverImageUrl} className="w-full h-full object-cover" /> : 'No Image'}
+                    {studio.coverImageUrl ? <img src={studio.coverImageUrl} className="w-full h-full object-cover" /> : 'No Image'}
                   </div>
-               </div>
-               <div className="p-6 flex-1 flex flex-col justify-center">
+              </div>
+              <div className="p-6 flex-1 flex flex-col justify-center">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-3">
-                       <h3 className="font-bold text-lg">{studio.name}</h3>
-                       <Badge variant={studio.isActive ? "success" : "secondary"}>
-                          {studio.isActive ? 'Active' : 'Inactive'}
-                       </Badge>
-                       <span className="text-xs font-mono text-muted-foreground bg-white/5 px-2 py-0.5 rounded">
-                          {studio.slug}
-                       </span>
+                      <h3 className="font-bold text-lg">{studio.name}</h3>
+                      <Badge variant={studio.isActive ? "success" : "secondary"}>
+                        {studio.isActive ? 'Active' : 'Inactive'}
+                      </Badge>
+                      <span className="text-xs font-mono text-muted-foreground bg-white/5 px-2 py-0.5 rounded">
+                        {studio.slug}
+                      </span>
                     </div>
                     <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                       <StudioForm studio={studio} mode="edit" />
-                       {studio.isActive && (
-                         <form action={async () => {
-                           'use server';
-                           // We need to import the action here or use a client component wrapper for the button
-                           // Given Server Actions can be passed, usually best to use a client wrapper for confirmation
-                           // For now, StudioForm handles edits. Deactivate can be part of Edit or separate.
-                           // We will let StudioForm handle it.
-                         }}>
+                      <StudioForm studio={studio} mode="edit" />
+                      {studio.isActive && (
+                        <form action={async () => {
+                          'use server';
+                          // We need to import the action here or use a client component wrapper for the button
+                          // Given Server Actions can be passed, usually best to use a client wrapper for confirmation
+                          // For now, StudioForm handles edits. Deactivate can be part of Edit or separate.
+                          // We will let StudioForm handle it.
+                        }}>
                              {/* Deactivation is handled inside Edit Form usually */}
-                         </form>
-                       )}
+                        </form>
+                      )}
                     </div>
                   </div>
                   <p className="text-sm text-muted-foreground line-clamp-2 mb-4">{studio.description}</p>
                   <div className="flex gap-6 text-xs text-muted-foreground">
-                     <span className="flex items-center gap-1">
-                        <span className="w-2 h-2 rounded-full bg-white/20" />
-                        Capacity: {studio.capacity}
-                     </span>
-                     <span className="flex items-center gap-1">
-                        <span className="w-2 h-2 rounded-full bg-white/20" />
-                        Equipment: {studio.equipmentSummary.slice(0, 30)}...
-                     </span>
+                    <span className="flex items-center gap-1">
+                      <span className="w-2 h-2 rounded-full bg-white/20" />
+                      Capacity: {studio.capacity}
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <span className="w-2 h-2 rounded-full bg-white/20" />
+                      Equipment: {studio.equipmentSummary.slice(0, 30)}...
+                    </span>
                   </div>
-               </div>
+              </div>
             </GlassCard>
           ))
         )}

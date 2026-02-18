@@ -7,12 +7,17 @@ import {
   markEventAsProcessed,
   getBookingById,
   upsertSubscription,
-  applyInvoicePaidGrant
+  applyInvoicePaidGrant,
+  markBookingPaidEmailSent,
+  markSubscriptionActiveEmailSent,
+  getActiveSubscription
 } from "@/server/data-access";
 import prisma from "@/lib/db";
 import { logger } from "@/lib/logger";
 import Stripe from "stripe";
 import { BookingStatus, SubscriptionStatus } from "@prisma/client";
+import { sendEmail } from "@/server/email/mailer";
+import { getBookingPaidEmail, getSubscriptionActivatedEmail } from "@/server/email/templates";
 
 export async function POST(request: NextRequest) {
   const requestId = request.headers.get("x-request-id") || "unknown";
@@ -141,8 +146,29 @@ async function handlePaymentSuccess(bookingId: string | undefined, paymentIntent
   await markBookingAsPaid(bookingId, paymentIntentId);
   await createBookingInvoice(bookingId, paymentIntentId);
 
+  // Email Notification with idempotency
+  if (!booking.bookingPaidEmailSentAt) {
+    try {
+      const email = getBookingPaidEmail({
+        userName: booking.user.name,
+        roomName: booking.room.name,
+        startTime: booking.startTime,
+        totalAmountMinor: booking.totalPriceMinorSnapshot,
+        bookingId: booking.id
+      });
+      await sendEmail({
+        to: booking.user.email,
+        subject: email.subject,
+        html: email.html,
+        text: email.text
+      });
+      await markBookingPaidEmailSent(bookingId);
+    } catch (err: any) {
+      logger.error("Failed to send booking paid email", { bookingId, error: err.message });
+    }
+  }
+
   // Step 9: Non-blocking calendar invitation
-  // We use void and catch to ensure it's non-blocking and safe
   const { sendBookingCalendarInvite } = await import("@/server/calendar/actions");
   void sendBookingCalendarInvite(bookingId, false).catch(err => {
     console.error("Non-blocking calendar invite failed", { bookingId, error: err.message });
@@ -194,6 +220,27 @@ async function handleSubscriptionInvoicePaid(eventId: string, invoice: any) {
 
   // Grant credits (idempotent via eventId)
   await applyInvoicePaidGrant(eventId, userId, planId);
+
+  // Subscription Activated Email with idempotency
+  const sub = await getActiveSubscription(userId);
+  if (sub && !sub.subscriptionActiveEmailSentAt) {
+    try {
+      const email = getSubscriptionActivatedEmail({
+        userName: sub.user.name,
+        planName: sub.plan.name,
+        includedHours: sub.plan.includedCredits
+      });
+      await sendEmail({
+        to: sub.user.email,
+        subject: email.subject,
+        html: email.html,
+        text: email.text
+      });
+      await markSubscriptionActiveEmailSent(sub.id);
+    } catch (err: any) {
+      logger.error("Failed to send subscription active email", { subId: sub.id, error: err.message });
+    }
+  }
 }
 
 async function handleSubscriptionInvoiceFailed(invoice: any) {

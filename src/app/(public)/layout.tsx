@@ -22,7 +22,7 @@ export default function PublicLayout({
   }, []);
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-bg selection:bg-accent-violet/30 selection:text-accent-violet">
+    <div className="dark relative min-h-screen overflow-hidden bg-bg text-fg selection:bg-accent-violet/30 selection:text-accent-violet">
       {/* Fixed Radial Glow Overlay */}
       <div 
         className="fixed inset-0 pointer-events-none z-0 bg-radial-glow transition-all duration-300 ease-out"

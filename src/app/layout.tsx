@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { PageTransition } from "@/components/page-transition";
+import { ToastProvider } from "@/components/ui/toast";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,13 +22,14 @@ export default function RootLayout({
       <body className={`${inter.className} antialiased transition-colors duration-500`}>
         <ThemeProvider
           attribute="class"
-          defaultTheme="dark"
           enableSystem
           disableTransitionOnChange
         >
-          <PageTransition>
-            {children}
-          </PageTransition>
+          <ToastProvider>
+            <PageTransition>
+              {children}
+            </PageTransition>
+          </ToastProvider>
         </ThemeProvider>
       </body>
     </html>

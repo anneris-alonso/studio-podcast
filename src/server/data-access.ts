@@ -460,3 +460,97 @@ export async function getUserById(userId: string) {
     where: { id: userId },
   });
 }
+
+/**
+ * listUserBookings(userId, filter)
+ * Server-side filtering for portal views.
+ */
+export async function listUserBookings(
+  userId: string, 
+  filter: 'UPCOMING' | 'PAST' | 'CANCELED' = 'UPCOMING'
+) {
+  const now = new Date();
+  let where: Prisma.BookingWhereInput = { userId };
+
+  if (filter === 'UPCOMING') {
+    where = {
+      ...where,
+      startTime: { gt: now },
+      status: { in: [BookingStatus.CONFIRMED, BookingStatus.PAID] },
+    };
+  } else if (filter === 'PAST') {
+    where = {
+      ...where,
+      startTime: { lt: now },
+      status: { in: [BookingStatus.CONFIRMED, BookingStatus.PAID] },
+    };
+  } else if (filter === 'CANCELED') {
+    where = {
+      ...where,
+      status: BookingStatus.CANCELLED,
+    };
+  }
+
+  return prisma.booking.findMany({
+    where,
+    include: {
+      room: true,
+      lineItems: {
+        where: { serviceId: null } // Only get the package line item for the list view
+      }
+    },
+    orderBy: { startTime: filter === 'UPCOMING' ? 'asc' : 'desc' },
+  });
+}
+
+/**
+ * getBookingDetailForUser(userId, bookingId)
+ * Strict relational ownership check.
+ */
+export async function getBookingDetailForUser(userId: string, bookingId: string) {
+  return prisma.booking.findFirst({
+    where: {
+      id: bookingId,
+      userId: userId,
+    },
+    include: {
+      room: true,
+      lineItems: true,
+      assets: true,
+      invoice: true,
+    },
+  });
+}
+
+/**
+ * listUserInvoices(userId)
+ */
+export async function listUserInvoices(userId: string) {
+  return prisma.invoice.findMany({
+    where: { userId },
+    orderBy: { createdAt: 'desc' },
+    include: {
+      booking: true,
+    }
+  });
+}
+
+/**
+ * markBookingPaidEmailSent(bookingId)
+ */
+export async function markBookingPaidEmailSent(bookingId: string) {
+  return prisma.booking.update({
+    where: { id: bookingId },
+    data: { bookingPaidEmailSentAt: new Date() },
+  });
+}
+
+/**
+ * markSubscriptionActiveEmailSent(subscriptionId)
+ */
+export async function markSubscriptionActiveEmailSent(subscriptionId: string) {
+  return prisma.subscription.update({
+    where: { id: subscriptionId },
+    data: { subscriptionActiveEmailSentAt: new Date() },
+  });
+}
