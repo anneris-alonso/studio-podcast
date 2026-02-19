@@ -11,27 +11,33 @@ export const dynamic = 'force-dynamic';
 export default async function ServicesPage({
   searchParams,
 }: {
-  searchParams: { q?: string; status?: string };
+  searchParams: Promise<{ q?: string; status?: string }>;
 }) {
   await requireAdmin();
   
-  const q = searchParams.q || '';
-  const status = searchParams.status || 'all';
+  const { q: searchQ, status: searchStatus } = await searchParams;
+  const q = searchQ || '';
+  const status = searchStatus || 'all';
 
   const where: any = {};
   if (q) {
-    where.OR = [
-      { name: { contains: q, mode: 'insensitive' } },
-      { slug: { contains: q, mode: 'insensitive' } },
-    ];
+    where.name = { contains: q, mode: 'insensitive' };
   }
   if (status === 'active') where.isActive = true;
   if (status === 'inactive') where.isActive = false;
 
-  const services = await prisma.service.findMany({
+  const rawServices = await prisma.service.findMany({
     where,
-    orderBy: { category: 'asc' },
+    orderBy: { name: 'asc' },
   });
+
+  const services = rawServices.map(service => ({
+    ...service,
+    price: service.price.toNumber(),
+    priceMinor: service.priceMinor, // Int, no conversion needed usually unless BigInt, but usually Int in Prisma is number in JS
+    // If priceMinor is Decimal in schema (unlikely for "Minor" but check), convert it.
+    // Assuming price is Decimal.
+  }));
 
   return (
     <div className="space-y-6">

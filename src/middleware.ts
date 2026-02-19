@@ -81,8 +81,8 @@ export async function middleware(request: NextRequest) {
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
     "font-src 'self' https://fonts.gstatic.com; " +
     "frame-src https://js.stripe.com; " +
-    "connect-src 'self' https://api.stripe.com; " +
-    "img-src 'self' data: https:;"
+    "connect-src 'self' https://api.stripe.com blob:; " +
+    "img-src 'self' data: https: blob:;"
   );
 
   return response;

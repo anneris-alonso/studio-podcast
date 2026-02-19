@@ -2,30 +2,30 @@ import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/db';
 import { localStorageProvider } from '@/server/storage/localStorage';
 import { AssetKind, UserRole } from '@prisma/client';
-import { crypto } from 'crypto';
+import { randomUUID } from 'crypto';
 
 const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
 
+import { getSession } from '@/lib/auth';
+
+// ... imports
+
 export async function POST(
     request: NextRequest,
-    { params }: { params: { bookingId: string } }
+    { params }: { params: Promise<{ bookingId: string }> }
 ) {
-    const { bookingId } = params;
+    const { bookingId } = await params;
 
     try {
-        // 1. Authentication & Authorization (Placeholder - assumes userId in headers for now)
-        const userId = request.headers.get('x-user-id');
-        if (!userId) {
+        // 1. Authentication & Authorization via Session
+        const session = await getSession();
+        if (!session || !session.user) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
-        const user = await prisma.user.findUnique({
-            where: { id: userId },
-            select: { role: true }
-        });
-
-        if (!user || (user.role !== UserRole.ADMIN && user.role !== UserRole.SUPER_ADMIN)) {
-            return NextResponse.json({ error: 'Forbidden: Admin access only' }, { status: 403 });
+        const { role } = session.user;
+        if (role !== UserRole.ADMIN && role !== UserRole.SUPER_ADMIN) {
+             return NextResponse.json({ error: 'Forbidden: Admin access only' }, { status: 403 });
         }
 
         // 2. Parse FormData
@@ -55,7 +55,7 @@ export async function POST(
         }
 
         // 4. Generate storageKey and Save File
-        const fileUuid = crypto.randomUUID();
+        const fileUuid = randomUUID();
         const storageKey = `booking/${bookingId}/${fileUuid}`;
     
         // Convert File to Buffer

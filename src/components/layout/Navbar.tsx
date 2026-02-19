@@ -39,13 +39,13 @@ export function Navbar() {
           <Link href="/gallery" className={`text-sm font-medium hover:text-white transition-colors ${pathname === '/gallery' ? 'text-white' : 'text-muted'}`}>
             Gallery
           </Link>
-          <Link href="/onboarding" className="text-sm font-medium text-muted hover:text-white transition-colors">
+          {/*<Link href="/onboarding" className="text-sm font-medium text-muted hover:text-white transition-colors">
             Setup
-          </Link>
+          </Link>*/}
           {/* Admin Link - visible for easy access as requested */}
-          <Link href="/admin" className="text-sm font-medium text-accent-pink hover:text-accent-pink/80 transition-colors">
+          {/*<Link href="/admin" className="text-sm font-medium text-accent-pink hover:text-accent-pink/80 transition-colors">
             Admin
-          </Link>
+          </Link>*/}
         </nav>
 
         <div className="flex items-center gap-4">

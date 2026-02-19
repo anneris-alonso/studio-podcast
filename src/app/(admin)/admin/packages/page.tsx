@@ -11,28 +11,35 @@ export const dynamic = 'force-dynamic';
 export default async function PackagesPage({
   searchParams,
 }: {
-  searchParams: { q?: string; status?: string };
+  searchParams: Promise<{ q?: string; status?: string }>;
 }) {
   await requireAdmin();
   
-  const q = searchParams.q || '';
-  const status = searchParams.status || 'all';
+  const { q: searchQ, status: searchStatus } = await searchParams;
+  const q = searchQ || '';
+  const status = searchStatus || 'all';
 
   const where: any = {};
   if (q) {
-    where.OR = [
-      { name: { contains: q, mode: 'insensitive' } },
-      { slug: { contains: q, mode: 'insensitive' } },
-    ];
+    where.name = { contains: q, mode: 'insensitive' };
   }
   if (status === 'active') where.isActive = true;
   if (status === 'inactive') where.isActive = false;
 
-  const packages = await prisma.package.findMany({
+  const rawPackages = await prisma.package.findMany({
     where,
-    orderBy: { isActive: 'desc' }, // Active first
-    include: { studioRoom: true }
+    include: { studioRoom: true },
+    orderBy: { name: 'asc' },
   });
+
+  const packages = rawPackages.map(pkg => ({
+    ...pkg,
+    pricePerUnitMinor: pkg.pricePerUnitMinor,
+    studioRoom: pkg.studioRoom ? {
+        ...pkg.studioRoom,
+        hourlyRate: pkg.studioRoom.hourlyRate ? pkg.studioRoom.hourlyRate.toNumber() : null // Handle hourlyRate if it's a Decimal
+    } : null
+  }));
 
   return (
     <div className="space-y-6">

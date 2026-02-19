@@ -1,7 +1,7 @@
 import { requireAdmin } from '@/lib/auth-guards';
 import Link from 'next/link';
 import { GlassCard } from '@/components/ui/glass-card';
-import { LayoutDashboard, Mic2, SquareStack, Settings, Package as PackageIcon } from 'lucide-react';
+import { LayoutDashboard, Mic2, SquareStack, Settings, Package as PackageIcon, Calendar as CalendarIcon, Activity } from 'lucide-react';
 import { ThemeProvider } from '@/components/theme-provider';
 
 export default async function AdminLayout({
@@ -13,9 +13,12 @@ export default async function AdminLayout({
   const user = await requireAdmin();
 
   const navItems = [
+    { name: 'Dashboard', href: '/admin', icon: <LayoutDashboard className="w-4 h-4" /> },
     { name: 'Studios', href: '/admin/studios', icon: <Mic2 className="w-4 h-4" /> },
     { name: 'Packages', href: '/admin/packages', icon: <SquareStack className="w-4 h-4" /> },
     { name: 'Services', href: '/admin/services', icon: <Settings className="w-4 h-4" /> },
+    { name: 'Bookings', href: '/admin/bookings', icon: <CalendarIcon className="w-4 h-4" /> },
+    { name: 'Audit Logs', href: '/admin/audit', icon: <Activity className="w-4 h-4" /> },
   ];
 
   return (

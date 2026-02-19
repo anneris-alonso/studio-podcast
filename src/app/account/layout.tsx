@@ -59,6 +59,17 @@ export default async function AccountLayout({
                 <p className="text-xs text-muted truncate">{user.email}</p>
               </div>
             </div>
+
+            {/* Admin Switcher */}
+            {(user.role === "ADMIN" || user.role === "SUPER_ADMIN") && (
+              <Link
+                href="/admin/studios"
+                className="flex items-center gap-3 px-4 py-3 rounded-lg bg-primary/5 hover:bg-primary/10 text-primary transition-colors border border-primary/20"
+              >
+                <Settings className="w-5 h-5" />
+                <span className="text-sm font-medium">Switch to Admin</span>
+              </Link>
+            )}
             
             <form action="/api/auth/logout" method="POST">
               <button

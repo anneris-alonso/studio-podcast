@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from 'sonner';
 import { PageTransition } from "@/components/page-transition";
 import { ToastProvider } from "@/components/ui/toast";
 
@@ -20,11 +21,16 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className} antialiased transition-colors duration-500`}>
-        <ToastProvider>
+        <ThemeProvider
+            attribute="class"
+            enableSystem
+            disableTransitionOnChange
+          >
           <PageTransition>
             {children}
           </PageTransition>
-        </ToastProvider>
+          <Toaster position="top-center" richColors />
+        </ThemeProvider>
       </body>
     </html>
   );

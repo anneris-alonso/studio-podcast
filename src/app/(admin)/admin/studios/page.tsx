@@ -11,12 +11,13 @@ export const dynamic = 'force-dynamic';
 export default async function StudiosPage({
   searchParams,
 }: {
-  searchParams: { q?: string; status?: string };
+  searchParams: Promise<{ q?: string; status?: string }>;
 }) {
   await requireAdmin();
   
-  const q = searchParams.q || '';
-  const status = searchParams.status || 'all';
+  const { q: searchQ, status: searchStatus } = await searchParams;
+  const q = searchQ || '';
+  const status = searchStatus || 'all';
 
   const where: any = {};
   if (q) {
@@ -28,10 +29,18 @@ export default async function StudiosPage({
   if (status === 'active') where.isActive = true;
   if (status === 'inactive') where.isActive = false;
 
-  const studios = await prisma.studioRoom.findMany({
+  const rawStudios = await prisma.studioRoom.findMany({
     where,
     orderBy: { createdAt: 'desc' },
   });
+
+  // Serialize Decimal objects to plain numbers/strings
+  const studios = rawStudios.map(studio => ({
+    ...studio,
+    hourlyRate: studio.hourlyRate.toNumber(),
+    // Add other decimal fields here if they exist, e.g.
+    // someOtherDecimal: studio.someOtherDecimal.toNumber(),
+  }));
 
   return (
     <div className="space-y-6">

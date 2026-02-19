@@ -7,12 +7,12 @@ import { ArrowLeft, Camera, LayoutGrid, Info } from "lucide-react";
 import Link from "next/link";
 
 const photos = [
-  { id: 1, title: "Zenith Suite Main", category: "Recording", color: "bg-accent-violet/20" },
-  { id: 2, title: "Acoustic Lounge", category: "Lounge", color: "bg-accent-blue/20" },
-  { id: 3, title: "Podcast Setup A", category: "Gear", color: "bg-accent-pink/20" },
-  { id: 4, title: "Editing Bay", category: "Post-Production", color: "bg-accent-violet/10" },
-  { id: 5, title: "Green Room", category: "Talent", color: "bg-accent-blue/10" },
-  { id: 6, title: "Control Room", category: "Recording", color: "bg-accent-pink/10" },
+  { id: 1, title: "Zenith Suite Main", category: "Recording", src: "/gallery/gallery-1.jpg" },
+  { id: 2, title: "Acoustic Lounge", category: "Lounge", src: "/gallery/gallery-2.jpg" },
+  { id: 3, title: "Podcast Setup A", category: "Gear", src: "/gallery/gallery-3.jpg" },
+  { id: 4, title: "Editing Bay", category: "Post-Production", src: "/gallery/gallery-4.jpg" },
+  { id: 5, title: "Green Room", category: "Talent", src: "/gallery/gallery-5.jpg" },
+  { id: 6, title: "Control Room", category: "Recording", src: "/gallery/gallery-6.jpg" },
 ];
 
 export default function GalleryPage() {
@@ -44,12 +44,18 @@ export default function GalleryPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.1 }}
           >
-            <GlassCard className="p-0 overflow-hidden group border-white/5 hover:border-accent-violet/30 transition-all duration-500">
-              <div className={`aspect-[4/3] ${photo.color} relative overflow-hidden`}>
-                <div className="absolute inset-0 flex items-center justify-center opacity-20 group-hover:opacity-40 transition-opacity">
-                   <Camera className="w-12 h-12 text-fg" />
-                </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-bg via-transparent to-transparent opacity-60" />
+            <GlassCard className="p-0 overflow-hidden group border-white/5 hover:border-accent-violet/30 transition-all duration-500 h-full">
+              <div className="aspect-[4/3] relative overflow-hidden bg-white/5">
+                {/* Image Rendering */}
+                <img 
+                  src={photo.src} 
+                  alt={photo.title}
+                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                />
+                
+                {/* Overlay for glass look and readability */}
+                <div className="absolute inset-0 bg-gradient-to-t from-bg via-transparent to-transparent opacity-80" />
+                
                 <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end">
                    <div>
                      <span className="text-[10px] uppercase tracking-widest text-accent-violet font-bold mb-1 block">{photo.category}</span>

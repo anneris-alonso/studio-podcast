@@ -1,138 +1,180 @@
 "use client";
 
-import { useState } from "react";
-import { GlassCard } from "@/components/ui/glass-card";
-import { Button } from "@/components/ui/button";
-import { Upload, X, Loader2, CheckCircle2 } from "lucide-react";
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { Loader2, Upload, FileText, CheckCircle2, AlertCircle } from 'lucide-react';
+import { AssetKind } from '@prisma/client';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogDescription,
+} from '@/components/ui/dialog';
+import { cn } from '@/lib/utils'; // Ensure you have this utility
 
-interface AdminUploadComponentProps {
+interface AdminUploadProps {
   bookingId: string;
-  onSuccess?: () => void;
 }
 
-export function AdminUploadComponent({ bookingId, onSuccess }: AdminUploadComponentProps) {
+export function AdminUploadComponent({ bookingId }: AdminUploadProps) {
+  const router = useRouter();
+  const [isOpen, setIsOpen] = useState(false);
   const [file, setFile] = useState<File | null>(null);
-  const [kind, setKind] = useState<'RAW' | 'EDIT_V1' | 'FINAL'>('RAW');
-  const [uploading, setUploading] = useState(false);
-  const [success, setSuccess] = useState(false);
+  const [kind, setKind] = useState<AssetKind>(AssetKind.FINAL);
+  const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
 
-  const userId = "admin-user-uuid"; // Simulated admin
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setFile(e.target.files[0]);
+      setError(null);
+    }
+  };
 
   const handleUpload = async () => {
-    if (!file) return;
-    
-    setUploading(true);
+    if (!file) {
+      setError('Please select a file first');
+      return;
+    }
+
+    setIsUploading(true);
     setError(null);
-    setSuccess(false);
 
     const formData = new FormData();
     formData.append('file', file);
     formData.append('kind', kind);
 
     try {
-      const response = await fetch(`/api/bookings/${bookingId}/upload`, {
+      const res = await fetch(`/api/bookings/${bookingId}/upload`, {
         method: 'POST',
-        headers: { 'x-user-id': userId },
-        body: formData
+        body: formData,
       });
 
-      if (!response.ok) {
-        const data = await response.json();
+      if (!res.ok) {
+        const data = await res.json();
         throw new Error(data.error || 'Upload failed');
       }
 
       setSuccess(true);
-      setFile(null);
-      if (onSuccess) onSuccess();
+      router.refresh(); 
+      
+      setTimeout(() => {
+          setIsOpen(false);
+          setFile(null);
+          setSuccess(false);
+      }, 1500);
+
     } catch (err: any) {
-      setError(err.message);
+      console.error(err);
+      setError(err.message || 'Something went wrong');
     } finally {
-      setUploading(false);
+      setIsUploading(false);
     }
   };
 
   return (
-    <GlassCard className="border-white/10 space-y-4 p-6">
-      <div className="flex items-center justify-between">
-        <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Internal Delivery Tool</h3>
-        <Upload className="w-4 h-4 text-primary opacity-50" />
-      </div>
-
-      <div className="space-y-4">
-        {/* Kind selector */}
-        <div className="flex gap-2">
-          {(['RAW', 'EDIT_V1', 'FINAL'] as const).map((k) => (
-            <button
-              key={k}
-              onClick={() => setKind(k)}
-              className={`px-3 py-1.5 rounded-md text-[10px] font-bold transition-all border ${
-                kind === k 
-                  ? 'bg-primary border-primary text-primary-foreground' 
-                  : 'bg-white/5 border-white/10 text-muted-foreground hover:border-white/20'
-              }`}
-            >
-              {k}
-            </button>
-          ))}
-        </div>
-
-        {/* File Drop Area */}
-        <div className="relative">
-          {!file ? (
-            <div className="border-2 border-dashed border-white/10 rounded-xl p-8 text-center hover:border-primary/30 transition-all cursor-pointer relative overflow-hidden">
-              <input 
-                type="file" 
-                className="absolute inset-0 opacity-0 cursor-pointer" 
-                onChange={(e) => setFile(e.target.files?.[0] || null)}
-              />
-              <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground opacity-30" />
-              <p className="text-xs text-muted-foreground">Click or drag to select file</p>
-              <p className="text-[10px] text-muted-foreground/50 mt-1">Max size: 50MB</p>
-            </div>
-          ) : (
-            <div className="bg-white/5 rounded-xl p-4 flex items-center justify-between border border-primary/20">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-primary/20 text-primary">
-                  <Upload className="w-4 h-4" />
-                </div>
-                <div className="max-w-[150px]">
-                  <p className="text-xs font-medium truncate">{file.name}</p>
-                  <p className="text-[10px] text-muted-foreground">{(file.size / (1024 * 1024)).toFixed(2)} MB</p>
-                </div>
-              </div>
-              <button 
-                onClick={() => setFile(null)}
-                className="p-1 hover:bg-white/5 rounded-md text-muted-foreground"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-          )}
-        </div>
-
-        {error && <p className="text-[10px] text-destructive">{error}</p>}
-        {success && (
-          <div className="flex items-center gap-2 text-[10px] text-green-400 bg-green-400/10 p-2 rounded-md border border-green-400/20">
-            <CheckCircle2 className="w-3 h-3" />
-            Upload complete!
-          </div>
-        )}
-
-        <Button 
-          variant="glass" 
-          className="w-full" 
-          disabled={!file || uploading}
-          onClick={handleUpload}
-        >
-          {uploading ? (
-            <>
-              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              Uploading...
-            </>
-          ) : 'Upload to Production'}
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild>
+        <Button size="sm" variant="outline" className="border-primary/20 hover:bg-primary/10 hover:text-primary transition-colors">
+            <Upload className="w-4 h-4 mr-2" />
+            Upload Asset
         </Button>
-      </div>
-    </GlassCard>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-md bg-stone-900 border-white/10 text-white">
+        <DialogHeader>
+          <DialogTitle>Upload Session Asset</DialogTitle>
+          <DialogDescription className="text-stone-400">
+            Select a file to upload for this booking. Max 50MB.
+          </DialogDescription>
+        </DialogHeader>
+
+        {!success ? (
+          <div className="space-y-4 py-4">
+                <div className={cn(
+                    "border-2 border-dashed border-white/10 rounded-lg p-8 text-center transition-colors relative cursor-pointer hover:border-primary/40 hover:bg-white/5",
+                    file && "border-primary/50 bg-primary/5"
+                )}>
+                  <input title="file"
+                  type="file" 
+                  onChange={handleFileChange} 
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                  />
+                  
+                  {file ? (
+                        <div className="flex flex-col items-center gap-2 text-primary">
+                            <FileText className="w-8 h-8" />
+                            <span className="font-medium text-sm truncate max-w-[200px]">{file.name}</span>
+                            <span className="text-xs opacity-70">{(file.size / 1024 / 1024).toFixed(2)} MB</span>
+                        </div>
+                  ) : (
+                        <div className="flex flex-col items-center gap-2 text-stone-500">
+                            <Upload className="w-8 h-8" />
+                            <span className="font-medium text-sm">Click to browse</span>
+                        </div>
+                  )}
+                </div>
+
+                <div className="flex gap-4">
+                    <label className="flex-1 cursor-pointer">
+                        <input 
+                        type="radio" 
+                        name="kind" 
+                        value="FINAL" 
+                        checked={kind === 'FINAL'}
+                        onChange={() => setKind('FINAL')}
+                        className="sr-only peer"
+                        />
+                        <div className="h-10 rounded-md border border-white/10 bg-black/20 flex items-center justify-center text-sm font-medium text-stone-400 peer-checked:border-primary/50 peer-checked:text-primary peer-checked:bg-primary/10 transition-all">
+                            FINAL
+                        </div>
+                    </label>
+                    <label className="flex-1 cursor-pointer">
+                        <input 
+                        type="radio" 
+                        name="kind" 
+                        value="RAW" 
+                        checked={kind === 'RAW'}
+                        onChange={() => setKind('RAW')}
+                        className="sr-only peer"
+                        />
+                        <div className="h-10 rounded-md border border-white/10 bg-black/20 flex items-center justify-center text-sm font-medium text-stone-400 peer-checked:border-blue-500/50 peer-checked:text-blue-400 peer-checked:bg-blue-500/10 transition-all">
+                            RAW
+                        </div>
+                    </label>
+                </div>
+
+                {error && (
+                    <div className="flex items-center gap-2 text-red-400 text-xs bg-red-400/10 p-3 rounded-md">
+                        <AlertCircle className="w-4 h-4" />
+                        {error}
+                    </div>
+                )}
+
+                <Button 
+                  onClick={handleUpload} 
+                  disabled={!file || isUploading} 
+                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
+                >
+                    {isUploading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                    {isUploading ? 'Uploading...' : 'Confirm Upload'}
+                </Button>
+            </div>
+        ) : (
+            <div className="py-8 flex flex-col items-center text-center gap-4">
+                <div className="w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-500">
+                    <CheckCircle2 className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-medium text-white">Upload Complete!</h3>
+                  <p className="text-sm text-stone-400">The customer can now access this file.</p>
+                </div>
+            </div>
+        )}
+      </DialogContent>
+    </Dialog>
   );
 }
