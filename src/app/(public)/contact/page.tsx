@@ -13,14 +13,16 @@ import { Button } from "@/components/ui/button";
 function StarField() {
     return (
         <group>
-            {/* Estrellas en órbita interna ultra-lenta - SIN rotación de grupo */}
-            <Sparkles count={1200} scale={25} size={0.3} speed={0.02} opacity={0.4} color="#6A47F2" />
-            <Sparkles count={400} scale={20} size={0.7} speed={0.02} opacity={0.5} color="#D936F1" />
-            <Sparkles count={150} scale={22} size={0.5} speed={0.02} opacity={0.3} color="#3B82F6" />
+            {/* Capa 1: Estrellas Pequeñas (Puntos de luz nítidos) - Desplazamiento suave */}
+            <Sparkles count={1500} scale={25} size={1.5} speed={0.15} opacity={0.9} color="#A78BFA" />
             
-            {/* Estrellas más grandes con "órbita" estática e imperceptible */}
-            <Sparkles count={40} scale={15} size={2.5} speed={0.01} opacity={0.1} color="#6A47F2" />
-            <Sparkles count={20} scale={18} size={3.5} speed={0.01} opacity={0.05} color="#D936F1" />
+            {/* Capa 2: Estrellas Medianas (Presencia vibrante) - Desplazamiento suave */}
+            <Sparkles count={400} scale={20} size={3.0} speed={0.25} opacity={0.8} color="#FF7EDB" />
+            <Sparkles count={150} scale={22} size={2.5} speed={0.20} opacity={0.7} color="#60A5FA" />
+            
+            {/* Capa 3: Bokeh Profundo (Glow suave y muy visible) - Órbita lenta */}
+            <Sparkles count={40} scale={15} size={12.0} speed={0.08} opacity={0.4} color="#A78BFA" />
+            <Sparkles count={20} scale={18} size={18.0} speed={0.12} opacity={0.3} color="#FF7EDB" />
         </group>
     );
 }
@@ -91,7 +93,7 @@ export default function ContactPage() {
                             </div>
                             <div>
                                 <p className="text-[10px] text-white/40 uppercase tracking-[0.2em] font-bold mb-1">Location</p>
-                                <p className="text-lg font-medium">Business Bay, Dubai, UAE</p>
+                                <p className="text-lg font-medium">Discovery Tower, Al Hebiah Second, Dubai Studio City, UAE</p>
                             </div>
                         </div>
                     </div>
