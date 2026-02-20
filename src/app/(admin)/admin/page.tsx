@@ -89,7 +89,7 @@ export default async function AdminDashboard() {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <GlassCard className="p-6 flex flex-col justify-between h-32 bg-white/5 border-white/10 relative overflow-hidden group">
+        <GlassCard className="p-6 flex flex-col justify-between h-32 bg-fg/[0.02] border-border/10 relative overflow-hidden group">
           <div className="absolute right-0 top-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
             <Calendar className="w-16 h-16" />
           </div>
@@ -102,7 +102,7 @@ export default async function AdminDashboard() {
           </div>
         </GlassCard>
 
-        <GlassCard className="p-6 flex flex-col justify-between h-32 bg-white/5 border-white/10 relative overflow-hidden group">
+        <GlassCard className="p-6 flex flex-col justify-between h-32 bg-fg/[0.02] border-border/10 relative overflow-hidden group">
            <div className="absolute right-0 top-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
             <Activity className="w-16 h-16" />
           </div>
@@ -115,7 +115,7 @@ export default async function AdminDashboard() {
           </div>
         </GlassCard>
 
-        <GlassCard className="p-6 flex flex-col justify-between h-32 bg-white/5 border-white/10 relative overflow-hidden group">
+        <GlassCard className="p-6 flex flex-col justify-between h-32 bg-fg/[0.02] border-border/10 relative overflow-hidden group">
            <div className="absolute right-0 top-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
             <DollarSign className="w-16 h-16" />
           </div>
@@ -128,7 +128,7 @@ export default async function AdminDashboard() {
           </div>
         </GlassCard>
 
-        <GlassCard className="p-6 flex flex-col justify-between h-32 bg-white/5 border-white/10 relative overflow-hidden group">
+        <GlassCard className="p-6 flex flex-col justify-between h-32 bg-fg/[0.02] border-border/10 relative overflow-hidden group">
            <div className="absolute right-0 top-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
             <Users className="w-16 h-16" />
           </div>
@@ -148,7 +148,7 @@ export default async function AdminDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
           {quickLinks.map((link) => (
             <Link key={link.name} href={link.href} className="block group">
-              <GlassCard className="p-4 flex items-center gap-4 hover:bg-white/10 transition-colors border-white/5">
+              <GlassCard className="p-4 flex items-center gap-4 hover:bg-fg/[0.05] transition-colors border-border/10 bg-card">
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center ${link.bg} ${link.color}`}>
                   <link.icon className="w-5 h-5" />
                 </div>

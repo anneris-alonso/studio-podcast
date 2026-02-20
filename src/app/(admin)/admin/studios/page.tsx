@@ -37,9 +37,7 @@ export default async function StudiosPage({
   // Serialize Decimal objects to plain numbers/strings
   const studios = rawStudios.map(studio => ({
     ...studio,
-    hourlyRate: studio.hourlyRate.toNumber(),
-    // Add other decimal fields here if they exist, e.g.
-    // someOtherDecimal: studio.someOtherDecimal.toNumber(),
+    hourlyRate: studio.hourlyRate ? studio.hourlyRate.toNumber() : null,
   }));
 
   return (
@@ -53,7 +51,7 @@ export default async function StudiosPage({
       </div>
 
       {/* Filter Bar */}
-      <GlassCard className="p-4 flex gap-4 bg-white/5">
+      <GlassCard className="p-4 flex gap-4 bg-fg/[0.02]">
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <form>
@@ -61,7 +59,7 @@ export default async function StudiosPage({
               name="q" 
               defaultValue={q} 
               placeholder="Search studios..." 
-              className="w-full bg-black/20 border border-white/10 rounded-md pl-9 pr-4 py-2 text-sm focus:outline-none focus:border-primary/50"
+              className="w-full bg-fg/[0.05] border border-border/10 rounded-md pl-9 pr-4 py-2 text-sm focus:outline-none focus:border-primary/50"
             />
           </form>
         </div>
@@ -78,11 +76,11 @@ export default async function StudiosPage({
           <div className="text-center py-12 text-muted-foreground">No studios found.</div>
         ) : (
           studios.map(studio => (
-            <GlassCard key={studio.id} className="p-0 overflow-hidden flex flex-col md:flex-row border-white/5 group bg-black/20">
-              <div className="w-full md:w-48 h-32 md:h-auto bg-white/5 relative">
+            <GlassCard key={studio.id} className="p-0 overflow-hidden flex flex-col md:flex-row border-border/10 group bg-card hover:shadow-soft transition-all">
+              <div className="w-full md:w-48 h-32 md:h-auto bg-fg/[0.02] border-r border-border/5 relative">
                   {/* Placeholder for image */}
                   <div className="absolute inset-0 flex items-center justify-center text-muted-foreground/20 text-xs">
-                    {studio.coverImageUrl ? <img alt={studio.name} src={studio.coverImageUrl} className="w-full h-full object-cover" /> : 'No Image'}
+                    {studio.coverImageUrl ? <img alt={studio.name} src={studio.coverImageUrl} className="w-full h-full object-cover" /> : <span className="text-fg">No Image</span>}
                   </div>
               </div>
               <div className="p-6 flex-1 flex flex-col justify-center">
@@ -92,33 +90,22 @@ export default async function StudiosPage({
                       <Badge variant={studio.isActive ? "success" : "secondary"}>
                         {studio.isActive ? 'Active' : 'Inactive'}
                       </Badge>
-                      <span className="text-xs font-mono text-muted-foreground bg-white/5 px-2 py-0.5 rounded">
+                      <span className="text-xs font-mono text-muted bg-fg/[0.05] px-2 py-0.5 rounded">
                         {studio.slug}
                       </span>
                     </div>
                     <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                       <StudioForm studio={studio} mode="edit" />
-                      {studio.isActive && (
-                        <form action={async () => {
-                          'use server';
-                          // We need to import the action here or use a client component wrapper for the button
-                          // Given Server Actions can be passed, usually best to use a client wrapper for confirmation
-                          // For now, StudioForm handles edits. Deactivate can be part of Edit or separate.
-                          // We will let StudioForm handle it.
-                        }}>
-                             {/* Deactivation is handled inside Edit Form usually */}
-                        </form>
-                      )}
                     </div>
                   </div>
-                  <p className="text-sm text-muted-foreground line-clamp-2 mb-4">{studio.description}</p>
-                  <div className="flex gap-6 text-xs text-muted-foreground">
+                  <p className="text-sm text-muted line-clamp-2 mb-4">{studio.description}</p>
+                  <div className="flex gap-6 text-xs text-muted">
                     <span className="flex items-center gap-1">
-                      <span className="w-2 h-2 rounded-full bg-white/20" />
+                      <span className="w-2 h-2 rounded-full bg-primary/20" />
                       Capacity: {studio.capacity}
                     </span>
                     <span className="flex items-center gap-1">
-                      <span className="w-2 h-2 rounded-full bg-white/20" />
+                      <span className="w-2 h-2 rounded-full bg-primary/20" />
                       Equipment: {studio.equipmentSummary.slice(0, 30)}...
                     </span>
                   </div>
@@ -136,7 +123,7 @@ function LinkButton({ href, active, children }: any) {
         <a 
           href={href} 
           className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-              active ? 'bg-primary text-primary-foreground' : 'bg-white/5 hover:bg-white/10 text-muted-foreground'
+              active ? 'bg-primary text-primary-foreground' : 'bg-fg/[0.05] hover:bg-fg/[0.1] text-muted'
           }`}
         >
             {children}

@@ -1,109 +1,26 @@
 "use client";
 
-import { Canvas, useFrame } from "@react-three/fiber";
-import { EffectComposer, Bloom, Noise, Vignette } from "@react-three/postprocessing";
-import { useRef, Suspense } from "react";
-import * as THREE from "three";
 import { motion } from "framer-motion";
 import { Navbar } from "@/components/layout/Navbar";
-
-// --- SHADER PARA EL HUMO MULTICOLOR ---
-const SmokeShader = {
-    uniforms: {
-    uTime: { value: 0 },
-    colorPink: { value: new THREE.Color("#D936F1") },
-    colorPurple: { value: new THREE.Color("#6A47F2") },
-    colorBlue: { value: new THREE.Color("#3B82F6") },
-},
-vertexShader: `
-    varying vec2 vUv;
-    void main() {
-        vUv = uv;
-        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-    }`,
-    fragmentShader: `
-    varying vec2 vUv;
-    uniform float uTime;
-    uniform vec3 colorPink;
-    uniform vec3 colorPurple;
-    uniform vec3 colorBlue;
-
-    float noise(vec2 p) {
-      return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);
-    }
-
-    float smoothNoise(vec2 p) {
-        vec2 i = floor(p);
-        vec2 f = fract(p);
-        f = f * f * (3.0 - 2.0 * f);
-        float a = noise(i);
-        float b = noise(i + vec2(1.0, 0.0));
-        float c = noise(i + vec2(0.0, 1.0));
-        float d = noise(i + vec2(1.0, 1.0));
-        return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
-    }
-
-    void main() {
-            vec2 uv = vUv;
-            float t = uTime * 0.15;
-            float n = smoothNoise(uv * 3.0 + t);
-            n += smoothNoise(uv * 6.0 - t * 0.5) * 0.5;
-            n += smoothNoise(uv * 12.0 + t * 0.2) * 0.25;
-            n /= 1.75;
-        vec3 finalColor = mix(colorPink, colorPurple, n);
-        finalColor = mix(finalColor, colorBlue, smoothstep(0.4, 0.8, n));
-        float alpha = smoothstep(0.1, 0.6, n) * 0.2;
-        gl_FragColor = vec4(finalColor, alpha);
-    }
-    `
-};
-
-function SmokeEffect() {
-    const materialRef = useRef<THREE.ShaderMaterial>(null);
-    useFrame((state) => {
-        if (materialRef.current) {
-            materialRef.current.uniforms.uTime.value = state.clock.getElapsedTime();
-        }
-    });
-    return (
-        <mesh position={[0, 0, -5]} scale={[25, 15, 1]}>
-            <planeGeometry args={[1, 1]} />
-            <shaderMaterial
-                ref={materialRef}
-                args={[SmokeShader]}
-                transparent
-                depthWrite={false}
-            />
-        </mesh>
-    );
-}
-
-function AboutScene() {
-    return (
-        <>
-            <color attach="background" args={["#000000"]} />
-            <SmokeEffect />
-            <EffectComposer>
-                <Bloom luminanceThreshold={0.2} mipmapBlur intensity={1.5} radius={0.8} />
-                <Noise opacity={0.03} />
-                <Vignette eskil={false} offset={0.1} darkness={0.8} />
-            </EffectComposer>
-        </>
-    );
-}
 
 export default function AboutPage() {
     return (
         <main className="min-h-screen bg-black text-white relative overflow-hidden">
             <Navbar />
             
-            {/* 3D Background */}
-            <div className="absolute inset-0 z-0">
-                <Canvas camera={{ position: [0, 0, 5], fov: 45 }}>
-                    <Suspense fallback={null}>
-                        <AboutScene />
-                    </Suspense>
-                </Canvas>
+            {/* Optimized High-Performance Background (CSS Ambient Glows) */}
+            <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+                {/* Fixed Glow 1 - Pink Top Left */}
+                <div className="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] rounded-full bg-accent-pink/10 blur-[120px] animate-pulse" style={{ animationDuration: '8s' }} />
+                
+                {/* Fixed Glow 2 - Violet Middle Right */}
+                <div className="absolute top-[20%] -right-[10%] w-[50%] h-[50%] rounded-full bg-accent-violet/10 blur-[130px] animate-pulse" style={{ animationDuration: '12s' }} />
+                
+                {/* Fixed Glow 3 - Blue Bottom Left */}
+                <div className="absolute -bottom-[10%] -left-[5%] w-[45%] h-[45%] rounded-full bg-accent-blue/10 blur-[100px] animate-pulse" style={{ animationDuration: '10s' }} />
+                
+                {/* Grain Overlay for Texture */}
+                <div className="absolute inset-0 opacity-[0.03] mix-blend-overlay pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
             </div>
 
             {/* Content */}

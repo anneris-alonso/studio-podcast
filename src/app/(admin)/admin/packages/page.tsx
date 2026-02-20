@@ -34,6 +34,7 @@ export default async function PackagesPage({
 
   const packages = rawPackages.map(pkg => ({
     ...pkg,
+    price: pkg.price.toNumber(), // Serialize Decimal to number
     pricePerUnitMinor: pkg.pricePerUnitMinor,
     studioRoom: pkg.studioRoom ? {
         ...pkg.studioRoom,
@@ -53,8 +54,8 @@ export default async function PackagesPage({
         <PackageForm />
       </div>
 
-       {/* Filter Bar */}
-      <GlassCard className="p-4 flex gap-4 bg-white/5">
+      {/* Filter Bar */}
+      <GlassCard className="p-4 flex gap-4 bg-fg/[0.02]">
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <form>
@@ -62,20 +63,20 @@ export default async function PackagesPage({
                name="q" 
                defaultValue={q} 
                placeholder="Search packages..." 
-               className="w-full bg-black/20 border border-white/10 rounded-md pl-9 pr-4 py-2 text-sm focus:outline-none focus:border-primary/50"
+               className="w-full bg-fg/[0.05] border border-border/10 rounded-md pl-9 pr-4 py-2 text-sm focus:outline-none focus:border-primary/50"
              />
           </form>
         </div>
         <div className="flex gap-2">
-            <Link href="/admin/packages?status=all" className={`px-4 py-2 rounded-md text-sm font-medium ${status === 'all' ? 'bg-primary text-primary-foreground' : 'bg-white/5 hover:bg-white/10'}`}>All</Link>
-            <Link href="/admin/packages?status=active" className={`px-4 py-2 rounded-md text-sm font-medium ${status === 'active' ? 'bg-primary text-primary-foreground' : 'bg-white/5 hover:bg-white/10'}`}>Active</Link>
-            <Link href="/admin/packages?status=inactive" className={`px-4 py-2 rounded-md text-sm font-medium ${status === 'inactive' ? 'bg-primary text-primary-foreground' : 'bg-white/5 hover:bg-white/10'}`}>Inactive</Link>
+            <Link href="/admin/packages?status=all" className={`px-4 py-2 rounded-md text-sm font-medium ${status === 'all' ? 'bg-primary text-primary-foreground' : 'bg-fg/[0.05] hover:bg-fg/[0.1]'}`}>All</Link>
+            <Link href="/admin/packages?status=active" className={`px-4 py-2 rounded-md text-sm font-medium ${status === 'active' ? 'bg-primary text-primary-foreground' : 'bg-fg/[0.05] hover:bg-fg/[0.1]'}`}>Active</Link>
+            <Link href="/admin/packages?status=inactive" className={`px-4 py-2 rounded-md text-sm font-medium ${status === 'inactive' ? 'bg-primary text-primary-foreground' : 'bg-fg/[0.05] hover:bg-fg/[0.1]'}`}>Inactive</Link>
         </div>
       </GlassCard>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {packages.map(pkg => (
-          <GlassCard key={pkg.id} className="flex flex-col border-white/5 bg-black/20 group relative overflow-hidden">
+          <GlassCard key={pkg.id} className="flex flex-col border-border/10 bg-card hover:shadow-soft group relative overflow-hidden transition-all">
              
              {/* Studio Badge */}
              {pkg.studioRoom && (
@@ -92,14 +93,14 @@ export default async function PackagesPage({
                     <Badge variant={pkg.isActive ? "success" : "secondary"} className="text-[10px]">
                       {pkg.isActive ? 'Active' : 'Inactive'}
                     </Badge>
-                    <span className="text-xs font-mono text-muted-foreground bg-white/5 px-2 py-0.5 rounded">
+                    <span className="text-xs font-mono text-muted bg-fg/[0.05] px-2 py-0.5 rounded">
                       {pkg.slug}
                     </span>
                 </div>
                 
-                <p className="text-sm text-muted-foreground line-clamp-3 mb-6 h-10">{pkg.description}</p>
+                <p className="text-sm text-muted line-clamp-3 mb-6 h-10">{pkg.description}</p>
 
-                <div className="space-y-2 text-sm bg-white/5 p-3 rounded-lg border border-white/5">
+                <div className="space-y-2 text-sm bg-fg/[0.02] p-3 rounded-lg border border-border/5">
                    <div className="flex justify-between">
                       <span className="text-muted-foreground">Price</span>
                       <span className="font-bold text-primary">
@@ -123,7 +124,7 @@ export default async function PackagesPage({
                 </div>
              </div>
 
-             <div className="p-4 border-t border-white/5 flex justify-end gap-2 bg-white/5">
+             <div className="p-4 border-t border-border/5 flex justify-end gap-2 bg-fg/[0.02]">
                 <PackageForm pkg={pkg} mode="edit" />
              </div>
           </GlassCard>

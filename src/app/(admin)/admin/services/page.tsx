@@ -33,10 +33,8 @@ export default async function ServicesPage({
 
   const services = rawServices.map(service => ({
     ...service,
-    price: service.price.toNumber(),
-    priceMinor: service.priceMinor, // Int, no conversion needed usually unless BigInt, but usually Int in Prisma is number in JS
-    // If priceMinor is Decimal in schema (unlikely for "Minor" but check), convert it.
-    // Assuming price is Decimal.
+    price: service.price ? service.price.toNumber() : 0,
+    priceMinor: service.priceMinor,
   }));
 
   return (
@@ -50,7 +48,7 @@ export default async function ServicesPage({
       </div>
 
        {/* Filter Bar */}
-      <GlassCard className="p-4 flex gap-4 bg-white/5">
+      <GlassCard className="p-4 flex gap-4 bg-fg/[0.02]">
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <form>
@@ -58,19 +56,19 @@ export default async function ServicesPage({
                name="q" 
                defaultValue={q} 
                placeholder="Search services..." 
-               className="w-full bg-black/20 border border-white/10 rounded-md pl-9 pr-4 py-2 text-sm focus:outline-none focus:border-primary/50"
+               className="w-full bg-fg/[0.05] border border-border/10 rounded-md pl-9 pr-4 py-2 text-sm focus:outline-none focus:border-primary/50"
              />
           </form>
         </div>
         <div className="flex gap-2">
-            <Link href="/admin/services?status=all" className={`px-4 py-2 rounded-md text-sm font-medium ${status === 'all' ? 'bg-primary text-primary-foreground' : 'bg-white/5 hover:bg-white/10'}`}>All</Link>
-            <Link href="/admin/services?status=active" className={`px-4 py-2 rounded-md text-sm font-medium ${status === 'active' ? 'bg-primary text-primary-foreground' : 'bg-white/5 hover:bg-white/10'}`}>Active</Link>
+            <Link href="/admin/services?status=all" className={`px-4 py-2 rounded-md text-sm font-medium ${status === 'all' ? 'bg-primary text-primary-foreground' : 'bg-fg/[0.05] hover:bg-fg/[0.1] text-muted'}`}>All</Link>
+            <Link href="/admin/services?status=active" className={`px-4 py-2 rounded-md text-sm font-medium ${status === 'active' ? 'bg-primary text-primary-foreground' : 'bg-fg/[0.05] hover:bg-fg/[0.1] text-muted'}`}>Active</Link>
         </div>
       </GlassCard>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {services.map(svc => (
-          <GlassCard key={svc.id} className="flex flex-col border-white/5 bg-black/20 group hover:border-primary/30 transition-all">
+          <GlassCard key={svc.id} className="flex flex-col border-border/10 bg-card hover:shadow-soft group hover:border-primary/30 transition-all">
              <div className="p-6 flex-1">
                 <div className="flex items-center justify-between mb-2">
                    <div className="flex flex-col">
@@ -84,30 +82,30 @@ export default async function ServicesPage({
                     <Badge variant={svc.isActive ? "success" : "secondary"} className="text-[10px]">
                       {svc.isActive ? 'Active' : 'Inactive'}
                     </Badge>
-                     <span className="text-xs font-mono text-muted-foreground bg-white/5 px-2 py-0.5 rounded">
+                     <span className="text-xs font-mono text-muted bg-fg/[0.05] px-2 py-0.5 rounded">
                       {svc.slug}
                     </span>
                 </div>
 
-                <p className="text-sm text-muted-foreground line-clamp-2 h-10 mb-4">{svc.description}</p>
+                <p className="text-sm text-muted line-clamp-2 h-10 mb-4">{svc.description}</p>
 
-                <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground bg-white/5 p-3 rounded-lg">
+                <div className="grid grid-cols-2 gap-2 text-xs text-muted bg-fg/[0.03] p-3 rounded-lg border border-border/5">
                    <div>
                        <p className="opacity-50 uppercase text-[9px]">Price</p>
-                       <p className="font-bold text-white">AED {(svc.priceMinor / 100).toFixed(2)}</p>
+                       <p className="font-bold text-fg">AED {(svc.priceMinor / 100).toFixed(2)}</p>
                    </div>
                    <div>
                        <p className="opacity-50 uppercase text-[9px]">Unit</p>
-                       <p className="font-bold text-white capitalize">{svc.unit.replace('_', ' ').toLowerCase()}</p>
+                       <p className="font-bold text-fg capitalize">{svc.unit.replace('_', ' ').toLowerCase()}</p>
                    </div>
-                   <div className="col-span-2 border-t border-white/10 pt-2 mt-1">
+                   <div className="col-span-2 border-t border-border/10 pt-2 mt-1">
                         <p className="opacity-50 uppercase text-[9px]">Quantity Logic</p>
-                        <p className="font-mono text-white">Min: {svc.minQuantity} | Max: {svc.maxQuantity} | Step: {svc.stepQuantity}</p>
+                        <p className="font-mono text-fg">Min: {svc.minQuantity} | Max: {svc.maxQuantity} | Step: {svc.stepQuantity}</p>
                    </div>
                 </div>
              </div>
 
-             <div className="p-4 border-t border-white/5 flex justify-end gap-2 bg-white/5">
+             <div className="p-4 border-t border-border/10 flex justify-end gap-2 bg-fg/[0.02]">
                 <ServiceForm service={svc} mode="edit" />
              </div>
           </GlassCard>

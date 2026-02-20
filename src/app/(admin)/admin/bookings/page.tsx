@@ -73,7 +73,7 @@ export default async function AdminBookingsPage({
       </div>
 
       {/* Filters & Search */}
-      <GlassCard className="p-4 flex flex-col md:flex-row gap-4 bg-white/5">
+      <GlassCard className="p-4 flex flex-col md:flex-row gap-4 bg-fg/[0.02]">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <form>
@@ -81,7 +81,7 @@ export default async function AdminBookingsPage({
               name="q" 
               defaultValue={q} 
               placeholder="Search by ID, email, or studio..." 
-              className="w-full bg-black/20 border border-white/10 rounded-md pl-9 pr-4 py-2 text-sm focus:outline-none focus:border-primary/50"
+              className="w-full bg-fg/[0.05] border border-border/10 rounded-md pl-9 pr-4 py-2 text-sm focus:outline-none focus:border-primary/50"
             />
              {/* Preserve other params */}
              {statusFilter !== 'ALL' && <input type="hidden" name="status" value={statusFilter} />}
@@ -91,7 +91,7 @@ export default async function AdminBookingsPage({
         <div className="flex gap-2 overflow-x-auto pb-2 md:pb-0">
             <LinkButton href="?time=UPCOMING&status=ALL" active={timeFilter === 'UPCOMING'}>Upcoming</LinkButton>
             <LinkButton href="?time=PAST&status=ALL" active={timeFilter === 'PAST'}>Past</LinkButton>
-            <div className="w-px bg-white/10 mx-2" />
+            <div className="w-px bg-border/20 mx-2" />
             <LinkButton href={`?time=${timeFilter}&status=ALL`} active={statusFilter === 'ALL'}>All Status</LinkButton>
             <LinkButton href={`?time=${timeFilter}&status=CONFIRMED`} active={statusFilter === 'CONFIRMED'}>Confirmed</LinkButton>
             <LinkButton href={`?time=${timeFilter}&status=PAID`} active={statusFilter === 'PAID'}>Paid</LinkButton>
@@ -100,10 +100,10 @@ export default async function AdminBookingsPage({
       </GlassCard>
 
       {/* Bookings Table */}
-      <GlassCard className="p-0 overflow-hidden border-white/5 bg-black/20">
+      <GlassCard className="p-0 overflow-hidden border-border/10 bg-card shadow-soft">
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left">
-            <thead className="text-xs uppercase bg-white/5 text-muted-foreground">
+            <thead className="text-xs uppercase bg-fg/[0.02] text-muted">
               <tr>
                 <th className="px-6 py-4 font-medium">Date & Time</th>
                 <th className="px-6 py-4 font-medium">Studio</th>
@@ -113,7 +113,7 @@ export default async function AdminBookingsPage({
                 <th className="px-6 py-4 font-medium text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5">
+            <tbody className="divide-y divide-border/5">
               {bookings.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-6 py-12 text-center text-muted-foreground">
@@ -152,7 +152,7 @@ export default async function AdminBookingsPage({
                     <td className="px-6 py-4 text-right">
                       <Link 
                         href={`/admin/bookings/${booking.id}`} 
-                        className="inline-flex items-center justify-center h-8 w-8 rounded-full hover:bg-white/10 transition-colors text-muted-foreground hover:text-primary"
+                        className="inline-flex items-center justify-center h-8 w-8 rounded-full hover:bg-fg/[0.05] transition-colors text-muted hover:text-primary"
                       >
                          <Eye className="w-4 h-4" />
                       </Link>
@@ -173,7 +173,7 @@ function LinkButton({ href, active, children }: any) {
         <Link 
           href={href} 
           className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors whitespace-nowrap ${
-              active ? 'bg-primary/20 text-primary border border-primary/20' : 'bg-white/5 hover:bg-white/10 text-muted-foreground'
+              active ? 'bg-primary/10 text-primary border border-primary/20' : 'bg-fg/[0.05] hover:bg-fg/[0.1] text-muted'
           }`}
         >
             {children}

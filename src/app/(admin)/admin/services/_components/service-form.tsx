@@ -46,7 +46,7 @@ export default function ServiceForm({ service, mode = 'create' }: { service?: an
 
   const form = useForm<ServiceFormData>({
     resolver: zodResolver(ServiceSchema),
-    defaultValues
+    defaultValues: defaultValues as ServiceFormData
   });
 
   const [priceAed, setPriceAed] = useState<string>(service ? (service.priceMinor / 100).toFixed(2) : '0.00');
@@ -58,7 +58,7 @@ export default function ServiceForm({ service, mode = 'create' }: { service?: an
      form.setValue('priceMinor', minor);
   };
 
-  const onSubmit = async (data: ServiceFormData) => {
+  const onSubmit = async (data: any) => {
     setLoading(true);
     setError(null);
     try {
@@ -92,8 +92,8 @@ export default function ServiceForm({ service, mode = 'create' }: { service?: an
       <DialogTrigger asChild>
         {mode === 'create' ? <Button variant="glass" className="gap-2"><Plus className="w-4 h-4" /> Add Service</Button> : <Button variant="ghost" size="icon"><Pencil className="w-4 h-4" /></Button>}
       </DialogTrigger>
-      <DialogContent className="bg-black/90 border-white/10 backdrop-blur-xl sm:max-w-xl">
-        <DialogHeader><DialogTitle>{mode === 'create' ? 'New Service' : `Edit ${service.name}`}</DialogTitle></DialogHeader>
+      <DialogContent className="bg-card/95 border-border/10 backdrop-blur-xl sm:max-w-xl">
+        <DialogHeader><DialogTitle className="text-fg">{mode === 'create' ? 'New Service' : `Edit ${service.name}`}</DialogTitle></DialogHeader>
         
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 py-4">
              {/* General */}
@@ -122,8 +122,8 @@ export default function ServiceForm({ service, mode = 'create' }: { service?: an
                         onValueChange={(v) => form.setValue('category', v as any)} 
                         defaultValue={form.getValues('category')}
                      >
-                         <SelectTrigger className="bg-white/5"><SelectValue /></SelectTrigger>
-                         <SelectContent>
+                         <SelectTrigger className="bg-fg/[0.03] border-border/10"><SelectValue /></SelectTrigger>
+                         <SelectContent className="bg-card border-border/10">
                              <SelectItem value="RECORDING">Recording</SelectItem>
                              <SelectItem value="EDITING">Editing</SelectItem>
                              <SelectItem value="EXTRA">Extra</SelectItem>
@@ -137,7 +137,7 @@ export default function ServiceForm({ service, mode = 'create' }: { service?: an
                        type="number" step="0.01" min="0" 
                        value={priceAed} 
                        onChange={handlePriceChange} 
-                       className="bg-white/5"
+                       className="bg-fg/[0.03] border-border/10"
                     />
                  </div>
 
@@ -147,8 +147,8 @@ export default function ServiceForm({ service, mode = 'create' }: { service?: an
                         onValueChange={(v) => form.setValue('unit', v as any)} 
                         defaultValue={form.getValues('unit')}
                      >
-                         <SelectTrigger className="bg-white/5"><SelectValue /></SelectTrigger>
-                         <SelectContent>
+                         <SelectTrigger className="bg-fg/[0.03] border-border/10"><SelectValue /></SelectTrigger>
+                         <SelectContent className="bg-card border-border/10">
                              <SelectItem value="PER_BOOKING">Per Booking</SelectItem>
                              <SelectItem value="PER_HOUR">Per Hour</SelectItem>
                              <SelectItem value="PER_DAY">Per Day</SelectItem>
@@ -175,8 +175,8 @@ export default function ServiceForm({ service, mode = 'create' }: { service?: an
             </div>
 
             <div className="pt-2">
-                 <label className="flex items-center gap-2 text-sm bg-white/5 p-3 rounded-lg border border-white/5">
-                    <input type="checkbox" {...form.register('isActive')} className="rounded bg-black/50 border-white/20" />
+                 <label className="flex items-center gap-2 text-sm bg-fg/[0.03] p-3 rounded-lg border border-border/10">
+                    <input type="checkbox" {...form.register('isActive')} className="rounded bg-bg border-border/20" />
                     Is Active?
                  </label>
             </div>

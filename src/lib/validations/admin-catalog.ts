@@ -8,7 +8,7 @@ const BaseEntitySchema = z.object({
   name: z.string().min(1, "Name is required"),
   slug: z.string().regex(SLUG_REGEX, "Invalid slug format (e.g., 'my-package-name')"),
   description: z.string().min(1, "Description is required"),
-  isActive: z.boolean().default(true),
+  isActive: z.boolean(),
 });
 
 // --- Studio Schemas ---

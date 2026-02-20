@@ -90,7 +90,7 @@ export default function StudioForm({ studio, mode = 'create' }: StudioFormProps)
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[600px] bg-black/90 border-white/10 backdrop-blur-xl">
+      <DialogContent className="sm:max-w-[600px] bg-card/95 border-border/10 backdrop-blur-xl">
         <DialogHeader>
           <DialogTitle>{mode === 'create' ? 'Create New Studio' : `Edit ${studio?.name}`}</DialogTitle>
         </DialogHeader>
@@ -139,7 +139,7 @@ export default function StudioForm({ studio, mode = 'create' }: StudioFormProps)
           </div>
           
            <div className="flex items-center gap-2">
-             <input type="checkbox" {...form.register('isActive')} id="isActive" className="rounded bg-white/10 border-white/20" />
+             <input type="checkbox" {...form.register('isActive')} id="isActive" className="rounded bg-bg border-border/20" />
              <label htmlFor="isActive" className="text-sm font-medium">Active (Visible to public)</label>
           </div>
 

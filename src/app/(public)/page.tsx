@@ -241,9 +241,14 @@ export default function LandingPage() {
           </PremiumGlassCard>
       </GlassSection>
 
-      {/* 5. Pricing Section */}
-      <section className="relative py-24">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-accent-violet/5 to-transparent pointer-events-none opacity-20" />
+      {/* 5. Pricing Section with Optimized Ambient Glows */}
+      <section className="relative py-24 overflow-hidden">
+        {/* Optimized Background Glows */}
+        <div className="absolute inset-0 z-0 pointer-events-none">
+            <div className="absolute top-[10%] -left-[10%] w-[40%] h-[40%] rounded-full bg-accent-pink/5 blur-[100px]" />
+            <div className="absolute bottom-[10%] -right-[10%] w-[40%] h-[40%] rounded-full bg-accent-violet/5 blur-[100px]" />
+        </div>
+
         <div className="max-w-7xl mx-auto px-6 space-y-16 relative z-10">
           <div className="text-center space-y-4">
             <h2 className="text-4xl font-bold text-white">Clear, Simple Pricing</h2>
