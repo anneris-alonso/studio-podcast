@@ -3,6 +3,8 @@
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import { PremiumGlassCard } from "./GlassSection";
 
 interface StudioCardProps {
@@ -25,42 +27,44 @@ export function StudioCard({ studio, index }: StudioCardProps) {
             transition={{ delay: index * 0.1, duration: 0.5 }}
             viewport={{ once: true }}
         >
-            <PremiumGlassCard className="h-full flex flex-col group p-0">
-                <div className="relative aspect-[16/9] overflow-hidden">
-                    <div className="absolute inset-0 bg-black/50 z-10 transition-opacity group-hover:opacity-40" />
+            <div className="glass-card-premium group cursor-pointer h-full flex flex-col">
+                <div className="relative h-64 overflow-hidden rounded-t-3xl">
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-10" />
                     {studio.imageUrl ? (
                         <Image 
                             src={studio.imageUrl} 
                             alt={studio.name} 
                             fill
-                            className="object-cover transition-transform duration-700 group-hover:scale-105"
+                            className="object-cover transition-transform duration-700 group-hover:scale-110"
                         />
                     ) : (
                         <div className="w-full h-full bg-gradient-to-br from-gray-900 to-black" />
                     )}
                     
                     <div className="absolute top-4 right-4 z-20">
-                         <span className="px-3 py-1 bg-black/60 backdrop-blur-md text-xs font-bold uppercase tracking-widest text-white border border-white/10 rounded-full">
-                            {studio.available !== false ? 'Available' : 'Booked'}
+                         <span className="bg-brand-gradient px-4 py-1 rounded-full text-xs font-bold shadow-lg">
+                            {studio.price}
                          </span>
                     </div>
-
-                    <div className="absolute bottom-0 left-0 right-0 p-6 z-20 bg-gradient-to-t from-black/90 to-transparent">
-                        <h3 className="text-2xl font-bold text-white mb-1 group-hover:text-accent-pink transition-colors">{studio.name}</h3>
-                        <p className="text-white/70 text-sm line-clamp-1">{studio.description}</p>
-                    </div>
                 </div>
 
-                <div className="p-6 flex items-center justify-between border-t border-white/5 bg-white/[0.02]">
-                    <div className="flex flex-col">
-                        <span className="text-xs text-muted-foreground uppercase tracking-wider">Starting from</span>
-                        <span className="text-xl font-bold text-white">{studio.price}</span>
+                <div className="p-8 flex flex-col flex-grow">
+                    <h3 className="text-2xl font-bold mb-3 group-hover:text-accent-pink transition-colors">{studio.name}</h3>
+                    <p className="text-white/50 text-sm mb-6 line-clamp-2">{studio.description}</p>
+                    
+                    <div className="flex gap-4 mb-8 mt-auto">
+                        <div className="p-2 rounded-lg bg-white/5 border border-white/10">
+                            <ArrowRight className="w-4 h-4 text-accent-violet -rotate-45" />
+                        </div>
                     </div>
-                    <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/50 group-hover:bg-accent-violet group-hover:text-white transition-all">
-                        <ArrowRight className="w-5 h-5 -rotate-45 group-hover:rotate-0 transition-transform" />
-                    </div>
+
+                    <Link href="/book" className="w-full">
+                        <Button className="w-full bg-white/5 border border-white/10 hover:bg-brand-gradient hover:border-none group-hover:shadow-glow transition-all rounded-xl h-12">
+                            View Details <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                        </Button>
+                    </Link>
                 </div>
-            </PremiumGlassCard>
+            </div>
         </motion.div>
     );
 }

@@ -178,7 +178,7 @@ export function Hero3D() {
     }, []);
 
     return (
-        <div className="absolute inset-0 z-0 w-full h-full pointer-events-none">
+        <div className="absolute inset-0 z-0 w-full h-full pointer-events-none bg-black">
             {/* 
                 SCENA 3D (Comentada temporalmente)
                 Descomenta el bloque <Canvas> para volver al micro 3D
@@ -199,20 +199,19 @@ export function Hero3D() {
             </Canvas> 
             */}
 
-            {/* VIDEO DE FONDO ALTERNATIVO */}
+            {/* VIDEO DE FONDO TOTALMENTE TRANSPARENTE (100% OPACIDAD, SIN CAPAS) */}
             <video
                 ref={videoRef}
                 autoPlay
                 muted
                 loop
                 playsInline
-                className="absolute inset-0 w-full h-full object-cover opacity-60"
+                className="absolute inset-0 w-full h-full object-cover scale-[1.05]"
             >
                 <source src="/video/hero.mp4" type="video/mp4" />
             </video>
 
-            {/* Capa de degradado extra para asegurar que el contenido se lea bien */}
-            <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black" />
+            {/* TOTALMENTE TRANSPARENTE: SE ELIMINAN TODOS LOS DEGRADADOS Y HALOS NEGROS */}
         </div>
     );
 }

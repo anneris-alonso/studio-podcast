@@ -29,11 +29,11 @@ export default function PublicLayout({
   }, []);
 
   return (
-    <ThemeProvider attribute="class" forcedTheme="dark">
-      <div className="dark dark-theme relative min-h-screen overflow-hidden bg-bg text-fg selection:bg-accent-violet/30 selection:text-accent-violet">
-        {/* Fixed Radial Glow Overlay */}
+    <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false} forcedTheme="dark">
+      <div className="relative min-h-screen overflow-hidden bg-black text-white selection:bg-accent-violet/30 selection:text-accent-violet dark">
+        {/* Fixed Radial Glow Overlay - Ajustado para ser más sutil y Dubai-style */}
         <div 
-          className="fixed inset-0 pointer-events-none z-0 bg-radial-glow transition-all duration-300 ease-out"
+          className="fixed inset-0 pointer-events-none z-0 bg-[radial-gradient(circle_at_var(--x,_50%)_var(--y,_30%),_rgba(122,92,255,0.12),_transparent_70%)]"
           style={{ 
             "--x": mousePosition.x, 
             "--y": mousePosition.y 
@@ -41,7 +41,7 @@ export default function PublicLayout({
         />
         
         {/* Grain/Noise Overlay */}
-        <div className="fixed inset-0 pointer-events-none z-[1] bg-grain" />
+        <div className="fixed inset-0 pointer-events-none z-[1] bg-grain opacity-[0.03]" />
 
         {/* Content */}
         <div className="relative z-10 flex flex-col min-h-screen">

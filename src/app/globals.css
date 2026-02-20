@@ -27,20 +27,20 @@
 }
 
 .dark, .dark-theme {
-  --bg: 5 5 8;
+  --bg: 0 0 0;
   --fg: 244 244 245;
   --muted: 161 161 170;
-  --card: 12 12 16;
-  --glass: 255 255 255;
+  --card: 5 5 8;
+  --glass: 0 0 0;
   --border: 255 255 255;
   --ring: 122 92 255;
 
-  --glass-alpha: 0.06;
-  --glass-border-alpha: 0.12;
-  --glass-blur: 22px;
+  --glass-alpha: 0.25;
+  --glass-border-alpha: 0.15;
+  --glass-blur: 32px;
 
-  --shadow-soft: 0 14px 40px rgba(0,0,0,.45);
-  --shadow-glow: 0 0 0 1px rgba(255,255,255,.08), 0 25px 80px rgba(255,46,203,.08);
+  --shadow-soft: 0 14px 40px rgba(0,0,0,.7);
+  --shadow-glow: 0 0 0 1px rgba(255,255,255,.08), 0 25px 80px rgba(255,46,203,.1);
 }
 
 @layer base {
@@ -59,6 +59,10 @@
     background: radial-gradient(600px circle at var(--x, 50%) var(--y, 30%), rgba(122, 92, 255, 0.22), transparent 60%);
   }
 
+  .bg-radial-vignette {
+    background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.7) 100%);
+  }
+
   .bg-grain {
     background-image: url("https://grainy-gradients.vercel.app/noise.svg");
     opacity: 0.05;
@@ -71,7 +75,30 @@
     border-color: rgba(var(--border), var(--glass-border-alpha));
   }
 
+  .glass-card-premium {
+    @apply relative overflow-hidden backdrop-blur-[32px] rounded-3xl;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0) 100%);
+    border: 1px solid transparent;
+    background-clip: padding-box;
+  }
+
+  .glass-card-premium::before {
+    content: "";
+    @apply absolute inset-0 -z-10 rounded-[inherit];
+    padding: 1px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0) 50%, rgba(122, 92, 255, 0.2));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+  }
+
   .premium-gradient-text {
-    @apply bg-clip-text text-transparent brand-gradient;
+    @apply inline-flex items-center px-6 py-1 mx-2 rounded-xl text-white font-bold brand-gradient shadow-glow;
+    transform: skewX(-10deg);
+  }
+
+  .premium-gradient-text span {
+    transform: skewX(10deg);
   }
 }

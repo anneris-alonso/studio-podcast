@@ -23,7 +23,9 @@ export default function GalleryPage() {
           <Link href="/" className="text-accent-violet flex items-center gap-2 text-sm font-medium hover:underline mb-4">
             <ArrowLeft className="w-4 h-4" /> Back to Home
           </Link>
-          <h1 className="text-5xl font-bold text-fg">Studio <span className="premium-gradient-text">Gallery</span></h1>
+          <h1 className="text-6xl font-bold tracking-tight mb-4">
+            Studio <span className="premium-gradient-text tracking-tighter"><span>Gallery.</span></span>
+          </h1>
           <p className="text-muted text-lg">A visual tour of the most premium recording spaces in Dubai.</p>
         </div>
         <div className="flex gap-4">

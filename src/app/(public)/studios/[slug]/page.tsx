@@ -38,10 +38,10 @@ export default function StudioDetailPage() {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <h1 className="text-5xl lg:text-7xl font-bold text-fg tracking-tight">{studio.name}</h1>
             <div className="flex items-center gap-3">
-               <div className="flex items-center text-accent-pink">
-                 {[1,2,3,4,5].map(i => <Star key={i} className="w-4 h-4 fill-current" />)}
-               </div>
-               <span className="text-muted text-sm">(48 Reviews)</span>
+              <div className="flex items-center text-accent-pink">
+                {[1,2,3,4,5].map(i => <Star key={i} className="w-4 h-4 fill-current" />)}
+              </div>
+              <span className="text-muted text-sm">(48 Reviews)</span>
             </div>
           </div>
         </div>
@@ -49,12 +49,12 @@ export default function StudioDetailPage() {
         {/* Hero Image / Gallery Section */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[500px]">
           <div className="lg:col-span-2 rounded-r-xl bg-accent-violet/10 border border-white/5 relative overflow-hidden">
-             <div className="absolute inset-0 bg-radial-glow opacity-30" />
-             <div className="absolute inset-0 flex items-center justify-center text-fg/20 uppercase tracking-[1em]">Main Studio View</div>
+            <div className="absolute inset-0 bg-radial-glow opacity-30" />
+            <div className="absolute inset-0 flex items-center justify-center text-fg/20 uppercase tracking-[1em]">Main Studio View</div>
           </div>
           <div className="hidden lg:flex flex-col gap-6">
-             <div className="flex-grow rounded-r-xl bg-accent-pink/5 border border-white/5 flex items-center justify-center text-fg/10">Angle 2</div>
-             <div className="flex-grow rounded-r-xl bg-accent-blue/5 border border-white/5 flex items-center justify-center text-fg/10">Angle 3</div>
+            <div className="flex-grow rounded-r-xl bg-accent-pink/5 border border-white/5 flex items-center justify-center text-fg/10">Angle 2</div>
+            <div className="flex-grow rounded-r-xl bg-accent-blue/5 border border-white/5 flex items-center justify-center text-fg/10">Angle 3</div>
           </div>
         </div>
 

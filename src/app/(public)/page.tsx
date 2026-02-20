@@ -27,9 +27,9 @@ const staggerContainer = {
 const studios = [
     { 
         id: "1", 
-        name: "The Zenith Suite", 
+        name: "Zenith Suite Main", 
         price: "250 AED/hr", 
-        description: "Up to 4 People • 4K Video • Pro Audio",
+        description: "Our flagship 4-microphone setup with 4K multi-cam recording.",
         imageUrl: "/gallery/gallery-1.jpg", 
         available: true 
     },
@@ -37,15 +37,15 @@ const studios = [
         id: "2", 
         name: "Acoustic Lounge", 
         price: "150 AED/hr", 
-        description: "Solo/Duo • Intimate Setting • Soundproof",
+        description: "Intimate 2-person setup optimized for acoustic quality and interviews.",
         imageUrl: "/gallery/gallery-2.jpg", 
         available: true 
     },
     { 
         id: "3", 
-        name: "Creator Hub", 
+        name: "Podcast Setup A", 
         price: "200 AED/hr", 
-        description: "Flexible Space • Green Screen Option",
+        description: "Versatile creator space with green screen and professional lighting.",
         imageUrl: "/gallery/gallery-3.jpg", 
         available: true 
     },
@@ -53,9 +53,9 @@ const studios = [
 
 export default function LandingPage() {
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-black text-white">
       {/* 1. Hero Section (Immersive) */}
-      <section className="relative h-screen min-h-[800px] flex items-center justify-center overflow-hidden">
+      <section className="relative h-screen min-h-[800px] flex items-center justify-center overflow-hidden bg-black">
         {/* 3D Background */}
         <Hero3D />
         
@@ -71,7 +71,7 @@ export default function LandingPage() {
             
             <motion.h1 variants={fadeInUp} className="text-6xl lg:text-8xl font-bold tracking-tight text-white leading-tight">
               Record Without <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent-pink to-accent-violet">Friction.</span>
+              <span className="premium-gradient-text tracking-tighter"><span>Friction.</span></span>
             </motion.h1>
             
             <motion.p variants={fadeInUp} className="text-xl text-white/70 max-w-xl mx-auto lg:mx-0">
@@ -84,40 +84,49 @@ export default function LandingPage() {
                   Get Started
                 </Button>
               </Link>
-              <Link href="/features">
-              <Button size="lg" variant="ghost" className="h-14 px-8 text-lg border border-white/20 bg-white/5 hover:bg-white/10 rounded-xl text-white">
-                    See Features
-              </Button>
+              <Link href="/about">
+                <Button 
+                  size="lg" 
+                  variant="outline" 
+                   className="h-14 px-8 text-lg border-accent-violet/50 bg-accent-violet/10 hover:bg-accent-violet/20 rounded-xl text-white backdrop-blur-sm"
+                >
+                  See Features
+                </Button>
               </Link>
             </motion.div>
 
-            {/* Feature Icons Row from Reference */}
-            <motion.div variants={fadeInUp} className="flex gap-8 pt-8 justify-center lg:justify-start border-t border-white/10 mt-8">
-              <div className="flex gap-3 items-center">
-                <div className="p-2 rounded-lg border border-white/20 bg-white/5">
-                  <Clock className="w-5 h-5 text-white" />
+            {/* Feature Icons Row (Restyling with Premium Gradients) */}
+            <motion.div variants={fadeInUp} className="flex flex-wrap gap-8 pt-12 justify-center lg:justify-start">
+              <div className="flex gap-4 items-center group">
+                <div className="p-3 rounded-xl border border-white/10 bg-white/5 relative overflow-hidden transition-all group-hover:border-accent-pink/50">
+                   <div className="absolute inset-0 bg-gradient-to-br from-accent-pink/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                   <Clock className="w-6 h-6 text-accent-pink" />
                 </div>
                 <div className="text-left">
-                  <p className="text-sm font-bold text-white leading-none">Instant</p>
-                  <p className="text-sm text-white/50 leading-none mt-1">Booking</p>
+                  <span className="text-sm font-bold text-white block leading-tight">Instant</span>
+                  <span className="text-[11px] text-white/50 uppercase tracking-widest font-bold">Booking</span>
                 </div>
               </div>
-              <div className="flex gap-3 items-center">
-                <div className="p-2 rounded-lg border border-white/20 bg-white/5">
-                  <Check className="w-5 h-5 text-[#D936F1]" />
+
+              <div className="flex gap-4 items-center group">
+                <div className="p-3 rounded-xl border border-white/10 bg-white/5 relative overflow-hidden transition-all group-hover:border-accent-violet/50">
+                   <div className="absolute inset-0 bg-gradient-to-br from-accent-violet/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                   <Mic className="w-6 h-6 text-accent-violet" />
                 </div>
                 <div className="text-left">
-                  <p className="text-sm font-bold text-white leading-none">Premium</p>
-                  <p className="text-sm text-white/50 leading-none mt-1">Studios</p>
+                  <span className="text-sm font-bold text-white block leading-tight">Premium</span>
+                  <span className="text-[11px] text-white/50 uppercase tracking-widest font-bold">Studios</span>
                 </div>
               </div>
-              <div className="flex gap-3 items-center">
-                <div className="p-2 rounded-lg border border-white/20 bg-white/5">
-                  <Video className="w-5 h-5 text-[#6A47F2]" />
+
+              <div className="flex gap-4 items-center group">
+                <div className="p-3 rounded-xl border border-white/10 bg-white/5 relative overflow-hidden transition-all group-hover:border-accent-blue/50">
+                   <div className="absolute inset-0 bg-gradient-to-br from-accent-blue/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                   <Video className="w-6 h-6 text-accent-blue" />
                 </div>
                 <div className="text-left">
-                  <p className="text-sm font-bold text-white leading-none">Content</p>
-                  <p className="text-sm text-white/50 leading-none mt-1">Delivery</p>
+                  <span className="text-sm font-bold text-white block leading-tight">Content</span>
+                  <span className="text-[11px] text-white/50 uppercase tracking-widest font-bold">Delivery</span>
                 </div>
               </div>
             </motion.div>
@@ -152,15 +161,24 @@ export default function LandingPage() {
               desc: "Check real-time availability and confirm in seconds.",
             },
           ].map((feature, i) => (
-            <PremiumGlassCard key={i} className="p-8 space-y-4">
-              <div className="w-12 h-12 rounded-r-lg bg-accent-violet/20 flex items-center justify-center text-accent-violet border border-white/5">
-                  <feature.icon className="w-6 h-6" />
+            <div key={i} className="glass-card-premium group p-10 space-y-6 relative overflow-hidden transition-all duration-500 hover:scale-[1.02]">
+                {/* Inner Glow Effect on Hover */}
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_0%_0%,rgba(122,92,255,0.15),transparent_70%)] opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+                
+                <div className="w-16 h-16 rounded-2xl brand-gradient flex items-center justify-center text-white shadow-lg relative z-10 transition-transform duration-500 group-hover:scale-110">
+                  <feature.icon className="w-8 h-8" />
                 </div>
-                <h3 className="text-xl font-bold text-white">{feature.title}</h3>
-                <p className="text-white/60">{feature.desc}</p>
-              </PremiumGlassCard>
-            ))}
-          </div>
+                
+                <div className="relative z-10">
+                    <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-accent-pink transition-colors">{feature.title}</h3>
+                    <p className="text-white/50 leading-relaxed">{feature.desc}</p>
+                </div>
+
+                {/* Bottom Accent Line */}
+                <div className="absolute bottom-0 left-0 h-[2px] w-0 bg-brand-gradient group-hover:w-full transition-all duration-700" />
+            </div>
+          ))}
+        </div>
         </GlassSection>
 
       {/* 3. Studios Grid */}

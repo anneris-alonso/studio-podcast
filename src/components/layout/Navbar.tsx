@@ -23,39 +23,41 @@ export function Navbar() {
   
   return (
     <header 
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? "bg-bg/80 backdrop-blur-md border-b border-white/5 py-4" : "bg-transparent py-6"
-      }`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? "bg-black/40 backdrop-blur-md border-b border-white/5 py-4" : "bg-transparent py-6"}`}
     >
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
-        <Link href="/" className="text-2xl font-bold font-heading tracking-tight">
-          Studio<span className="text-accent-violet">Suite</span>
+        <Link href="/" className="text-2xl font-bold font-heading tracking-tight flex items-center gap-2 group">
+          <span className="text-white group-hover:text-accent-pink transition-colors">Studio</span>
+          <span className="text-accent-violet">Suite</span>
         </Link>
 
-        <nav className="hidden md:flex items-center gap-8">
-          <Link href="/book" className={`text-sm font-medium hover:text-white transition-colors ${pathname === '/book' ? 'text-white' : 'text-muted'}`}>
+        <nav className="hidden md:flex items-center gap-10">
+          <Link href="/book" className={`text-[18px] font-bold transition-colors ${pathname === '/book' ? 'text-accent-pink' : 'text-accent-pink hover:text-accent-pink/80'}`}>
             Book Now
           </Link>
-          <Link href="/gallery" className={`text-sm font-medium hover:text-white transition-colors ${pathname === '/gallery' ? 'text-white' : 'text-muted'}`}>
+          <Link href="/studios" className={`text-[18px] font-bold hover:text-white transition-colors ${pathname === '/studios' ? 'text-white' : 'text-white/60'}`}>
+            Studios
+          </Link>
+          <Link href="/gallery" className={`text-[18px] font-bold hover:text-white transition-colors ${pathname === '/gallery' ? 'text-white' : 'text-white/60'}`}>
             Gallery
           </Link>
-          {/*<Link href="/onboarding" className="text-sm font-medium text-muted hover:text-white transition-colors">
-            Setup
-          </Link>*/}
-          {/* Admin Link - visible for easy access as requested */}
-          {/*<Link href="/admin" className="text-sm font-medium text-accent-pink hover:text-accent-pink/80 transition-colors">
-            Admin
-          </Link>*/}
+          <Link href="/about" className={`text-[18px] font-bold hover:text-white transition-colors ${pathname === '/about' ? 'text-white' : 'text-white/60'}`}>
+            About
+          </Link>
+          <Link href="/contact" className={`text-[18px] font-bold hover:text-white transition-colors ${pathname === '/contact' ? 'text-white' : 'text-white/60'}`}>
+            Contact
+          </Link>
         </nav>
 
-        <div className="flex items-center gap-4">
-          <Link href="/login">
-            <Button variant="ghost" size="sm" className="text-muted hover:text-white">
+        <div className="flex items-center gap-6">
+          <Link href="/login" className="text-[18px] font-bold text-white hover:text-accent-pink transition-colors px-4 py-2">
               Log In
-            </Button>
           </Link>
           <Link href="/book">
-            <Button size="sm" className="bg-brand-gradient text-white border-none shadow-glow">
+            <Button 
+                variant="outline"
+                className="rounded-full bg-transparent border-white text-white hover:bg-brand-gradient hover:border-none shadow-glow hover:scale-105 transition-all text-[18px] font-bold h-12 px-10"
+            >
               Get Started
             </Button>
           </Link>
