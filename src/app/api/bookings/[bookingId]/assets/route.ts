@@ -6,7 +6,7 @@ import { requireBookingOwnerOrAdmin } from '@/lib/auth-guards';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { bookingId: string } }
+  { params }: { params: Promise<{ bookingId: string }> }
 ) {
   const { bookingId } = await params;
   const requestId = request.headers.get("x-request-id") || "unknown";

@@ -8,9 +8,15 @@ export async function middleware(request: NextRequest) {
 
   const { pathname } = request.nextUrl;
 
-  // 1. Force HTTPS in production
-  if (process.env.NODE_ENV === 'production' && request.headers.get('x-forwarded-proto') !== 'https') {
-    return NextResponse.redirect(`https://${request.headers.get('host')}${pathname}`, 301);
+  // 1. Force HTTPS in production (exclude localhost and use 307 to avoid caching)
+  const host = request.headers.get('host') || '';
+  if (
+    process.env.NODE_ENV === 'production' && 
+    !host.includes('localhost') && 
+    request.headers.get('x-forwarded-proto') !== 'https'
+  ) {
+    const httpsUrl = new URL(pathname, `https://${host}`);
+    return NextResponse.redirect(httpsUrl, 307);
   }
 
   // 2. Determine Client IP (TRUST_PROXY check)

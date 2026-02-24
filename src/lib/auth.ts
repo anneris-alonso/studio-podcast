@@ -175,3 +175,22 @@ export async function logout() {
 
   return { success: true };
 }
+
+/**
+ * Generic requestOtp (often used for registration or login)
+ */
+export async function requestOtp(email: string) {
+  return requestRegistrationOtp(email);
+}
+
+/**
+ * Generic verifyOtp
+ */
+export async function verifyOtp(email: string, otp: string) {
+  const verification = await verifyRegistrationOtpOnly(email, otp);
+  if (!verification.success) return verification;
+
+  // For this generic one, we might want to return the user if they exist
+  const user = await prisma.user.findUnique({ where: { email } });
+  return { success: true, user };
+}

@@ -69,7 +69,7 @@ export async function createPackage(data: z.infer<typeof PackageSchema>) {
 
   await logAudit('ADMIN_PACKAGE_CREATE', 'Package', pkg.id, admin, { slug: pkg.slug });
   revalidatePath('/admin/packages');
-  return { success: true, pkg };
+  return { success: true };
 }
 
 export async function updatePackage(id: string, data: Partial<z.infer<typeof PackageSchema>>) {
@@ -95,7 +95,7 @@ export async function updatePackage(id: string, data: Partial<z.infer<typeof Pac
 
   await logAudit('ADMIN_PACKAGE_UPDATE', 'Package', pkg.id, admin);
   revalidatePath('/admin/packages');
-  return { success: true, pkg };
+  return { success: true };
 }
 
 export async function deactivatePackage(id: string) {

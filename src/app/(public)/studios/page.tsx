@@ -7,34 +7,29 @@ import { ArrowRight, Mic, Video, Zap, Clock } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
-const studios = [
-    { 
-        id: "1", 
-        name: "Zenith Suite Main", 
-        price: "250 AED/hr", 
-        description: "Our flagship 4-microphone setup with 4K multi-cam recording.",
-        imageUrl: "/gallery/gallery-1.jpg", 
-        slug: "zenith-suite-main"
-    },
-    { 
-        id: "2", 
-        name: "Acoustic Lounge", 
-        price: "150 AED/hr", 
-        description: "Intimate 2-person setup optimized for acoustic quality and interviews.",
-        imageUrl: "/gallery/gallery-2.jpg", 
-        slug: "acoustic-lounge"
-    },
-    { 
-        id: "3", 
-        name: "Podcast Setup A", 
-        price: "200 AED/hr", 
-        description: "Versatile creator space with green screen and professional lighting.",
-        imageUrl: "/gallery/gallery-3.jpg", 
-        slug: "podcast-setup-a"
-    },
-];
+import { useState, useEffect } from "react";
 
 export default function StudiosPage() {
+    const [studios, setStudios] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        fetch("/api/studios")
+            .then(res => res.json())
+            .then(data => {
+                setStudios(data);
+                setLoading(false);
+            });
+    }, []);
+
+    if (loading) {
+        return (
+            <main className="min-h-screen bg-black text-white pt-32 pb-20 px-6 flex items-center justify-center">
+                <Navbar />
+                <div className="text-2xl font-bold animate-pulse">Loading Studios...</div>
+            </main>
+        );
+    }
     return (
         <main className="min-h-screen bg-black text-white pt-32 pb-20 px-6">
             <Navbar />
@@ -63,13 +58,13 @@ export default function StudiosPage() {
                                     <div className="relative h-64 overflow-hidden rounded-t-2xl">
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-10" />
                                         <img 
-                                            src={studio.imageUrl} 
+                                            src={studio.coverImageUrl || "/gallery/gallery-1.jpg"} 
                                             alt={studio.name}
                                             className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
                                         />
                                         <div className="absolute top-4 right-4 z-20">
                                             <span className="bg-brand-gradient px-4 py-1 rounded-full text-xs font-bold shadow-lg">
-                                                {studio.price}
+                                                {studio.hourlyRate} AED/hr
                                             </span>
                                         </div>
                                     </div>

@@ -1,7 +1,9 @@
 import { requireAdmin } from '@/lib/auth-guards';
+import { logout } from '@/lib/auth';
+import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { GlassCard } from '@/components/ui/glass-card';
-import { LayoutDashboard, Mic2, SquareStack, Settings, Package as PackageIcon, Calendar as CalendarIcon, Activity } from 'lucide-react';
+import { LayoutDashboard, Mic2, SquareStack, Settings, Package as PackageIcon, Calendar as CalendarIcon, Activity, LogOut } from 'lucide-react';
 import { ThemeProvider } from '@/components/theme-provider';
 
 export default async function AdminLayout({
@@ -11,6 +13,12 @@ export default async function AdminLayout({
 }) {
   // Enforce Admin Access for the entire layout
   const user = await requireAdmin();
+
+  async function handleLogout() {
+    "use server";
+    await logout();
+    redirect("/login");
+  }
 
   const navItems = [
     { name: 'Dashboard', href: '/admin', icon: <LayoutDashboard className="w-4 h-4" /> },
@@ -46,7 +54,7 @@ export default async function AdminLayout({
             ))}
           </nav>
 
-          <div className="mt-auto pt-6 border-t border-border/10 px-2">
+          <div className="mt-auto pt-6 border-t border-border/10 px-2 space-y-4">
             <div className="flex items-center gap-3">
                <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center text-xs font-bold text-primary">
                   {user.email?.[0].toUpperCase() || 'A'}
@@ -56,6 +64,16 @@ export default async function AdminLayout({
                   <span className="text-[10px] text-muted uppercase">{user.role}</span>
                </div>
             </div>
+
+            <form action={handleLogout}>
+              <button
+                 type="submit"
+                 className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-red-500/10 text-red-400 transition-colors"
+              >
+                <LogOut className="w-4 h-4" />
+                <span className="text-sm font-medium">Logout</span>
+              </button>
+            </form>
           </div>
         </aside>
 

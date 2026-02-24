@@ -14,13 +14,18 @@ export async function POST(request: NextRequest) {
 
     const result = await verifyOtp(email, code);
 
-    if (!result.success || !result.user) {
-      return NextResponse.json({ error: result.error || "verification_failed", requestId }, { status: 401 });
+    if (!result.success) {
+      return NextResponse.json({ error: (result as any).error || "verification_failed", requestId }, { status: 401 });
+    }
+
+    const user = (result as any).user;
+    if (!user) {
+      return NextResponse.json({ error: "user_not_found", requestId }, { status: 401 });
     }
 
     return NextResponse.json({ 
       success: true, 
-      user: { id: result.user.id, role: result.user.role },
+      user: { id: user.id, role: user.role },
       requestId 
     });
   } catch (error: any) {

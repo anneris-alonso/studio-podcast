@@ -81,8 +81,8 @@ export async function POST(request: NextRequest) {
         planId: plan.id,
         planSlug: plan.slug,
       },
-      success_url: `${process.env.APP_URL}/account/billing?status=success&session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.APP_URL}/pricing?status=cancel`,
+      success_url: `${process.env.APP_URL || 'http://localhost:3000'}/account/billing?status=success&session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.APP_URL || 'http://localhost:3000'}/pricing?status=cancel`,
     });
 
     return NextResponse.json({ url: session.url });

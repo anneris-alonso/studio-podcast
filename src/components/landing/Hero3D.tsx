@@ -178,7 +178,7 @@ export function Hero3D() {
     }, []);
 
     return (
-        <div className="absolute inset-0 z-0 w-full h-full pointer-events-none bg-black">
+        <div className="absolute inset-0 z-0 w-full h-full pointer-events-none bg-transparent">
             {/* 
                 SCENA 3D (Comentada temporalmente)
                 Descomenta el bloque <Canvas> para volver al micro 3D
@@ -206,7 +206,7 @@ export function Hero3D() {
                 muted
                 loop
                 playsInline
-                className="absolute inset-0 w-full h-full object-cover scale-[1.05]"
+                className="absolute inset-0 w-full h-full object-cover scale-[1.05] opacity-90"
             >
                 <source src="/video/hero.mp4" type="video/mp4" />
             </video>

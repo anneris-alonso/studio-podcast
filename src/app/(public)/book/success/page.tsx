@@ -35,10 +35,16 @@ function SuccessContent() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ bookingId }),
       });
-      const { url } = await res.json();
-      if (url) window.location.href = url;
-    } catch (err) {
+      const data = await res.json();
+      
+      if (data.error) {
+        throw new Error(data.error);
+      }
+      
+      if (data.url) window.location.href = data.url;
+    } catch (err: any) {
       console.error(err);
+      alert(`Payment Initialization Failed: ${err.message}`);
     } finally {
       setPaying(false);
     }
@@ -55,13 +61,13 @@ function SuccessContent() {
   if (!booking) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-bg">
-        <GlassCard className="text-center p-12 space-y-4">
-          <h1 className="text-4xl font-bold text-fg">Booking Not Found</h1>
-          <p className="text-muted">We couldn't locate your booking details.</p>
+        <div className="glass-card-premium text-center p-12 space-y-4 border-gradient-fine">
+          <h1 className="text-4xl font-bold text-white">Booking Not Found</h1>
+          <p className="text-white/50">We couldn't locate your booking details.</p>
           <Link href="/book">
-            <UIButton variant="primary">Try Again</UIButton>
+            <UIButton className="bg-brand-gradient text-white border-none py-6 px-8 rounded-full font-bold shadow-[0_0_20px_rgba(122,92,255,0.3)]">Try Again</UIButton>
           </Link>
-        </GlassCard>
+        </div>
       </div>
     );
   }
@@ -71,76 +77,80 @@ function SuccessContent() {
   return (
     <div className="max-w-3xl mx-auto px-6 pt-32 pb-24 space-y-8">
       <div className="text-center space-y-4">
-        <div className="w-20 h-20 rounded-full bg-accent-violet/10 flex items-center justify-center text-accent-violet mx-auto">
+        <div className="w-20 h-20 rounded-full bg-accent-violet/10 flex items-center justify-center text-accent-violet mx-auto shadow-[0_0_30px_rgba(122,92,255,0.2)]">
           <CheckCircle2 className="w-12 h-12" />
         </div>
-        <h1 className="text-5xl font-bold text-fg">Booking {isPaid ? "Confirmed & Paid" : "Confirmed"}</h1>
-        <p className="text-muted text-lg">Your recording session is scheduled at {booking.room?.name || "The Zenith Suite"}.</p>
+        <h1 className="text-5xl font-bold text-white font-heading">Booking {isPaid ? "Confirmed & Paid" : "Confirmed"}</h1>
+        <p className="text-white/50 text-lg">Your recording session is scheduled at {booking.room?.name || "The Zenith Suite"}.</p>
       </div>
 
-      <GlassCard className="p-8 space-y-8 border-accent-violet/20">
-        <div className="flex justify-between items-start border-b border-white/5 pb-6">
+      <div className="glass-card-premium p-8 space-y-8 border-gradient-fine relative overflow-hidden">
+        {/* Subtle Background Glow */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-accent-pink/10 rounded-full blur-[100px] pointer-events-none -translate-y-1/2 translate-x-1/2" />
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-accent-violet/10 rounded-full blur-[100px] pointer-events-none translate-y-1/2 -translate-x-1/2" />
+
+        <div className="flex justify-between items-start border-b border-white/5 pb-6 relative z-10">
           <div className="space-y-1">
-            <p className="text-xs text-muted uppercase tracking-[0.2em]">Booking Reference</p>
-            <p className="text-xl font-bold text-fg">#{booking.id}</p>
+            <p className="text-[10px] text-white/40 font-bold uppercase tracking-[0.2em]">Booking Reference</p>
+            <p className="text-2xl font-bold text-white tracking-wider">#{booking.id?.split('-')[0].toUpperCase()}</p>
           </div>
           <div className="text-right space-y-1">
-            <p className="text-xs text-muted uppercase tracking-[0.2em]">Status</p>
-            <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${isPaid ? "bg-green-500/10 text-green-400 border border-green-500/20" : "bg-accent-violet/10 text-accent-violet border border-accent-violet/20"}`}>
+            <p className="text-[10px] text-white/40 font-bold uppercase tracking-[0.2em]">Status</p>
+            <span className={`px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${isPaid ? "bg-green-500/10 text-green-400 border border-green-500/20" : "bg-accent-violet/10 text-accent-violet border border-accent-violet/20"}`}>
               {booking.status}
             </span>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10">
           <div className="space-y-4">
-            <h3 className="text-sm font-bold text-muted uppercase tracking-widest flex items-center gap-2">
+            <h3 className="text-[10px] font-bold text-accent-violet uppercase tracking-[0.2em] flex items-center gap-2">
               <Clock className="w-4 h-4" /> Schedule
             </h3>
             <div className="space-y-2">
-               <p className="text-fg font-medium">{new Date(booking.startTime).toLocaleDateString()} at {new Date(booking.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
-               <p className="text-muted text-sm capitalize">{booking.timeZone}</p>
+               <p className="text-white font-bold">{new Date(booking.startTime).toLocaleDateString()} at {new Date(booking.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+               <p className="text-white/40 text-[10px] uppercase font-bold tracking-widest">{booking.timeZone}</p>
             </div>
           </div>
           <div className="space-y-4">
-            <h3 className="text-sm font-bold text-muted uppercase tracking-widest flex items-center gap-2">
+            <h3 className="text-[10px] font-bold text-accent-pink uppercase tracking-[0.2em] flex items-center gap-2">
               <Receipt className="w-4 h-4" /> Summary
             </h3>
             <div className="space-y-2">
-               <p className="text-fg font-medium">{booking.totalPriceAedSnapshot} AED Total</p>
-               {isPaid && booking.paidAt && (
-                 <p className="text-green-400 text-xs">Paid on {new Date(booking.paidAt).toLocaleString()}</p>
-               )}
+              <p className="text-white font-bold">{booking.totalPriceAedSnapshot} <span className="text-[10px] text-white/50 font-bold uppercase tracking-widest ml-1">AED Total</span></p>
+              {isPaid && booking.paidAt && (
+                <p className="text-green-400 text-[10px] font-bold uppercase tracking-widest">Paid on {new Date(booking.paidAt).toLocaleDateString()}</p>
+              )}
             </div>
           </div>
         </div>
 
         {!isPaid && (
-          <div className="pt-6 border-t border-white/5 text-center space-y-6">
-            <div className="p-6 bg-accent-violet/5 rounded-r-lg border border-accent-violet/10">
-               <p className="text-sm text-fg/80 mb-4 lowercase">Payment is required to secure your session. You can pay now or through your dashboard later.</p>
-               <UIButton 
-                 onClick={handlePayNow} 
-                 disabled={paying}
-                 className="w-full bg-brand-gradient text-white h-14 text-lg"
-               >
-                 {paying ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : "Pay Now with Stripe"}
-               </UIButton>
+          <div className="pt-6 border-t border-white/5 text-center space-y-6 relative z-10">
+            <div className="p-8 bg-black/40 rounded-2xl border border-white/5">
+              <p className="text-sm text-white/50 mb-6">Payment is required to secure your session. You can pay now or through your dashboard later.</p>
+              <UIButton 
+                onClick={handlePayNow} 
+                disabled={paying}
+                className="w-full bg-brand-gradient text-white h-14 rounded-2xl text-lg font-bold border-none shadow-[0_0_20px_rgba(122,92,255,0.3)] hover:shadow-[0_0_30px_rgba(122,92,255,0.5)] transition-all duration-300"
+              >
+                {paying ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : "Pay Now with Stripe"}
+              </UIButton>
             </div>
           </div>
         )}
 
         {isPaid && (
-          <div className="pt-6 border-t border-white/5">
-             <div className="flex items-center justify-between text-sm">
-                <span className="text-muted italic lowercase">A confirmation email has been sent to you.</span>
-                <Link href="/dashboard">
-                  <UIButton variant="ghost" size="sm">Go to Dashboard <ArrowRight className="ml-2 w-4 h-4" /></UIButton>
-                </Link>
-             </div>
+          <div className="pt-6 border-t border-white/5 relative z-10">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-white/40 italic text-xs">A confirmation email has been sent to you.</span>
+              <Link href="/dashboard">
+                <UIButton variant="ghost" size="sm" className="text-white/50 hover:text-white hover:bg-white/10 uppercase tracking-widest font-bold text-[10px]">Go to Dashboard <ArrowRight className="ml-2 w-4 h-4" /></UIButton>
+              </Link>
+            </div>
           </div>
         )}
-      </GlassCard>
+      </div>
 
       <div className="text-center opacity-40">
         <p className="text-xs uppercase tracking-[0.3em]">Studio Suite Dubai • Premium Podcast Production</p>

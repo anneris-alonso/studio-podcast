@@ -67,14 +67,14 @@ export default function UIShowcase() {
              <GlassCard className="space-y-6">
                 <h3 className="text-sm font-semibold uppercase tracking-widest text-muted">Brand Buttons</h3>
                 <div className="flex flex-wrap gap-4">
-                  <Button variant="primary">Brand Gradient</Button>
+                  <Button variant="default">Brand Gradient</Button>
                   <Button variant="secondary">Dark / Light</Button>
                   <Button variant="outline">Outline</Button>
                   <Button variant="ghost">Ghost</Button>
                 </div>
                 <div className="flex flex-wrap gap-4 pt-4 border-t border-border/10">
-                  <Button variant="primary" size="lg">Large Scale</Button>
-                  <Button variant="primary" size="sm">Small Scale</Button>
+                  <Button variant="default" size="lg">Large Scale</Button>
+                  <Button variant="default" size="sm">Small Scale</Button>
                 </div>
              </GlassCard>
 
@@ -149,7 +149,7 @@ export default function UIShowcase() {
                     </div>
                     <div className="flex justify-end gap-3 mt-4">
                       <Button variant="ghost">Close</Button>
-                      <Button variant="primary">Confirm</Button>
+                      <Button variant="default">Confirm</Button>
                     </div>
                   </ModalContent>
                 </Modal>

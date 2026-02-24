@@ -3,8 +3,7 @@ import { listPackages } from "@/server/data-access";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const roomIdStr = searchParams.get("studioRoomId");
-  const roomId = roomIdStr ? parseInt(roomIdStr, 10) : undefined;
+  const roomId = searchParams.get("studioRoomId") || undefined;
 
   try {
     const packages = await listPackages(roomId);

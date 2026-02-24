@@ -30,9 +30,9 @@ export function StudioCard({ studio, index }: StudioCardProps) {
             <div className="glass-card-premium group cursor-pointer h-full flex flex-col">
                 <div className="relative h-64 overflow-hidden rounded-t-3xl">
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-10" />
-                    {studio.imageUrl ? (
+                    {studio.imageUrl || (studio as any).coverImageUrl ? (
                         <Image 
-                            src={studio.imageUrl} 
+                            src={studio.imageUrl || (studio as any).coverImageUrl} 
                             alt={studio.name} 
                             fill
                             className="object-cover transition-transform duration-700 group-hover:scale-110"

@@ -7,7 +7,7 @@ import { requireAssetOwnerOrAdmin } from '@/lib/auth-guards';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { assetId: string } }
+  { params }: { params: Promise<{ assetId: string }> }
 ) {
   const { assetId } = await params;
 

@@ -1,3 +1,4 @@
+'use server';
 import { requireAdmin } from '@/lib/auth-guards';
 import { sendBookingCalendarInvite } from '@/server/calendar/actions';
 import { revalidatePath } from 'next/cache';

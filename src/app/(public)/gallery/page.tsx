@@ -46,8 +46,11 @@ export default function GalleryPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.1 }}
           >
-            <GlassCard className="p-0 overflow-hidden group border-white/5 hover:border-accent-violet/30 transition-all duration-500 h-full">
-              <div className="aspect-[4/3] relative overflow-hidden bg-white/5">
+            <div className="glass-card-premium p-4 group transition-all duration-500 hover:scale-[1.02] h-full relative overflow-hidden bg-transparent border-white/5 hover:border-accent-violet/30">
+               {/* Subtle Inner Glow on Hover */}
+               <div className="absolute inset-0 bg-brand-gradient opacity-0 group-hover:opacity-20 transition-opacity duration-700 pointer-events-none" />
+                
+               <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-black/40 border border-white/5">
                 {/* Image Rendering */}
                 <img 
                   src={photo.src} 
@@ -56,19 +59,19 @@ export default function GalleryPage() {
                 />
                 
                 {/* Overlay for glass look and readability */}
-                <div className="absolute inset-0 bg-gradient-to-t from-bg via-transparent to-transparent opacity-80" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60" />
                 
-                <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end">
+                <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end z-10">
                    <div>
                      <span className="text-[10px] uppercase tracking-widest text-accent-violet font-bold mb-1 block">{photo.category}</span>
-                     <h3 className="text-lg font-bold text-fg">{photo.title}</h3>
+                     <h3 className="text-lg font-bold text-white">{photo.title}</h3>
                    </div>
-                   <Button size="icon" variant="ghost" className="rounded-full bg-white/5 backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity">
-                     <Info className="w-4 h-4" />
+                   <Button size="icon" variant="ghost" className="rounded-full bg-white/5 backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity border border-white/5">
+                     <Info className="w-4 h-4 text-white" />
                    </Button>
                 </div>
               </div>
-            </GlassCard>
+            </div>
           </motion.div>
         ))}
       </div>

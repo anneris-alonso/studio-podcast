@@ -6,14 +6,15 @@ import { v4 as uuidv4 } from 'uuid';
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { bookingId: string } }
+  { params }: { params: Promise<{ bookingId: string }> }
 ) {
+  const { bookingId } = await params;
   const session = await getSession();
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const booking = await getBookingDetailForUser(session.userId, params.bookingId);
+  const booking = await getBookingDetailForUser(session.userId, bookingId);
   if (!booking) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }

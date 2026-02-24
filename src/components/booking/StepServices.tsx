@@ -76,51 +76,54 @@ export function StepServices({ selected, packageQuantity, packageUnit, onUpdate,
         {services.map((service) => {
           const sel = getSelected(service.id);
           return (
-            <GlassCard 
+            <div 
               key={service.id}
-              className={`cursor-pointer transition-all duration-300 border-2 flex flex-col ${
+              className={`glass-card-premium p-6 cursor-pointer transition-all duration-500 hover:scale-[1.02] flex flex-col group relative ${
                 sel 
-                  ? "border-premium-purple bg-premium-purple/5" 
-                  : "border-transparent hover:border-premium-purple/30"
+                  ? "ring-1 ring-accent-pink/50 shadow-[0_0_30px_rgba(255,42,133,0.15)]" 
+                  : "hover:shadow-[0_8px_32px_rgba(255,255,255,0.05)]"
               }`}
               onClick={() => toggleService(service)}
             >
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-1 space-y-1">
-                  <h3 className="text-sm font-bold">{service.name}</h3>
-                  <p className="text-xs text-muted-foreground line-clamp-1">{service.description}</p>
-                  <div className="text-sm font-bold text-premium-purple">
-                    +{Number(service.priceMinor / 100)} <span className="text-[10px] font-normal uppercase">AED {calculateUnitDisplay(service.unit)}</span>
+               {/* Active/Hover Glows */}
+               <div className={`absolute inset-0 bg-brand-gradient mix-blend-overlay transition-opacity duration-500 pointer-events-none rounded-3xl ${sel ? "opacity-10" : "opacity-0 group-hover:opacity-5"}`} />
+
+              <div className="flex items-start justify-between gap-4 relative z-10">
+                <div className="flex-1 space-y-2">
+                  <h3 className="text-lg font-bold text-white group-hover:text-accent-pink transition-colors">{service.name}</h3>
+                  <p className="text-sm text-white/50">{service.description}</p>
+                  <div className="text-lg font-bold text-white pt-1">
+                    +{Number(service.priceMinor / 100)} <span className="text-[10px] font-bold uppercase tracking-widest text-white/40 ml-1">AED {calculateUnitDisplay(service.unit)}</span>
                   </div>
                 </div>
-                <div className={`w-6 h-6 rounded-full border flex items-center justify-center transition-all ${
+                <div className={`w-8 h-8 rounded-full border flex items-center justify-center transition-all shadow-lg ${
                   sel 
-                    ? "bg-premium-purple border-premium-purple text-white" 
-                    : "border-white/20 text-muted-foreground"
+                    ? "bg-brand-gradient border-transparent text-white shadow-[0_0_15px_rgba(255,42,133,0.5)]" 
+                    : "border-white/20 text-white/50"
                 }`}>
                   {sel ? <Check className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
                 </div>
               </div>
 
               {sel && (
-                <div className="mt-4 pt-4 border-t border-premium-purple/20 space-y-2" onClick={(e) => e.stopPropagation()}>
+                <div className="mt-6 pt-4 border-t border-white/10 space-y-2 relative z-10" onClick={(e) => e.stopPropagation()}>
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-medium text-muted-foreground uppercase opacity-70">Quantity</span>
-                    <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest">Quantity</span>
+                    <div className="flex items-center gap-4 bg-black/50 p-2 rounded-xl border border-white/10">
                       <Button 
                         variant="ghost" 
                         size="icon" 
-                        className="h-6 w-6 rounded-full p-0 h-min w-min"
+                        className="h-8 w-8 rounded-lg hover:bg-white/10 text-white"
                         onClick={() => updateQuantity(service.id, sel.quantity - service.stepQuantity, service)}
                         disabled={sel.quantity <= service.minQuantity}
                       >
                         -
                       </Button>
-                      <span className="text-xs font-bold w-4 text-center">{sel.quantity}</span>
+                      <span className="text-md font-bold w-6 text-center text-white">{sel.quantity}</span>
                       <Button 
                         variant="ghost" 
                         size="icon" 
-                        className="h-6 w-6 rounded-full p-0 h-min w-min"
+                        className="h-8 w-8 rounded-lg hover:bg-white/10 text-white"
                         onClick={() => updateQuantity(service.id, sel.quantity + service.stepQuantity, service)}
                         disabled={sel.quantity >= service.maxQuantity}
                       >
@@ -130,17 +133,16 @@ export function StepServices({ selected, packageQuantity, packageUnit, onUpdate,
                   </div>
                 </div>
               )}
-            </GlassCard>
+            </div>
           );
         })}
       </div>
 
-      <div className="flex justify-between pt-4">
-        <Button variant="ghost" onClick={onBack}>Back</Button>
+      <div className="flex justify-between pt-8">
+        <Button variant="ghost" onClick={onBack} className="text-white/50 hover:text-white hover:bg-white/5">Back</Button>
         <Button 
-          variant="glass" 
           onClick={onNext}
-          className="px-8 border-premium-purple/30 hover:border-premium-purple/60"
+          className="px-8 h-14 rounded-2xl text-md font-bold bg-brand-gradient text-white border-none shadow-[0_0_20px_rgba(122,92,255,0.3)] hover:shadow-[0_0_30px_rgba(122,92,255,0.5)] transition-all duration-300 disabled:opacity-50 disabled:shadow-none"
         >
           Review Booking
         </Button>

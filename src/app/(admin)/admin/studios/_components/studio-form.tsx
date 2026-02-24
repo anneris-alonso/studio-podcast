@@ -126,8 +126,27 @@ export default function StudioForm({ studio, mode = 'create' }: StudioFormProps)
               {form.formState.errors.capacity && <p className="text-red-400 text-xs">{form.formState.errors.capacity.message}</p>}
             </div>
              <div className="space-y-2">
-              <label className="text-xs font-medium text-muted-foreground">Cover Image URL</label>
-              <Input {...form.register('coverImageUrl')} placeholder="https://..." className="bg-white/5 border-white/10" />
+              <label className="text-xs font-medium text-muted-foreground">Cover Image (Upload)</label>
+              <Input 
+                type="file" 
+                accept="image/*"
+                className="bg-white/5 border-white/10 file:text-white file:font-medium file:cursor-pointer cursor-pointer" 
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                      form.setValue('coverImageUrl', reader.result as string, { shouldValidate: true });
+                    };
+                    reader.readAsDataURL(file);
+                  } else {
+                    form.setValue('coverImageUrl', '');
+                  }
+                }}
+              />
+              {form.watch('coverImageUrl') && (
+                <div className="mt-2 text-[10px] text-emerald-400">✓ Image loaded ready to be saved</div>
+              )}
               {form.formState.errors.coverImageUrl && <p className="text-red-400 text-xs">{form.formState.errors.coverImageUrl.message}</p>}
             </div>
           </div>

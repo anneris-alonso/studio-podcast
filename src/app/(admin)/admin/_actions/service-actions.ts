@@ -65,7 +65,7 @@ export async function createService(data: z.infer<typeof ServiceSchema>) {
 
   await logAudit('ADMIN_SERVICE_CREATE', 'Service', svc.id, admin, { slug: svc.slug });
   revalidatePath('/admin/services');
-  return { success: true, svc };
+  return { success: true };
 }
 
 export async function updateService(id: string, data: Partial<z.infer<typeof ServiceSchema>>) {
@@ -86,7 +86,7 @@ export async function updateService(id: string, data: Partial<z.infer<typeof Ser
 
   await logAudit('ADMIN_SERVICE_UPDATE', 'Service', svc.id, admin);
   revalidatePath('/admin/services');
-  return { success: true, svc };
+  return { success: true };
 }
 
 export async function deactivateService(id: string) {

@@ -58,7 +58,7 @@ export async function createStudioRoom(data: z.infer<typeof StudioSchema>) {
 
   await logAudit('ADMIN_STUDIO_CREATE', 'StudioRoom', studio.id, admin, { slug: studio.slug });
   revalidatePath('/admin/studios');
-  return { success: true, studio };
+  return { success: true };
 }
 
 export async function updateStudioRoom(id: string, data: Partial<z.infer<typeof StudioSchema>>) {
@@ -72,7 +72,7 @@ export async function updateStudioRoom(id: string, data: Partial<z.infer<typeof 
 
   await logAudit('ADMIN_STUDIO_UPDATE', 'StudioRoom', studio.id, admin, { changed: Object.keys(data) });
   revalidatePath('/admin/studios');
-  return { success: true, studio };
+  return { success: true };
 }
 
 export async function deactivateStudioRoom(id: string) {

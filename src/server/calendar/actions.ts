@@ -16,7 +16,7 @@ export async function sendBookingCalendarInvite(bookingId: string, force: boolea
       include: {
         user: true,
         room: true,
-        bookingLineItems: {
+        lineItems: {
           include: {
             service: true
           }
@@ -45,18 +45,18 @@ export async function sendBookingCalendarInvite(bookingId: string, force: boolea
     }
 
     // Build description
-    const packageInfo = booking.bookingLineItems.find(li => !li.serviceId);
-    const services = booking.bookingLineItems.filter(li => li.serviceId);
+    const packageInfo = booking.lineItems.find(li => !li.serviceId);
+    const services = booking.lineItems.filter(li => li.serviceId);
     
     let description = `Booking ID: ${booking.id}\n`;
     if (packageInfo) {
-      description += `Package: ${packageInfo.name} (${packageInfo.quantity} ${packageInfo.unit})\n`;
+      description += `Package: ${packageInfo.nameSnapshot} (${packageInfo.quantity})\n`;
     }
     
     if (services.length > 0) {
       description += `\nAdd-ons:\n`;
       services.forEach(svc => {
-        description += `- ${svc.name} x${svc.quantity}\n`;
+        description += `- ${svc.nameSnapshot} x${svc.quantity}\n`;
       });
     }
     

@@ -24,7 +24,7 @@ function CancelContent() {
         
         <div className="pt-6 border-t border-white/5 space-y-4">
            <Link href={`/book/success?bookingId=${bookingId}`} className="block">
-              <Button variant="primary" className="w-full">
+              <Button variant="default" className="w-full">
                 Back to Booking Summary
               </Button>
            </Link>

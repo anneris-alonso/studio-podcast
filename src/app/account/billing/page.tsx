@@ -83,11 +83,11 @@ export default function BillingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background pt-24 pb-16 px-4 text-foreground">
+    <div className="space-y-8">
       <div className="max-w-4xl mx-auto space-y-8">
         <div className="space-y-2">
-          <h1 className="text-3xl font-bold">Billing & Subscription</h1>
-          <p className="text-muted-foreground">Manage your subscription, credits, and invoices.</p>
+          <h1 className="text-3xl font-bold text-slate-900">Billing & Subscription</h1>
+          <p className="text-slate-500">Manage your subscription, credits, and invoices.</p>
         </div>
 
         {searchParams.get("status") === "success" && (
@@ -99,10 +99,10 @@ export default function BillingPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Subscription Info */}
-          <GlassCard className="p-6 space-y-6">
+          <div className="rounded-xl border border-slate-200 bg-white/50 hover:bg-slate-50 hover:border-accent-blue/30 transition-all shadow-sm p-6 space-y-6">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold flex items-center space-x-2">
-                <CreditCard className="w-5 h-5 text-primary" />
+              <h2 className="text-xl font-semibold flex items-center space-x-2 text-slate-900">
+                <CreditCard className="w-5 h-5 text-accent-blue" />
                 <span>Active Plan</span>
               </h2>
               <span className="bg-primary/20 text-primary text-xs font-bold px-2 py-1 rounded uppercase tracking-wider">
@@ -112,8 +112,8 @@ export default function BillingPage() {
             
             <div className="space-y-4">
               <div>
-                <p className="text-4xl font-bold">{data.subscription.planName}</p>
-                <p className="text-muted-foreground text-sm mt-1">
+                <p className="text-4xl font-bold text-slate-900">{data.subscription.planName}</p>
+                <p className="text-slate-400 text-sm mt-1">
                   Next renewal on {data.subscription.currentPeriodEnd}
                 </p>
               </div>
@@ -133,35 +133,35 @@ export default function BillingPage() {
                 </Button>
               </div>
             </div>
-          </GlassCard>
+          </div>
 
           {/* Credits Info */}
-          <GlassCard className="p-6 space-y-6 border-primary/30">
+          <div className="rounded-xl border border-slate-200 bg-white/50 hover:bg-slate-50 hover:border-accent-violet/30 transition-all shadow-sm p-6 space-y-6">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold flex items-center space-x-2">
-                <Clock className="w-5 h-5 text-primary" />
+              <h2 className="text-xl font-semibold flex items-center space-x-2 text-slate-900">
+                <Clock className="w-5 h-5 text-accent-violet" />
                 <span>Studio Credits</span>
               </h2>
             </div>
 
             <div className="space-y-6">
               <div className="grid grid-cols-2 gap-4 text-center">
-                <div className="p-4 rounded-lg bg-background/40 border border-border">
-                  <p className="text-2xl font-bold text-primary">{Math.floor(data.credits.balance / 60)}h</p>
-                  <p className="text-xs text-muted-foreground uppercase tracking-wider mt-1">Total</p>
+                <div className="p-4 rounded-lg bg-slate-50 border border-slate-100">
+                  <p className="text-2xl font-bold text-accent-violet">{Math.floor(data.credits.balance / 60)}h</p>
+                  <p className="text-xs text-slate-400 uppercase tracking-wider mt-1">Total</p>
                 </div>
-                <div className="p-4 rounded-lg bg-background/40 border border-border">
-                  <p className="text-2xl font-bold">{Math.floor(data.credits.remaining / 60)}h</p>
-                  <p className="text-xs text-muted-foreground uppercase tracking-wider mt-1">Available</p>
+                <div className="p-4 rounded-lg bg-slate-50 border border-slate-100">
+                  <p className="text-2xl font-bold text-slate-900">{Math.floor(data.credits.remaining / 60)}h</p>
+                  <p className="text-xs text-slate-400 uppercase tracking-wider mt-1">Available</p>
                 </div>
               </div>
 
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Usage</span>
-                  <span className="font-medium">{Math.floor(data.credits.used / 60)}h / {Math.floor(data.credits.balance / 60)}h</span>
+                  <span className="text-slate-500">Usage</span>
+                  <span className="font-medium text-slate-900">{Math.floor(data.credits.used / 60)}h / {Math.floor(data.credits.balance / 60)}h</span>
                 </div>
-                <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
+                <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
                   <div 
                     className="h-full bg-primary transition-all duration-500 ease-out" 
                     style={{ width: `${(data.credits.used / data.credits.balance) * 100}%` }}
@@ -173,15 +173,15 @@ export default function BillingPage() {
                 Credits reset at the start of each billing period.
               </p>
             </div>
-          </GlassCard>
+          </div>
         </div>
 
         {/* Info Box */}
-        <div className="bg-muted/30 rounded-lg p-6 flex space-x-4 border border-border">
-          <AlertCircle className="w-6 h-6 text-muted-foreground flex-shrink-0" />
+        <div className="bg-slate-50 rounded-lg p-6 flex space-x-4 border border-slate-200">
+          <AlertCircle className="w-6 h-6 text-slate-400 flex-shrink-0" />
           <div className="space-y-1">
-            <h4 className="font-semibold">How credits work</h4>
-            <p className="text-sm text-muted-foreground leading-relaxed">
+            <h4 className="font-semibold text-slate-900">How credits work</h4>
+            <p className="text-sm text-slate-500 leading-relaxed">
               Your subscription includes monthly recording hours. When you book a studio session, 
               the duration will be deducted from your balance. If you run out of credits, 
               you can still book sessions at our standard hourly rates.

@@ -4,10 +4,35 @@ import { computePackagePrice, computeServicePrice, computeEndTime } from "./pric
 
 /**
  * listStudioRooms()
+ * Returns all active studios with their calculated baseline price (the lowest package price)
  */
 export async function listStudioRooms() {
-  return prisma.studioRoom.findMany({
+  const rooms = await prisma.studioRoom.findMany({
+    where: { isActive: true },
+    include: {
+      packages: {
+        where: { isActive: true, active: true },
+        orderBy: { pricePerUnitMinor: 'asc' },
+        take: 1
+      }
+    },
     orderBy: { name: "asc" },
+  });
+
+  return rooms.map(room => {
+    // Determine the baseline price: 
+    // 1. Lowest active package price
+    // 2. Fallback to legacy hourlyRate
+    // 3. Fallback to 0
+    const lowestPackage = room.packages[0];
+    const displayPrice = lowestPackage 
+      ? (lowestPackage.pricePerUnitMinor / 100) 
+      : (room.hourlyRate ? Number(room.hourlyRate) : 0);
+
+    return {
+      ...room,
+      hourlyRate: displayPrice, // Overwrite with dynamic price for UI
+    };
   });
 }
 
@@ -27,10 +52,10 @@ export async function listPackages(studioRoomId?: string) {
   return prisma.package.findMany({
     where: {
       active: true,
-      OR: [
-        { studioRoomId: null },
-        ...(studioRoomId ? [{ studioRoomId }] : []),
-      ],
+      ...(studioRoomId 
+        ? { OR: [{ studioRoomId }, { studioRoomId: null }] } 
+        : {} // If no roomId, just return all active packages
+      ),
     },
     orderBy: { price: "asc" },
   });
@@ -232,6 +257,7 @@ export async function getBookingById(id: string) {
     include: {
       lineItems: true,
       user: true,
+      room: true,
     },
   });
 }
@@ -323,6 +349,7 @@ export async function getActiveSubscription(userId: string) {
     },
     include: {
       plan: true,
+      user: true,
     },
   });
 }

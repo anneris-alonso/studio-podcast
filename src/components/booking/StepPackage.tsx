@@ -17,6 +17,7 @@ interface Package {
   maxQuantity: number;
   stepQuantity: number;
   pricePerUnitMinor: number;
+  durationMinutes: number;
 }
 
 interface StepPackageProps {
@@ -55,56 +56,59 @@ export function StepPackage({ studioId, selected, packageQuantity, onSelect, onN
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {packages.map((pkg) => (
-          <GlassCard 
+          <div 
             key={pkg.id}
-            className={`cursor-pointer transition-all duration-300 border-2 flex flex-col h-full ${
+            className={`glass-card-premium p-6 cursor-pointer transition-all duration-500 hover:scale-[1.02] flex flex-col h-full relative group ${
               selected?.id === pkg.id 
-                ? "border-premium-gold bg-premium-gold/5 scale-[1.02]" 
-                : "border-transparent hover:border-premium-gold/30"
+                ? "ring-1 ring-accent-pink/50 shadow-[0_0_30px_rgba(255,42,133,0.15)]" 
+                : "hover:shadow-[0_8px_32px_rgba(255,255,255,0.05)]"
             }`}
             onClick={() => onSelect(pkg, pkg.minQuantity)}
           >
-            <div className="flex-1 space-y-4">
+             {/* Active/Hover Glows */}
+             <div className={`absolute inset-0 bg-brand-gradient mix-blend-overlay transition-opacity duration-500 pointer-events-none rounded-3xl ${selected?.id === pkg.id ? "opacity-10" : "opacity-0 group-hover:opacity-5"}`} />
+
+            <div className="flex-1 space-y-4 relative z-10">
               <div className="flex justify-between items-start">
-                <h3 className="text-lg font-bold">{pkg.name}</h3>
+                <h3 className="text-xl font-bold text-white group-hover:text-accent-pink transition-colors">{pkg.name}</h3>
                 {pkg.studioRoomId === null && (
-                  <span className="text-[10px] bg-premium-purple/20 text-premium-purple px-2 py-0.5 rounded-full border border-premium-purple/30">
+                  <span className="text-[10px] uppercase font-bold tracking-widest bg-white/5 text-accent-violet px-3 py-1 rounded-full border border-white/10">
                     GLOBAL
                   </span>
                 )}
               </div>
               <div className="space-y-1">
-                <div className="text-3xl font-bold text-premium-gold">
+                <div className="text-3xl font-bold text-white">
                   {pkg.unit === 'FIXED_MINUTES' ? Number(pkg.price) : Number(pkg.pricePerUnitMinor / 100)} 
-                  <span className="text-sm text-muted-foreground font-normal ml-1">
+                  <span className="text-sm uppercase tracking-widest text-white/40 font-bold ml-2">
                     AED {pkg.unit !== 'FIXED_MINUTES' ? `/ ${pkg.unit.toLowerCase()}` : ""}
                   </span>
                 </div>
-                <div className="text-sm text-muted-foreground">
+                <div className="text-[13px] font-medium text-white/50 bg-white/5 px-3 py-1.5 rounded-lg border border-white/10 w-fit">
                   {pkg.credits} Credits included
                 </div>
               </div>
 
               {selected?.id === pkg.id && pkg.unit !== 'FIXED_MINUTES' && (
-                <div className="pt-4 space-y-2" onClick={(e) => e.stopPropagation()}>
-                  <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                <div className="pt-4 space-y-3 border-t border-white/10 mt-4" onClick={(e) => e.stopPropagation()}>
+                  <label className="text-[10px] font-bold text-white/40 uppercase tracking-widest">
                     Select Duration ({pkg.unit.toLowerCase()}s)
                   </label>
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-4 bg-black/50 p-2 rounded-xl border border-white/10 w-fit">
                     <Button 
-                      variant="outline" 
+                      variant="ghost" 
                       size="icon" 
-                      className="h-8 w-8 rounded-full border-premium-gold/30"
+                      className="h-8 w-8 rounded-lg hover:bg-white/10 text-white"
                       onClick={() => handleQuantityChange(packageQuantity - pkg.stepQuantity)}
                       disabled={packageQuantity <= pkg.minQuantity}
                     >
                       -
                     </Button>
-                    <span className="text-lg font-bold w-8 text-center">{packageQuantity}</span>
+                    <span className="text-lg font-bold w-6 text-center text-white">{packageQuantity}</span>
                     <Button 
-                      variant="outline" 
+                      variant="ghost" 
                       size="icon" 
-                      className="h-8 w-8 rounded-full border-premium-gold/30"
+                      className="h-8 w-8 rounded-lg hover:bg-white/10 text-white"
                       onClick={() => handleQuantityChange(packageQuantity + pkg.stepQuantity)}
                       disabled={packageQuantity >= pkg.maxQuantity}
                     >
@@ -114,30 +118,31 @@ export function StepPackage({ studioId, selected, packageQuantity, onSelect, onN
                 </div>
               )}
 
-              <ul className="space-y-2 pt-2">
-                <li className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <Check className="w-3 h-3 text-premium-gold" />
+              <ul className="space-y-2 pt-4 mt-auto border-t border-white/10">
+                <li className="flex items-center gap-2 text-xs font-medium text-white/50">
+                  <div className="w-5 h-5 rounded bg-white/5 flex items-center justify-center border border-white/10">
+                     <Check className="w-3 h-3 text-accent-violet" />
+                  </div>
                   Validity: {pkg.validityDays} Days
                 </li>
               </ul>
             </div>
             {selected?.id === pkg.id && (
-              <div className="pt-4 flex justify-center">
-                <div className="bg-premium-gold text-black rounded-full p-1">
-                  <Check className="w-4 h-4" />
+              <div className="absolute top-6 right-6 z-20">
+                <div className="bg-brand-gradient text-white rounded-full p-1.5 shadow-[0_0_15px_rgba(255,42,133,0.5)]">
+                  <Check className="w-3 h-3" />
                 </div>
               </div>
             )}
-          </GlassCard>
+          </div>
         ))}
       </div>
-      <div className="flex justify-between pt-4">
-        <Button variant="ghost" onClick={onBack}>Back</Button>
+      <div className="flex justify-between pt-8">
+        <Button variant="ghost" onClick={onBack} className="text-white/50 hover:text-white hover:bg-white/5">Back</Button>
         <Button 
-          variant="glass" 
           disabled={!selected} 
           onClick={onNext}
-          className="px-8"
+          className="px-8 h-14 rounded-2xl text-md font-bold bg-brand-gradient text-white border-none shadow-[0_0_20px_rgba(122,92,255,0.3)] hover:shadow-[0_0_30px_rgba(122,92,255,0.5)] transition-all duration-300 disabled:opacity-50 disabled:shadow-none"
         >
           Select Date & Time
         </Button>

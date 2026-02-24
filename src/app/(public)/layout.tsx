@@ -29,11 +29,11 @@ export default function PublicLayout({
   }, []);
 
   return (
-    <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false} forcedTheme="dark">
-      <div className="relative min-h-screen overflow-hidden bg-black text-white selection:bg-accent-violet/30 selection:text-accent-violet dark">
-        {/* Fixed Radial Glow Overlay - Ajustado para ser más sutil y Dubai-style */}
+    <ThemeProvider attribute="class" defaultTheme="dark" forcedTheme="dark" enableSystem={false}>
+      <div className="relative min-h-screen overflow-hidden bg-black text-white selection:bg-accent-violet/30 selection:text-accent-violet">
+        {/* Fixed Radial Glow Overlay - Saturated and Premium */}
         <div 
-          className="fixed inset-0 pointer-events-none z-0 bg-[radial-gradient(circle_at_var(--x,_50%)_var(--y,_30%),_rgba(122,92,255,0.12),_transparent_70%)]"
+          className="fixed inset-0 pointer-events-none z-0 bg-[radial-gradient(circle_at_var(--x,_50%)_var(--y,_30%),_rgba(217,54,241,0.15),_rgba(106,71,242,0.1),_transparent_70%)]"
           style={{ 
             "--x": mousePosition.x, 
             "--y": mousePosition.y 
@@ -41,7 +41,7 @@ export default function PublicLayout({
         />
         
         {/* Grain/Noise Overlay */}
-        <div className="fixed inset-0 pointer-events-none z-[1] bg-grain opacity-[0.03]" />
+        <div className="fixed inset-0 pointer-events-none z-[1] bg-grain opacity-[0.05]" />
 
         {/* Content */}
         <div className="relative z-10 flex flex-col min-h-screen">

@@ -43,10 +43,12 @@ export default function AboutPage() {
                     <motion.div 
                         initial={{ opacity: 0, x: -30 }}
                         whileInView={{ opacity: 1, x: 0 }}
+                        whileHover={{ scale: 1.02, y: -5 }}
                         viewport={{ once: true }}
-                        className="glass-card-premium p-12 group"
+                        transition={{ duration: 0.4 }}
+                        className="glass-card-premium p-12 group cursor-pointer"
                     >
-                        <h2 className="text-4xl font-bold mb-8 leading-tight">The Dubai <br/><span className="premium-gradient-text tracking-tighter">Standard</span></h2>
+                        <h2 className="text-4xl font-bold mb-8 leading-tight">The Dubai <span className="premium-gradient-text tracking-tighter">Standard</span></h2>
                         <p className="text-white/60 leading-relaxed mb-10 text-lg">
                             Born from a desire to redefine podcasting, Studio Suite brings the luxury of Dubai's high-tech scene to every creator. We believe that professional quality shouldn't come with friction.
                         </p>
@@ -70,13 +72,13 @@ export default function AboutPage() {
                     >
                         <div className="absolute inset-0 bg-gradient-to-br from-accent-purple/20 to-transparent z-10 pointer-events-none" />
                         <img 
-                            src="/images/premium-mic-pro.jpg" 
-                            alt="Premium Content Station"
+                            src="/images/studios_page%202.jpg" 
+                            alt="Elite Infrastructure"
                             className="w-full h-full object-cover transform scale-110 hover:scale-100 transition-transform duration-1000"
                         />
                         <div className="absolute bottom-8 left-8 right-8 p-8 glass-card rounded-3xl z-20 backdrop-blur-3xl border-white/10">
                             <h3 className="text-2xl font-bold mb-1">Elite Infrastructure</h3>
-                            <p className="text-white/40 text-[10px] tracking-[0.25em] font-bold uppercase">Business Bay • Dubai Edition</p>
+                            <p className="text-white/40 text-[10px] tracking-[0.25em] font-bold uppercase">Studio City • Dubai Edition</p>
                         </div>
                     </motion.div>
                 </div>
@@ -92,9 +94,10 @@ export default function AboutPage() {
                             key={i}
                             initial={{ opacity: 0, y: 30 }}
                             whileInView={{ opacity: 1, y: 0 }}
+                            whileHover={{ scale: 1.05, y: -10 }}
                             viewport={{ once: true }}
-                            transition={{ delay: i * 0.1 }}
-                            className="glass-card-premium p-10 group relative"
+                            transition={{ duration: 0.4, delay: i * 0.1 }}
+                            className="glass-card-premium p-10 group relative cursor-pointer"
                         >
                             <div className={`absolute top-0 right-10 w-20 h-20 bg-${val.color}/10 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity`} />
                             <h4 className={`text-2xl font-bold mb-4 text-${val.color}`}>{val.title}</h4>
