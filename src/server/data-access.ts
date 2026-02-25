@@ -46,6 +46,38 @@ export async function getStudioRoomBySlug(slug: string) {
 }
 
 /**
+ * getStudioReviews(studioRoomId)
+ * Returns approved reviews for a studio with calculated avg rating
+ */
+export async function getStudioReviews(studioRoomId: string) {
+  const reviews = await prisma.review.findMany({
+    where: { studioRoomId, isApproved: true },
+    orderBy: { createdAt: "desc" },
+    include: { user: { select: { name: true } } },
+  });
+
+  const avg = reviews.length
+    ? reviews.reduce((sum: number, r: { rating: number }) => sum + r.rating, 0) / reviews.length
+    : 0;
+
+  return { reviews, avgRating: Math.round(avg * 10) / 10, count: reviews.length };
+}
+
+/**
+ * createReview()
+ */
+export async function createReview(data: {
+  studioRoomId: string;
+  rating: number;
+  comment: string;
+  authorName: string;
+  userId?: string;
+}) {
+  return prisma.review.create({ data });
+}
+
+
+/**
  * listPackages(studioRoomId)
  */
 export async function listPackages(studioRoomId?: string) {

@@ -1,19 +1,27 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { GlassCard } from "@/components/ui/glass-card";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Mic, Video, Users, CheckCircle2, Calendar, Star } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { ReviewList } from "@/components/reviews/ReviewList";
+import { ReviewForm } from "@/components/reviews/ReviewForm";
 
 export default function StudioDetailPage() {
   const params = useParams();
   const slug = params?.slug as string;
   const [studio, setStudio] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [reviewData, setReviewData] = useState<{ reviews: any[]; avgRating: number; count: number }>({ reviews: [], avgRating: 0, count: 0 });
+
+  const fetchReviews = useCallback((studioSlug: string) => {
+    fetch(`/api/studios/${studioSlug}/reviews`)
+      .then(res => res.json())
+      .then(data => setReviewData(data))
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     if (!slug) return;
@@ -34,6 +42,7 @@ export default function StudioDetailPage() {
               "Professional Lighting Grid"
             ]
           });
+          fetchReviews(slug);
         }
         setLoading(false);
       });
@@ -54,9 +63,13 @@ export default function StudioDetailPage() {
             <h1 className="text-5xl lg:text-7xl font-bold text-white tracking-tight">{studio.name}</h1>
             <div className="flex items-center gap-3">
               <div className="flex items-center text-accent-pink">
-                {[1,2,3,4,5].map(i => <Star key={i} className="w-4 h-4 fill-current" />)}
+                {[1,2,3,4,5].map(i => (
+                  <Star key={i} className={`w-4 h-4 ${i <= Math.round(reviewData.avgRating) ? "fill-current" : "opacity-20"}`} />
+                ))}
               </div>
-              <span className="text-white/50 text-sm">(48 Reviews)</span>
+              <span className="text-white/50 text-sm">
+                {reviewData.count > 0 ? `${reviewData.avgRating.toFixed(1)} (${reviewData.count} review${reviewData.count > 1 ? "s" : ""})` : "No reviews yet"}
+              </span>
             </div>
           </div>
         </div>
@@ -137,6 +150,22 @@ export default function StudioDetailPage() {
               <p className="text-center text-[10px] text-white/30 uppercase tracking-wider relative z-10">Secure Transaction • Professional Support</p>
             </div>
           </aside>
+        </div>
+
+        {/* Reviews Section */}
+        <div className="space-y-8 pt-8 border-t border-white/10">
+          <h2 className="text-2xl font-bold text-white">Studio Reviews</h2>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <ReviewList
+              reviews={reviewData.reviews}
+              avgRating={reviewData.avgRating}
+              count={reviewData.count}
+            />
+            <ReviewForm
+              studioId={slug}
+              onSuccess={() => fetchReviews(slug)}
+            />
+          </div>
         </div>
       </div>
     </div>

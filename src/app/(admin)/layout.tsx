@@ -3,7 +3,7 @@ import { logout } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { GlassCard } from '@/components/ui/glass-card';
-import { LayoutDashboard, Mic2, SquareStack, Settings, Package as PackageIcon, Calendar as CalendarIcon, Activity, LogOut } from 'lucide-react';
+import { LayoutDashboard, Mic2, SquareStack, Settings, Package as PackageIcon, Calendar as CalendarIcon, Activity, LogOut, MessageSquare } from 'lucide-react';
 import { ThemeProvider } from '@/components/theme-provider';
 
 export default async function AdminLayout({
@@ -26,6 +26,7 @@ export default async function AdminLayout({
     { name: 'Packages', href: '/admin/packages', icon: <SquareStack className="w-4 h-4" /> },
     { name: 'Services', href: '/admin/services', icon: <Settings className="w-4 h-4" /> },
     { name: 'Bookings', href: '/admin/bookings', icon: <CalendarIcon className="w-4 h-4" /> },
+    { name: 'Reviews', href: '/admin/reviews', icon: <MessageSquare className="w-4 h-4" /> },
     { name: 'Audit Logs', href: '/admin/audit', icon: <Activity className="w-4 h-4" /> },
   ];
 

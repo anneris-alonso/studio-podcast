@@ -28,8 +28,12 @@ export async function requireUser() {
 export async function requireAdmin() {
   const user = await getCurrentUser();
 
-  if (!user || (user.role !== UserRole.ADMIN && user.role !== UserRole.SUPER_ADMIN)) {
-    throw new Error("forbidden");
+  if (!user) {
+    redirect("/login?from=/admin");
+  }
+
+  if (user.role !== UserRole.ADMIN && user.role !== UserRole.SUPER_ADMIN) {
+    redirect("/unauthorized");
   }
 
   return user;
@@ -41,8 +45,12 @@ export async function requireAdmin() {
 export async function requireSuperAdmin() {
   const user = await getCurrentUser();
 
-  if (!user || user.role !== UserRole.SUPER_ADMIN) {
-    throw new Error("forbidden");
+  if (!user) {
+    redirect("/login?from=/admin");
+  }
+
+  if (user.role !== UserRole.SUPER_ADMIN) {
+    redirect("/unauthorized");
   }
 
   return user;

@@ -31,6 +31,7 @@ model User {
   email            String   @unique
   name             String
   passwordHash     String?  @map("password_hash")
+  googleId         String?  @unique @map("google_id")
   role             UserRole @default(CLIENT)
   stripeCustomerId String?  @unique @map("stripe_customer_id")
   createdAt        DateTime @default(now()) @map("created_at")
@@ -40,6 +41,7 @@ model User {
   ledgerEntries CreditLedger[]
   invoices      Invoice[]
   sessions      Session[]
+  reviews       Review[]
 
   @@map("users")
 }
@@ -85,6 +87,7 @@ model StudioRoom {
 
   bookings Booking[]
   packages Package[]
+  reviews  Review[]
 
   @@map("studio_rooms")
 }
@@ -348,4 +351,21 @@ model AuditLog {
   @@index([actorUserId, createdAt])
   @@index([action, createdAt])
   @@map("audit_logs")
+}
+
+model Review {
+  id           String     @id @default(uuid())
+  rating       Int        // 1 to 5
+  comment      String
+  authorName   String     @default("") @map("author_name")
+  userId       String?    @map("user_id")
+  studioRoomId String     @map("studio_room_id")
+  isApproved   Boolean    @default(false) @map("is_approved")
+  createdAt    DateTime   @default(now()) @map("created_at")
+
+  user         User?      @relation(fields: [userId], references: [id], onDelete: SetNull)
+  studioRoom   StudioRoom @relation(fields: [studioRoomId], references: [id], onDelete: Cascade)
+
+  @@index([studioRoomId, isApproved])
+  @@map("reviews")
 }
