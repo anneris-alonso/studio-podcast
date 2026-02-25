@@ -4,6 +4,7 @@ import { GlassCard } from '@/components/ui/glass-card';
 import { formatDubaiDate } from '@/lib/format';
 import { Activity, Search, Eye } from 'lucide-react';
 import { AuditRowActions } from '@/components/admin/AuditRowActions';
+import { AuditSearch } from '@/components/admin/AuditSearch';
 
 export const dynamic = 'force-dynamic';
 
@@ -39,24 +40,14 @@ export default async function AuditPage({
         </div>
       </div>
 
-       <GlassCard className="p-4 flex gap-4 bg-white/5">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <form>
-            <input 
-              name="q" 
-              defaultValue={q} 
-              placeholder="Search logs..." 
-              className="w-full bg-black/20 border border-white/10 rounded-md pl-9 pr-4 py-2 text-sm focus:outline-none focus:border-primary/50"
-            />
-          </form>
-        </div>
+       <GlassCard className="p-4 flex gap-4 bg-slate-50 border-slate-200">
+         <AuditSearch defaultValue={q} />
       </GlassCard>
 
-      <GlassCard className="p-0 overflow-hidden border-white/5 bg-black/20">
+      <GlassCard className="p-0 overflow-hidden border-slate-200 bg-white shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left">
-            <thead className="text-xs uppercase bg-white/5 text-muted-foreground">
+            <thead className="text-xs uppercase bg-slate-50 text-slate-500 border-b border-slate-200">
               <tr>
                 <th className="px-6 py-4 font-medium">Time (Dubai)</th>
                 <th className="px-6 py-4 font-medium">Actor</th>
@@ -65,7 +56,7 @@ export default async function AuditPage({
                 <th className="px-6 py-4 font-medium">Details</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5">
+            <tbody className="divide-y divide-slate-100">
                {logs.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="px-6 py-12 text-center text-muted-foreground">
@@ -74,7 +65,7 @@ export default async function AuditPage({
                 </tr>
               ) : (
                 logs.map((log) => (
-                  <tr key={log.id} className="hover:bg-white/5 transition-colors">
+                  <tr key={log.id} className="hover:bg-slate-50/50 transition-colors">
                     <td className="px-6 py-4 whitespace-nowrap text-xs text-muted-foreground">
                       {formatDubaiDate(log.createdAt, 'MMM dd, HH:mm:ss')}
                     </td>
