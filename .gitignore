@@ -9,3 +9,34 @@ build
 prisma/backups/*.sql
 !prisma/backups/studio_suite_db_backup.sql
 /uploads
+
+
+# Ignored logs
+*.txt
+*_log.txt
+*_log_*.txt
+*_out.txt
+*_output.txt
+*_error.txt
+prisma_error.txt
+prisma_log.txt
+prisma_validate_error.txt
+tsc_errors.txt
+
+# Ignored IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Ignored test files
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+
+# Ignored temp files
+*.tmp
+*.temp
+*.bak
+*.old

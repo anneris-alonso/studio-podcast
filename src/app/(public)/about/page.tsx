@@ -10,15 +10,7 @@ export default function AboutPage() {
             
             {/* Optimized High-Performance Background (CSS Ambient Glows) */}
             <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-                {/* Fixed Glow 1 - Pink Top Left */}
-                <div className="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] rounded-full bg-accent-pink/10 blur-[120px] animate-pulse" style={{ animationDuration: '8s' }} />
-                
-                {/* Fixed Glow 2 - Violet Middle Right */}
-                <div className="absolute top-[20%] -right-[10%] w-[50%] h-[50%] rounded-full bg-accent-violet/10 blur-[130px] animate-pulse" style={{ animationDuration: '12s' }} />
-                
-                {/* Fixed Glow 3 - Blue Bottom Left */}
-                <div className="absolute -bottom-[10%] -left-[5%] w-[45%] h-[45%] rounded-full bg-accent-blue/10 blur-[100px] animate-pulse" style={{ animationDuration: '10s' }} />
-                
+
                 {/* Grain Overlay for Texture */}
                 <div className="absolute inset-0 opacity-[0.03] mix-blend-overlay pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
             </div>
@@ -29,12 +21,12 @@ export default function AboutPage() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8 }}
-                    className="text-center mb-16"
+                    className="text-left mb-20"
                 >
                     <h1 className="text-5xl md:text-7xl font-bold font-heading mb-6 tracking-tight">
-                        Our <span className="premium-gradient-text">Story</span>
+                        Our <span className="premium-gradient-text"><span>Story</span></span>
                     </h1>
-                    <p className="text-xl text-white/60 max-w-2xl mx-auto">
+                    <p className="text-xl text-white/60 max-w-2xl">
                         Elevating the art of sound through precision engineering and immersive design.
                     </p>
                 </motion.div>
@@ -48,7 +40,7 @@ export default function AboutPage() {
                         transition={{ duration: 0.4 }}
                         className="glass-card-premium p-12 group cursor-pointer"
                     >
-                        <h2 className="text-4xl font-bold mb-8 leading-tight">The Dubai <span className="premium-gradient-text tracking-tighter">Standard</span></h2>
+                        <h2 className="text-4xl font-bold mb-8 leading-tight">The Dubai Standard</h2>
                         <p className="text-white/60 leading-relaxed mb-10 text-lg">
                             Born from a desire to redefine podcasting, Studio Suite brings the luxury of Dubai's high-tech scene to every creator. We believe that professional quality shouldn't come with friction.
                         </p>

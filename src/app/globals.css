@@ -71,7 +71,7 @@
   }
 
   .glass-card {
-    @apply backdrop-blur-glass border relative overflow-hidden;
+    @apply backdrop-blur-glass border overflow-hidden;
     background-color: rgba(var(--glass), var(--glass-alpha));
     border-color: rgba(var(--border), var(--glass-border-alpha));
     box-shadow: 
@@ -81,7 +81,7 @@
   }
 
   .glass-card-premium {
-    @apply relative overflow-hidden backdrop-blur-[32px] rounded-3xl bg-white/[0.03] border-white/10;
+    @apply overflow-hidden backdrop-blur-[32px] rounded-3xl bg-white/[0.03] border-white/10;
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
   }
 

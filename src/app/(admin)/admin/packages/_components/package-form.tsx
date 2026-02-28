@@ -55,11 +55,11 @@ export default function PackageForm({ pkg, mode = 'create' }: { pkg?: any; mode?
 
   // Enforce Fixed Minutes Rules on UI change
   useEffect(() => {
-     if (unit === PackageUnit.FIXED_MINUTES) {
+    if (unit === PackageUnit.FIXED_MINUTES) {
         form.setValue('minQuantity', 1);
         form.setValue('maxQuantity', 1);
         form.setValue('stepQuantity', 1);
-     }
+    }
   }, [unit, form]);
 
   const onSubmit = async (data: any) => {
@@ -95,10 +95,10 @@ export default function PackageForm({ pkg, mode = 'create' }: { pkg?: any; mode?
   const [priceAed, setPriceAed] = useState<string>(pkg ? (pkg.pricePerUnitMinor / 100).toFixed(2) : '0.00');
 
   const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-     const val = e.target.value;
-     setPriceAed(val);
-     const minor = Math.round(parseFloat(val || '0') * 100);
-     form.setValue('pricePerUnitMinor', minor);
+    const val = e.target.value;
+    setPriceAed(val);
+    const minor = Math.round(parseFloat(val || '0') * 100);
+    form.setValue('pricePerUnitMinor', minor);
   };
 
   return (

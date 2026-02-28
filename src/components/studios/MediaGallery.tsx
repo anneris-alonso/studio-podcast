@@ -62,7 +62,20 @@ export function MediaGallery({ media, studioName }: MediaGalleryProps) {
                 </div>
               </div>
             )}
-            <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
+            <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/80 to-transparent pointer-events-none" />
+            
+            {/* Title Overlay Card (User's preferred style) */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="absolute bottom-8 left-8 right-8 p-8 glass-card rounded-3xl z-20 backdrop-blur-3xl border-white/10"
+            >
+              <h3 className="text-2xl font-bold mb-1">{studioName}</h3>
+              <p className="text-white/40 text-[10px] tracking-[0.25em] font-bold uppercase">
+                Studio City • Dubai Edition
+              </p>
+            </motion.div>
           </motion.div>
         </AnimatePresence>
 
