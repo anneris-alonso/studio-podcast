@@ -78,6 +78,9 @@ model StudioRoom {
   coverImageUrl    String?  @map("cover_image_url")
   isActive         Boolean  @default(true) @map("is_active")
   
+  // Gallery
+  media            StudioMedia[]
+
   // Legacy fields kept for backward compatibility if needed, or can be removed if data migration is done
   hourlyRate       Decimal? @map("hourly_rate") 
   imageUrl         String?  @map("image_url")
@@ -90,6 +93,25 @@ model StudioRoom {
   reviews  Review[]
 
   @@map("studio_rooms")
+}
+
+enum MediaType {
+  IMAGE
+  VIDEO
+}
+
+model StudioMedia {
+  id           String    @id @default(uuid())
+  studioRoomId String    @map("studio_room_id")
+  url          String
+  type         MediaType @default(IMAGE)
+  sortOrder    Int       @default(0) @map("sort_order")
+  createdAt    DateTime  @default(now()) @map("created_at")
+
+  studioRoom StudioRoom @relation(fields: [studioRoomId], references: [id], onDelete: Cascade)
+
+  @@index([studioRoomId])
+  @@map("studio_media")
 }
 
 model Package {

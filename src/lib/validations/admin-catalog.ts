@@ -17,7 +17,11 @@ export const StudioSchema = BaseEntitySchema.extend({
   capacity: z.number().int().min(1),
   equipmentSummary: z.string(),
   coverImageUrl: z.string().url().optional().or(z.literal('')),
-  // galleryImageUrls is handled as string array in UI but logic might vary
+  media: z.array(z.object({
+    url: z.string(),
+    type: z.enum(['IMAGE', 'VIDEO']),
+    sortOrder: z.number().int()
+  })).default([]),
 });
 
 // --- Package Schemas ---

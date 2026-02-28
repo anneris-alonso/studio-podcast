@@ -33,6 +33,11 @@ export default function StudioForm({ studio, mode = 'create' }: StudioFormProps)
       equipmentSummary: studio.equipmentSummary,
       coverImageUrl: studio.coverImageUrl || '',
       isActive: studio.isActive,
+      media: studio.media?.map((m: any) => ({
+        url: m.url,
+        type: m.type,
+        sortOrder: m.sortOrder
+      })) || [],
     } : {
       name: '',
       slug: '',
@@ -41,8 +46,29 @@ export default function StudioForm({ studio, mode = 'create' }: StudioFormProps)
       equipmentSummary: '',
       coverImageUrl: '',
       isActive: true,
+      media: [],
     }
   });
+
+  const media = form.watch('media') || [];
+
+  const addMedia = (type: 'IMAGE' | 'VIDEO', url: string = '') => {
+    form.setValue('media', [
+      ...media,
+      { url, type, sortOrder: media.length }
+    ]);
+  };
+
+  const removeMedia = (index: number) => {
+    const newMedia = media.filter((_, i) => i !== index);
+    form.setValue('media', newMedia.map((m, i) => ({ ...m, sortOrder: i })));
+  };
+
+  const updateMediaUrl = (index: number, url: string) => {
+    const newMedia = [...media];
+    newMedia[index].url = url;
+    form.setValue('media', newMedia);
+  };
 
   const onSubmit = async (data: StudioFormData) => {
     setLoading(true);
@@ -155,6 +181,87 @@ export default function StudioForm({ studio, mode = 'create' }: StudioFormProps)
             <label className="text-xs font-medium text-muted-foreground">Equipment Summary</label>
             <Textarea {...form.register('equipmentSummary')} placeholder="e.g. 4x Shure SM7B, Rodecaster Pro..." className="bg-white/5 border-white/10 h-20" />
             {form.formState.errors.equipmentSummary && <p className="text-red-400 text-xs">{form.formState.errors.equipmentSummary.message}</p>}
+          </div>
+          
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Media Gallery</label>
+              <div className="flex gap-2">
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  size="sm" 
+                  className="h-7 text-[10px] gap-1 bg-white/5 border-white/10"
+                  onClick={() => addMedia('IMAGE')}
+                >
+                  <ImagePlus className="w-3 h-3" /> Add Image
+                </Button>
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  size="sm" 
+                  className="h-7 text-[10px] gap-1 bg-white/5 border-white/10"
+                  onClick={() => addMedia('VIDEO')}
+                >
+                  <Video className="w-3 h-3" /> Add Video Link
+                </Button>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 gap-3">
+              {media.map((m, index) => (
+                <div key={index} className="flex items-start gap-3 p-3 rounded-lg bg-white/5 border border-white/10 group">
+                  <div className="mt-1">
+                    {m.type === 'IMAGE' ? <ImagePlus className="w-4 h-4 text-blue-400" /> : <Video className="w-4 h-4 text-rose-400" />}
+                  </div>
+                  <div className="flex-1 space-y-2">
+                    {m.type === 'IMAGE' ? (
+                      <div className="flex flex-col gap-2">
+                        <Input 
+                          type="file" 
+                          accept="image/*"
+                          className="h-8 text-[10px] bg-transparent border-white/10 cursor-pointer"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              const reader = new FileReader();
+                              reader.onloadend = () => updateMediaUrl(index, reader.result as string);
+                              reader.readAsDataURL(file);
+                            }
+                          }}
+                        />
+                        {m.url && (
+                          <div className="relative w-20 h-12 rounded overflow-hidden border border-white/10">
+                            <img src={m.url} alt="Preview" className="w-full h-full object-cover" />
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <Input 
+                        placeholder="Video URL (YouTube, Vimeo, or direct link)"
+                        value={m.url}
+                        onChange={(e) => updateMediaUrl(index, e.target.value)}
+                        className="h-8 text-xs bg-transparent border-white/10"
+                      />
+                    )}
+                  </div>
+                  <Button 
+                    type="button" 
+                    variant="ghost" 
+                    size="icon" 
+                    className="h-8 w-8 text-muted-foreground hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity"
+                    onClick={() => removeMedia(index)}
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                </div>
+              ))}
+              {media.length === 0 && (
+                <div className="text-center py-6 border-2 border-dashed border-white/5 rounded-xl text-muted-foreground text-xs">
+                  No images or videos added yet.
+                </div>
+              )}
+            </div>
           </div>
           
            <div className="flex items-center gap-2">

@@ -8,6 +8,7 @@ import { useParams } from "next/navigation";
 import { useState, useEffect, useCallback } from "react";
 import { ReviewList } from "@/components/reviews/ReviewList";
 import { ReviewForm } from "@/components/reviews/ReviewForm";
+import { MediaGallery } from "@/components/studios/MediaGallery";
 
 export default function StudioDetailPage() {
   const params = useParams();
@@ -75,23 +76,29 @@ export default function StudioDetailPage() {
         </div>
 
         {/* Hero Image / Gallery Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[500px]">
-          <div className="lg:col-span-2 rounded-2xl bg-white/5 border border-white/10 relative overflow-hidden group">
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10" />
-            {studio.coverImageUrl ? (
-                <img src={studio.coverImageUrl} alt={studio.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-            ) : (
-                <div className="absolute inset-0 flex items-center justify-center text-white/10 uppercase tracking-[1em]">Main Studio View</div>
-            )}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2">
+            <MediaGallery media={studio.media} studioName={studio.name} />
           </div>
+          
           <div className="hidden lg:flex flex-col gap-6">
-            <div className="flex-grow rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white/5 overflow-hidden relative">
-                 {studio.coverImageUrl && <img src={studio.coverImageUrl} alt="" className="absolute inset-0 w-full h-full object-cover opacity-20 blur-sm" />}
-                 <span className="relative z-10 uppercase tracking-widest text-[10px]">Interior Detail</span>
+            <div className="flex-grow rounded-3xl bg-white/5 border border-white/10 flex flex-col items-center justify-center text-white/20 overflow-hidden relative group">
+                {studio.coverImageUrl && <img src={studio.coverImageUrl} alt="" className="absolute inset-0 w-full h-full object-cover opacity-20 blur-sm group-hover:scale-110 transition-transform duration-700" />}
+                <div className="relative z-10 flex flex-col items-center gap-2">
+                  <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center">
+                    <Users className="w-5 h-5" />
+                  </div>
+                  <span className="uppercase tracking-[0.2em] text-[10px] font-bold">Premium Experience</span>
+                </div>
             </div>
-            <div className="flex-grow rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white/5 overflow-hidden relative">
-                 {studio.coverImageUrl && <img src={studio.coverImageUrl} alt="" className="absolute inset-0 w-full h-full object-cover opacity-20 grayscale" />}
-                 <span className="relative z-10 uppercase tracking-widest text-[10px]">Atmosphere</span>
+            <div className="flex-grow rounded-3xl bg-white/5 border border-white/10 flex flex-col items-center justify-center text-white/20 overflow-hidden relative group">
+                {studio.coverImageUrl && <img src={studio.coverImageUrl} alt="" className="absolute inset-0 w-full h-full object-cover opacity-20 grayscale group-hover:scale-110 transition-transform duration-700" />}
+                <div className="relative z-10 flex flex-col items-center gap-2">
+                  <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center">
+                    <Mic className="w-5 h-5" />
+                  </div>
+                  <span className="uppercase tracking-[0.2em] text-[10px] font-bold">State-of-the-Art Gear</span>
+                </div>
             </div>
           </div>
         </div>

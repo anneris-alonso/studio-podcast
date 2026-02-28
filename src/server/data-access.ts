@@ -42,6 +42,11 @@ export async function listStudioRooms() {
 export async function getStudioRoomBySlug(slug: string) {
   return prisma.studioRoom.findUnique({
     where: { slug },
+    include: {
+      media: {
+        orderBy: { sortOrder: 'asc' }
+      }
+    }
   });
 }
 

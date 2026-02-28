@@ -53,6 +53,13 @@ export async function createStudioRoom(data: z.infer<typeof StudioSchema>) {
       equipmentSummary: validated.equipmentSummary,
       coverImageUrl: validated.coverImageUrl || null,
       isActive: validated.isActive,
+      media: {
+        create: validated.media.map(m => ({
+          url: m.url,
+          type: m.type as any,
+          sortOrder: m.sortOrder
+        }))
+      }
     }
   });
 
@@ -63,14 +70,39 @@ export async function createStudioRoom(data: z.infer<typeof StudioSchema>) {
 
 export async function updateStudioRoom(id: string, data: Partial<z.infer<typeof StudioSchema>>) {
   const admin = await requireAdmin();
-  const existing = await prisma.studioRoom.findUniqueOrThrow({ where: { id } });
+  const validated = StudioSchema.partial().parse(data);
 
-  const studio = await prisma.studioRoom.update({
-    where: { id },
-    data: { ...data }
+  const studio = await prisma.$transaction(async (tx) => {
+    const updated = await tx.studioRoom.update({
+      where: { id },
+      data: {
+        name: validated.name,
+        slug: validated.slug,
+        description: validated.description,
+        capacity: validated.capacity,
+        equipmentSummary: validated.equipmentSummary,
+        coverImageUrl: validated.coverImageUrl,
+        isActive: validated.isActive,
+      }
+    });
+
+    if (validated.media) {
+      // Simple strategy: delete and recreate media
+      await tx.studioMedia.deleteMany({ where: { studioRoomId: id } });
+      await tx.studioMedia.createMany({
+        data: validated.media.map(m => ({
+          studioRoomId: id,
+          url: m.url,
+          type: m.type as any,
+          sortOrder: m.sortOrder
+        }))
+      });
+    }
+
+    return updated;
   });
 
-  await logAudit('ADMIN_STUDIO_UPDATE', 'StudioRoom', studio.id, admin, { changed: Object.keys(data) });
+  await logAudit('ADMIN_STUDIO_UPDATE', 'StudioRoom', id, admin, { changed: Object.keys(data) });
   revalidatePath('/admin/studios');
   return { success: true };
 }
