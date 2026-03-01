@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Plus, Pencil, Loader2, AlertTriangle } from 'lucide-react';
+import { Plus, Pencil, Loader2, AlertTriangle, ImagePlus, Video, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 interface StudioFormProps {
@@ -70,6 +70,33 @@ export default function StudioForm({ studio, mode = 'create' }: StudioFormProps)
     form.setValue('media', newMedia);
   };
 
+  const handleMultipleImages = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+
+    const readFiles = files.map(file => {
+      return new Promise<string>((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.readAsDataURL(file);
+      });
+    });
+
+    const results = await Promise.all(readFiles);
+    
+    const currentMedia = form.getValues('media') || [];
+    const newMediaItems = results.map((url, i) => ({
+      url,
+      type: 'IMAGE' as const,
+      sortOrder: currentMedia.length + i
+    }));
+
+    form.setValue('media', [...currentMedia, ...newMediaItems]);
+    
+    // Reset the input so the same files can be selected again if needed
+    e.target.value = '';
+  };
+
   const onSubmit = async (data: StudioFormData) => {
     setLoading(true);
     setError(null);
@@ -116,7 +143,7 @@ export default function StudioForm({ studio, mode = 'create' }: StudioFormProps)
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[600px] bg-card/95 border-border/10 backdrop-blur-xl">
+      <DialogContent className="sm:max-w-[800px] max-h-[85vh] overflow-y-auto bg-card/95 border-border/10 backdrop-blur-xl">
         <DialogHeader>
           <DialogTitle>{mode === 'create' ? 'Create New Studio' : `Edit ${studio?.name}`}</DialogTitle>
         </DialogHeader>
@@ -187,15 +214,26 @@ export default function StudioForm({ studio, mode = 'create' }: StudioFormProps)
             <div className="flex items-center justify-between">
               <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Media Gallery</label>
               <div className="flex gap-2">
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  size="sm" 
-                  className="h-7 text-[10px] gap-1 bg-white/5 border-white/10"
-                  onClick={() => addMedia('IMAGE')}
-                >
-                  <ImagePlus className="w-3 h-3" /> Add Image
-                </Button>
+                <div>
+                  <input 
+                    type="file" 
+                    accept="image/*" 
+                    multiple 
+                    id="multi-image-upload"
+                    className="hidden"
+                    title="Upload images"
+                    onChange={handleMultipleImages}
+                  />
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    size="sm" 
+                    className="h-7 text-[10px] gap-1 bg-white/5 border-white/10"
+                    onClick={() => document.getElementById('multi-image-upload')?.click()}
+                  >
+                    <ImagePlus className="w-3 h-3" /> Add Images
+                  </Button>
+                </div>
                 <Button 
                   type="button" 
                   variant="outline" 
@@ -208,19 +246,22 @@ export default function StudioForm({ studio, mode = 'create' }: StudioFormProps)
               </div>
             </div>
 
-            <div className="grid grid-cols-1 gap-3">
-              {media.map((m, index) => (
-                <div key={index} className="flex items-start gap-3 p-3 rounded-lg bg-white/5 border border-white/10 group">
-                  <div className="mt-1">
-                    {m.type === 'IMAGE' ? <ImagePlus className="w-4 h-4 text-blue-400" /> : <Video className="w-4 h-4 text-rose-400" />}
-                  </div>
-                  <div className="flex-1 space-y-2">
-                    {m.type === 'IMAGE' ? (
-                      <div className="flex flex-col gap-2">
-                        <Input 
-                          type="file" 
+            {/* Images: 3-column grid */}
+            {media.some(m => m.type === 'IMAGE') && (
+              <div className="grid grid-cols-3 gap-2">
+                {media.map((m, index) => m.type === 'IMAGE' && (
+                  <div key={index} className="relative group aspect-video rounded-lg overflow-hidden border border-white/10 bg-white/5">
+                    {m.url ? (
+                      <img src={m.url} alt={`Media ${index + 1}`} className="w-full h-full object-cover" />
+                    ) : (
+                      <label className="flex flex-col items-center justify-center w-full h-full cursor-pointer text-white/30 hover:text-white/60 transition-colors">
+                        <ImagePlus className="w-5 h-5 mb-1" />
+                        <span className="text-[9px]">Pick image</span>
+                        <input
+                          type="file"
                           accept="image/*"
-                          className="h-8 text-[10px] bg-transparent border-white/10 cursor-pointer"
+                          title="Upload image"
+                          className="hidden"
                           onChange={(e) => {
                             const file = e.target.files?.[0];
                             if (file) {
@@ -230,38 +271,52 @@ export default function StudioForm({ studio, mode = 'create' }: StudioFormProps)
                             }
                           }}
                         />
-                        {m.url && (
-                          <div className="relative w-20 h-12 rounded overflow-hidden border border-white/10">
-                            <img src={m.url} alt="Preview" className="w-full h-full object-cover" />
-                          </div>
-                        )}
-                      </div>
-                    ) : (
-                      <Input 
-                        placeholder="Video URL (YouTube, Vimeo, or direct link)"
-                        value={m.url}
-                        onChange={(e) => updateMediaUrl(index, e.target.value)}
-                        className="h-8 text-xs bg-transparent border-white/10"
-                      />
+                      </label>
                     )}
+                    {/* Floating delete button */}
+                    <button
+                      type="button"
+                      onClick={() => removeMedia(index)}
+                      className="absolute top-1.5 right-1.5 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-md bg-black/70 hover:bg-red-500/80 text-white"
+                      title="Remove image"
+                    >
+                      <Trash2 className="w-3 h-3" />
+                    </button>
                   </div>
-                  <Button 
-                    type="button" 
-                    variant="ghost" 
-                    size="icon" 
-                    className="h-8 w-8 text-muted-foreground hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity"
-                    onClick={() => removeMedia(index)}
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
-                </div>
-              ))}
-              {media.length === 0 && (
-                <div className="text-center py-6 border-2 border-dashed border-white/5 rounded-xl text-muted-foreground text-xs">
-                  No images or videos added yet.
-                </div>
-              )}
-            </div>
+                ))}
+              </div>
+            )}
+
+            {/* Videos: list rows */}
+            {media.some(m => m.type === 'VIDEO') && (
+              <div className="flex flex-col gap-2 mt-2">
+                {media.map((m, index) => m.type === 'VIDEO' && (
+                  <div key={index} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5 border border-white/10 group">
+                    <Video className="w-3.5 h-3.5 text-rose-400 shrink-0" />
+                    <Input 
+                      placeholder="Video URL (YouTube, Vimeo, or direct link)"
+                      value={m.url}
+                      onChange={(e) => updateMediaUrl(index, e.target.value)}
+                      className="h-7 text-xs bg-transparent border-none focus-visible:ring-0 px-0 py-0"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeMedia(index)}
+                      className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-md bg-black/60 hover:bg-red-500/80 text-white shrink-0"
+                      title="Remove video"
+                    >
+                      <Trash2 className="w-3 h-3" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {media.length === 0 && (
+              <div className="text-center py-6 border-2 border-dashed border-white/5 rounded-xl text-muted-foreground text-xs">
+                No images or videos added yet.
+              </div>
+            )}
           </div>
           
            <div className="flex items-center gap-2">
