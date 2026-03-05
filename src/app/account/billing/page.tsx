@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { GlassCard } from "@/components/ui/glass-card";
 import { Button } from "@/components/ui/button";
 import { Loader2, CreditCard, Clock, CheckCircle2, AlertCircle } from "lucide-react";
 import Link from "next/link";
 
-export default function BillingPage() {
+function BillingContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [loading, setLoading] = useState(true);
@@ -27,7 +27,7 @@ export default function BillingPage() {
         const status = searchParams.get("status");
         if (status === "success") {
           // You might want to wait a bit for webhooks to process
-          setTimeout(() => {}, 2000);
+          setTimeout(() => { }, 2000);
         }
 
         // Mock data for initial UI implementation
@@ -76,7 +76,7 @@ export default function BillingPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="min-h-screen flex items-center justify-center bg-transparent">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
@@ -109,7 +109,7 @@ export default function BillingPage() {
                 {data.subscription.status}
               </span>
             </div>
-            
+
             <div className="space-y-4">
               <div>
                 <p className="text-4xl font-bold text-slate-900">{data.subscription.planName}</p>
@@ -119,9 +119,9 @@ export default function BillingPage() {
               </div>
 
               <div className="pt-4">
-                <Button 
-                  variant="glass" 
-                  className="w-full" 
+                <Button
+                  variant="glass"
+                  className="w-full"
                   onClick={handleManageBilling}
                   disabled={portalLoading}
                 >
@@ -162,8 +162,8 @@ export default function BillingPage() {
                   <span className="font-medium text-slate-900">{Math.floor(data.credits.used / 60)}h / {Math.floor(data.credits.balance / 60)}h</span>
                 </div>
                 <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                  <div 
-                    className="h-full bg-primary transition-all duration-500 ease-out" 
+                  <div
+                    className="h-full bg-primary transition-all duration-500 ease-out"
                     style={{ width: `${(data.credits.used / data.credits.balance) * 100}%` }}
                   />
                 </div>
@@ -182,8 +182,8 @@ export default function BillingPage() {
           <div className="space-y-1">
             <h4 className="font-semibold text-slate-900">How credits work</h4>
             <p className="text-sm text-slate-500 leading-relaxed">
-              Your subscription includes monthly recording hours. When you book a studio session, 
-              the duration will be deducted from your balance. If you run out of credits, 
+              Your subscription includes monthly recording hours. When you book a studio session,
+              the duration will be deducted from your balance. If you run out of credits,
               you can still book sessions at our standard hourly rates.
             </p>
           </div>
@@ -196,5 +196,17 @@ export default function BillingPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function BillingPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-transparent">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    }>
+      <BillingContent />
+    </Suspense>
   );
 }

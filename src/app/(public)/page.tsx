@@ -66,20 +66,20 @@ export default function LandingPage() {
     <div className="flex flex-col min-h-screen bg-transparent text-white">
       {/* Optimized High-Performance Background (Saturated Ambient Glows) */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-          {/* Vibrant global hints */}
-          <div className="absolute top-[20%] -left-[10%] w-[30%] h-[30%] rounded-full bg-accent-pink/[0.06] blur-[140px]" />
-          <div className="absolute top-[60%] -right-[15%] w-[40%] h-[40%] rounded-full bg-accent-violet/[0.05] blur-[160px]" />
-          
-          {/* Internal Grain Overlay */}
-          <div className="absolute inset-0 opacity-[0.03] mix-blend-overlay pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+        {/* Vibrant global hints */}
+        <div className="absolute top-[20%] -left-[10%] w-[30%] h-[30%] rounded-full bg-accent-pink/[0.06] blur-[140px]" />
+        <div className="absolute top-[60%] -right-[15%] w-[40%] h-[40%] rounded-full bg-accent-violet/[0.05] blur-[160px]" />
+
+        {/* Internal Grain Overlay */}
+        <div className="absolute inset-0 opacity-[0.03] mix-blend-overlay pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
       </div>
 
       {/* 1. Hero Section (Immersive) */}
       <section className="relative h-screen min-h-[800px] flex items-center justify-center overflow-hidden bg-black">
         {/* 3D Background */}
         <Hero3D />
-        
-        <motion.div 
+
+        <motion.div
           initial="hidden"
           animate="visible"
           variants={staggerContainer}
@@ -88,16 +88,16 @@ export default function LandingPage() {
           {/* Left Content */}
           <div className="space-y-8 lg:text-left text-center">
             {/* Brand / Logo if needed, or kept in Navbar */}
-            
+
             <motion.h1 variants={fadeInUp} className="text-6xl lg:text-8xl font-bold tracking-tight text-white leading-tight">
               Record Without <br />
               <span className="premium-gradient-text tracking-tighter"><span>Friction.</span></span>
             </motion.h1>
-            
+
             <motion.p variants={fadeInUp} className="text-xl text-slate-400 max-w-xl mx-auto lg:mx-0">
               Book. Record. Access your content instantly.
             </motion.p>
-            
+
             <motion.div variants={fadeInUp} className="flex flex-wrap justify-center lg:justify-start gap-4 pt-4">
               <Link href="/book">
                 <Button size="lg" className="bg-gradient-to-r from-[#D936F1] to-[#6A47F2] text-white border-none shadow-[0_0_30px_rgba(217,54,241,0.4)] text-lg px-8 h-14 rounded-xl hover:scale-105 transition-transform">
@@ -105,10 +105,10 @@ export default function LandingPage() {
                 </Button>
               </Link>
               <Link href="/about">
-                <Button 
-                  size="lg" 
-                  variant="outline" 
-                   className="h-14 px-8 text-lg border-white/10 bg-black/20 hover:bg-white/5 rounded-xl text-slate-300 backdrop-blur-sm"
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="h-14 px-8 text-lg border-white/10 bg-black/20 hover:bg-white/5 rounded-xl text-slate-300 backdrop-blur-sm"
                 >
                   See Features
                 </Button>
@@ -119,8 +119,8 @@ export default function LandingPage() {
             <motion.div variants={fadeInUp} className="flex flex-wrap gap-8 pt-12 justify-center lg:justify-start">
               <div className="flex gap-4 items-center group">
                 <div className="p-3 rounded-xl border border-white/5 bg-transparent relative overflow-hidden transition-all group-hover:border-accent-pink/50">
-                   <div className="absolute inset-0 bg-gradient-to-br from-accent-pink/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                   <Clock className="w-6 h-6 text-accent-pink" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-accent-pink/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <Clock className="w-6 h-6 text-accent-pink" />
                 </div>
                 <div className="text-left">
                   <span className="text-sm font-bold text-white block leading-tight">Instant</span>
@@ -130,8 +130,8 @@ export default function LandingPage() {
 
               <div className="flex gap-4 items-center group">
                 <div className="p-3 rounded-xl border border-white/5 bg-transparent relative overflow-hidden transition-all group-hover:border-accent-violet/50">
-                   <div className="absolute inset-0 bg-gradient-to-br from-accent-violet/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                   <Mic className="w-6 h-6 text-accent-violet" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-accent-violet/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <Mic className="w-6 h-6 text-accent-violet" />
                 </div>
                 <div className="text-left">
                   <span className="text-sm font-bold text-white block leading-tight">Premium</span>
@@ -141,8 +141,8 @@ export default function LandingPage() {
 
               <div className="flex gap-4 items-center group">
                 <div className="p-3 rounded-xl border border-white/5 bg-transparent relative overflow-hidden transition-all group-hover:border-accent-blue/50">
-                   <div className="absolute inset-0 bg-gradient-to-br from-accent-blue/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                   <Video className="w-6 h-6 text-accent-blue" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-accent-blue/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <Video className="w-6 h-6 text-accent-blue" />
                 </div>
                 <div className="text-left">
                   <span className="text-sm font-bold text-white block leading-tight">Content</span>
@@ -163,12 +163,12 @@ export default function LandingPage() {
           <h2 className="text-4xl font-bold text-white">Why Studio Suite?</h2>
           <p className="text-slate-400 max-w-xl mx-auto text-lg">Everything you need to grow your podcast without the technical headache.</p>
         </div>
-        
+
         <div className="relative">
           {/* Localized Glow - Centered behind cards only */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60%] h-[40%] bg-accent-violet/[0.04] blur-[100px] pointer-events-none" />
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
+
+          <div className="flex flex-wrap justify-center gap-8 relative z-10 w-full">
             {[
               {
                 icon: Mic,
@@ -186,21 +186,21 @@ export default function LandingPage() {
                 desc: "Check real-time availability and confirm in seconds.",
               },
             ].map((feature, i) => (
-              <div key={i} className="glass-card-premium group p-10 space-y-6 relative overflow-hidden transition-all duration-500 hover:scale-[1.02]">
-                  {/* Inner Glow Effect on Hover */}
-                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_0%_0%,rgba(122,92,255,0.15),transparent_70%)] opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
-                  
-                  <div className="w-16 h-16 rounded-2xl brand-gradient flex items-center justify-center text-white shadow-lg relative z-10 transition-transform duration-500 group-hover:scale-110">
-                    <feature.icon className="w-8 h-8" />
-                  </div>
-                  
-                  <div className="relative z-10">
-                      <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-accent-pink transition-colors">{feature.title}</h3>
-                      <p className="text-slate-400 leading-relaxed">{feature.desc}</p>
-                  </div>
+              <div key={i} className="glass-card-premium group p-10 space-y-6 relative overflow-hidden transition-all duration-500 hover:scale-[1.02] flex-1 min-w-[300px] max-w-[400px] w-full">
+                {/* Inner Glow Effect on Hover */}
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_0%_0%,rgba(122,92,255,0.15),transparent_70%)] opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
 
-                  {/* Bottom Accent Line */}
-                  <div className="absolute bottom-0 left-0 h-[2px] w-0 bg-brand-gradient group-hover:w-full transition-all duration-700" />
+                <div className="w-16 h-16 rounded-2xl brand-gradient flex items-center justify-center text-white shadow-lg relative z-10 transition-transform duration-500 group-hover:scale-110">
+                  <feature.icon className="w-8 h-8" />
+                </div>
+
+                <div className="relative z-10">
+                  <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-accent-pink transition-colors">{feature.title}</h3>
+                  <p className="text-slate-400 leading-relaxed">{feature.desc}</p>
+                </div>
+
+                {/* Bottom Accent Line */}
+                <div className="absolute bottom-0 left-0 h-[2px] w-0 bg-brand-gradient group-hover:w-full transition-all duration-700" />
               </div>
             ))}
           </div>
@@ -209,76 +209,82 @@ export default function LandingPage() {
 
       {/* 3. Studios Grid */}
       <GlassSection className="py-24">
-          <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
-            <div className="space-y-4">
-              <h2 className="text-4xl font-bold text-white">Our Studios</h2>
-              <p className="text-slate-400 text-lg">Curated spaces designed for creators.</p>
-            </div>
-            <Link href="/gallery" className="text-accent-violet font-medium hover:text-accent-pink transition-colors flex items-center gap-2">
-              See all spaces <ArrowRight className="w-4 h-4" />
-            </Link>
+        <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
+          <div className="space-y-4">
+            <h2 className="text-4xl font-bold text-white">Our Studios</h2>
+            <p className="text-slate-400 text-lg">Curated spaces designed for creators.</p>
           </div>
-          
-          <div className="relative">
-            {/* Localized Glow - Deep Blue behind Studios */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[70%] h-[50%] bg-accent-blue/[0.03] blur-[120px] pointer-events-none" />
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 relative z-10">
-              {studios.map((studio, i) => (
-                  <StudioCard key={studio.id} studio={studio} index={i} />
-              ))}
-            </div>
+          <Link href="/gallery" className="text-accent-violet font-medium hover:text-accent-pink transition-colors flex items-center gap-2">
+            See all spaces <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
+
+        <div className="relative">
+          {/* Localized Glow - Deep Blue behind Studios */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[70%] h-[50%] bg-accent-blue/[0.03] blur-[120px] pointer-events-none" />
+
+          <div className="flex flex-wrap justify-center gap-8 relative z-10 w-full">
+            {studios.length > 0 ? studios.map((studio, i) => (
+              <div key={studio.id} className="w-full sm:w-[380px] flex-shrink-0">
+                <StudioCard studio={studio} index={i} />
+              </div>
+            )) : (
+              <div className="w-full max-w-2xl py-20 text-center glass-card-premium border-white/5 bg-white/[0.02]">
+                <p className="text-slate-500 font-medium italic">No studios available at the moment. Check back soon!</p>
+              </div>
+            )}
           </div>
+        </div>
       </GlassSection>
 
       {/* 4. Portal Preview Section */}
       <GlassSection className="py-24">
-          <div className="text-center space-y-4 mb-16">
-            <h2 className="text-4xl font-bold text-white">The Creator Hub</h2>
-            <p className="text-slate-400 max-w-xl mx-auto text-lg">Your central command center for all things podcasting.</p>
-          </div>
-          <PremiumGlassCard className="overflow-hidden p-2 lg:p-4 bg-transparent border-white/5 shadow-2xl">
-            <div className="rounded-lg bg-[#050508] aspect-[16/9] border border-white/5 shadow-2xl overflow-hidden relative group">
-                {/* Mock UI elements */}
-                <div className="absolute inset-0 bg-radial-glow opacity-20" />
-                <div className="absolute top-0 left-0 right-0 h-12 border-b border-white/5 flex items-center px-6 gap-4 bg-white/[0.02]">
-                  <div className="flex gap-1.5">
-                    <div className="w-3 h-3 rounded-full bg-red-500/20 border border-red-500/40" />
-                    <div className="w-3 h-3 rounded-full bg-yellow-500/20 border border-yellow-500/40" />
-                    <div className="w-3 h-3 rounded-full bg-green-500/20 border border-green-500/40" />
-                  </div>
-                  <div className="h-6 w-64 rounded-md bg-white/5" />
-                </div>
-                <div className="p-8 lg:p-12 grid grid-cols-12 gap-6">
-                  {/* Sidebar Mock */}
-                  <div className="col-span-3 space-y-3 hidden lg:block">
-                    {[1,2,3,4,5].map(i => <div key={i} className="h-8 w-full rounded-md bg-white/5" />)}
-                  </div>
-                  {/* Dashboard Content Mock */}
-                  <div className="col-span-12 lg:col-span-9 space-y-6">
-                      <div className="grid grid-cols-3 gap-4">
-                          {[1,2,3].map(i => <div key={i} className="h-24 rounded-lg bg-white/5 border border-white/5" />)}
-                      </div>
-                      <div className="h-64 w-full rounded-lg bg-white/[0.02] border border-white/5 flex items-center justify-center">
-                        <span className="text-white/20 text-sm uppercase tracking-widest font-mono">Analytics Graph Preview</span>
-                      </div>
-                  </div>
-                </div>
-                
-                {/* Overlay Button */}
-                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-black/40 backdrop-blur-sm">
-                  <Button variant="secondary" className="bg-white text-black hover:bg-white/90 shadow-glow">Preview Dashboard</Button>
-                </div>
+        <div className="text-center space-y-4 mb-16">
+          <h2 className="text-4xl font-bold text-white">The Creator Hub</h2>
+          <p className="text-slate-400 max-w-xl mx-auto text-lg">Your central command center for all things podcasting.</p>
+        </div>
+        <PremiumGlassCard className="overflow-hidden p-2 lg:p-4 bg-transparent border-white/5 shadow-2xl">
+          <div className="rounded-lg bg-[#050508] aspect-[16/9] border border-white/5 shadow-2xl overflow-hidden relative group">
+            {/* Mock UI elements */}
+            <div className="absolute inset-0 bg-radial-glow opacity-20" />
+            <div className="absolute top-0 left-0 right-0 h-12 border-b border-white/5 flex items-center px-6 gap-4 bg-white/[0.02]">
+              <div className="flex gap-1.5">
+                <div className="w-3 h-3 rounded-full bg-red-500/20 border border-red-500/40" />
+                <div className="w-3 h-3 rounded-full bg-yellow-500/20 border border-yellow-500/40" />
+                <div className="w-3 h-3 rounded-full bg-green-500/20 border border-green-500/40" />
+              </div>
+              <div className="h-6 w-64 rounded-md bg-white/5" />
             </div>
-          </PremiumGlassCard>
+            <div className="p-8 lg:p-12 grid grid-cols-12 gap-6">
+              {/* Sidebar Mock */}
+              <div className="col-span-3 space-y-3 hidden lg:block">
+                {[1, 2, 3, 4, 5].map(i => <div key={i} className="h-8 w-full rounded-md bg-white/5" />)}
+              </div>
+              {/* Dashboard Content Mock */}
+              <div className="col-span-12 lg:col-span-9 space-y-6">
+                <div className="grid grid-cols-3 gap-4">
+                  {[1, 2, 3].map(i => <div key={i} className="h-24 rounded-lg bg-white/5 border border-white/5" />)}
+                </div>
+                <div className="h-64 w-full rounded-lg bg-white/[0.02] border border-white/5 flex items-center justify-center">
+                  <span className="text-white/20 text-sm uppercase tracking-widest font-mono">Analytics Graph Preview</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Overlay Button */}
+            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-black/40 backdrop-blur-sm">
+              <Button variant="secondary" className="bg-white text-black hover:bg-white/90 shadow-glow">Preview Dashboard</Button>
+            </div>
+          </div>
+        </PremiumGlassCard>
       </GlassSection>
 
       {/* 5. Pricing Section with Optimized Ambient Glows */}
       <section className="relative py-24 overflow-hidden">
         {/* Very Subtle Background Glows - Only hints */}
         <div className="absolute inset-0 z-0 pointer-events-none">
-            <div className="absolute top-[0%] left-[20%] w-[40%] h-[40%] rounded-full bg-accent-pink/[0.05] blur-[140px] opacity-30" />
-            <div className="absolute bottom-[0%] right-[20%] w-[40%] h-[40%] rounded-full bg-accent-violet/[0.05] blur-[140px] opacity-30" />
+          <div className="absolute top-[0%] left-[20%] w-[40%] h-[40%] rounded-full bg-accent-pink/[0.05] blur-[140px] opacity-30" />
+          <div className="absolute bottom-[0%] right-[20%] w-[40%] h-[40%] rounded-full bg-accent-violet/[0.05] blur-[140px] opacity-30" />
         </div>
 
         <div className="max-w-7xl mx-auto px-6 space-y-16 relative z-10">
@@ -286,19 +292,19 @@ export default function LandingPage() {
             <h2 className="text-4xl font-bold text-white">Clear, Simple Pricing</h2>
             <p className="text-slate-400 max-w-xl mx-auto text-lg">Choose a plan that fits your recording frequency.</p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="flex flex-wrap justify-center gap-8 w-full">
             {packages.length > 0 ? packages.map((plan, i) => (
-              <div 
-                key={i} 
+              <div
+                key={i}
                 className={cn(
-                  "glass-card-premium p-10 space-y-8 flex flex-col group transition-all duration-500 hover:scale-[1.02] bg-white/[0.03] border-white/10",
+                  "glass-card-premium p-10 space-y-8 flex flex-col group transition-all duration-500 hover:scale-[1.02] bg-white/[0.03] border-white/10 flex-1 min-w-[320px] max-w-[420px] w-full",
                   plan.accent.includes('border-accent-violet') ? "shadow-glow-soft border-accent-violet/50" : "shadow-2xl shadow-black"
                 )}
               >
                 {/* Background Glow */}
                 <div className={cn(
-                    "absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-100 transition-opacity duration-700",
-                    plan.accent || "from-white/5 via-white/2 to-transparent"
+                  "absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-100 transition-opacity duration-700",
+                  plan.accent || "from-white/5 via-white/2 to-transparent"
                 )} />
 
                 <div className="relative z-10 space-y-2">
@@ -308,7 +314,7 @@ export default function LandingPage() {
                     <span className="text-white/40 text-sm font-medium">AED</span>
                   </div>
                 </div>
-                
+
                 <div className="relative z-10 space-y-4 flex-grow">
                   {plan.features.map((f: string, j: number) => (
                     <div key={j} className="flex gap-3 items-center text-sm text-slate-300 group/item">
@@ -320,18 +326,18 @@ export default function LandingPage() {
                     </div>
                   ))}
                 </div>
-                
+
                 <Button className={cn(
-                    "relative z-10 w-full h-14 rounded-2xl font-bold transition-all duration-300",
-                    i === 1 
-                        ? "bg-brand-gradient text-white border-none shadow-[0_0_20px_rgba(122,92,255,0.3)] hover:shadow-[0_0_30px_rgba(122,92,255,0.5)] hover:scale-[1.02]" 
-                        : "bg-white text-black hover:bg-white/90 border-none transition-all"
+                  "relative z-10 w-full h-14 rounded-2xl font-bold transition-all duration-300",
+                  i === 1
+                    ? "bg-brand-gradient text-white border-none shadow-[0_0_20px_rgba(122,92,255,0.3)] hover:shadow-[0_0_30px_rgba(122,92,255,0.5)] hover:scale-[1.02]"
+                    : "bg-white text-black hover:bg-white/90 border-none transition-all"
                 )}>
-                    {i === 1 ? "Start Recording" : "Get Started"}
+                  {i === 1 ? "Start Recording" : "Get Started"}
                 </Button>
               </div>
             )) : (
-              <div className="col-span-3 text-center py-12 text-white/30 animate-pulse">
+              <div className="w-full text-center py-12 text-white/30 animate-pulse">
                 Loading packages...
               </div>
             )}
@@ -343,24 +349,24 @@ export default function LandingPage() {
       <section className="px-6 py-32 relative">
         <div className="max-w-5xl mx-auto p-12 md:p-20 text-center space-y-10 glass-card-premium border-white/5 bg-white/[0.02] overflow-hidden relative shadow-2xl shadow-black">
           <div className="absolute inset-0 bg-brand-gradient opacity-[0.05] blur-[120px]" />
-          
+
           <div className="relative z-10 space-y-10">
             <h2 className="text-5xl md:text-7xl font-bold text-white tracking-tighter leading-none">
-                Your production, <br />
-                <span className="premium-gradient-text !skew-x-0 !mx-0 !bg-none !shadow-none !p-0">
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent-pink via-accent-violet to-accent-blue py-2 inline-block skew-x-[-12deg]">simplified.</span>
-                </span>
+              Your production, <br />
+              <span className="premium-gradient-text !skew-x-0 !mx-0 !bg-none !shadow-none !p-0">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent-pink via-accent-violet to-accent-blue py-2 inline-block skew-x-[-12deg]">simplified.</span>
+              </span>
             </h2>
             <p className="text-xl md:text-2xl text-slate-400 max-w-2xl mx-auto font-medium leading-relaxed">
-                Join 100+ shows producing world-class content <br className="hidden md:block" /> 
-                in the heart of Dubai.
+              Join 50+ shows producing world-class content <br className="hidden md:block" />
+              in the heart of Dubai.
             </p>
             <div className="flex justify-center gap-4 pt-6">
-                <Link href="/book">
-                  <Button size="lg" className="bg-brand-gradient text-white border-none shadow-[0_0_40px_rgba(122,92,255,0.3)] h-16 px-14 text-xl rounded-2xl hover:scale-105 hover:shadow-[0_0_50px_rgba(122,92,255,0.5)] transition-all duration-500 font-bold">
-                      Book Your Session
-                  </Button>
-                </Link>
+              <Link href="/book">
+                <Button size="lg" className="bg-brand-gradient text-white border-none shadow-[0_0_40px_rgba(122,92,255,0.3)] h-16 px-14 text-xl rounded-2xl hover:scale-105 hover:shadow-[0_0_50px_rgba(122,92,255,0.5)] transition-all duration-500 font-bold">
+                  Book Your Session
+                </Button>
+              </Link>
             </div>
           </div>
         </div>

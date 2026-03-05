@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { requireUser } from "@/lib/auth-guards";
-import { logout } from "@/lib/auth";
-import { redirect } from "next/navigation";
+import { logoutAction } from "@/app/actions/auth";
 import { DashboardSidebar } from "@/components/layout/DashboardSidebar";
 import { ThemeProvider } from "@/components/theme-provider";
 
@@ -11,12 +10,6 @@ export default async function AccountLayout({
   children: React.ReactNode;
 }) {
   const user = await requireUser();
-
-  async function handleLogout() {
-    "use server";
-    await logout();
-    redirect("/login");
-  }
 
 
   return (
@@ -29,7 +22,7 @@ export default async function AccountLayout({
         </div>
 
         {/* Sidebar */}
-        <DashboardSidebar user={user} handleLogout={handleLogout} />
+        <DashboardSidebar user={user} handleLogout={logoutAction} />
 
         {/* Main Content */}
         <main className="flex-1 p-6 md:p-10 overflow-auto">

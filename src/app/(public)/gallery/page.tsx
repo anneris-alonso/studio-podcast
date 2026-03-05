@@ -17,64 +17,70 @@ const photos = [
 
 export default function GalleryPage() {
   return (
-    <div className="max-w-7xl mx-auto px-6 pt-32 pb-24 space-y-12">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-        <div className="space-y-4">
-          <Link href="/" className="text-accent-violet flex items-center gap-2 text-sm font-medium hover:underline mb-4">
-            <ArrowLeft className="w-4 h-4" /> Back to Home
-          </Link>
-          <h1 className="text-6xl font-bold tracking-tight mb-4">
-            Studio <span className="premium-gradient-text tracking-tighter"><span>Gallery.</span></span>
-          </h1>
-          <p className="text-muted text-lg">A visual tour of the most premium recording spaces in Dubai.</p>
-        </div>
-        <div className="flex gap-4">
-          <Button variant="ghost" className="border border-white/10">
-            <LayoutGrid className="w-4 h-4 mr-2" /> All Photos
-          </Button>
-          <Button variant="ghost" className="border border-white/10 opacity-50">
-            <Camera className="w-4 h-4 mr-2" /> Virtual Tour
-          </Button>
-        </div>
-      </div>
+    <main className="min-h-screen bg-transparent pt-32 pb-24 px-6 relative overflow-hidden">
+      {/* Ambient Glows */}
+      <div className="absolute top-[0%] left-[-10%] w-[40%] h-[40%] bg-accent-violet/10 blur-[130px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-accent-pink/10 blur-[120px] rounded-full pointer-events-none" />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {photos.map((photo, i) => (
-          <motion.div
-            key={photo.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.1 }}
-          >
-            <div className="glass-card-premium p-4 group transition-all duration-500 hover:scale-[1.02] h-full relative overflow-hidden bg-transparent border-white/5 hover:border-accent-violet/30">
-               {/* Subtle Inner Glow on Hover */}
-               <div className="absolute inset-0 bg-brand-gradient opacity-0 group-hover:opacity-20 transition-opacity duration-700 pointer-events-none" />
-                
-               <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-black/40 border border-white/5">
-                {/* Image Rendering */}
-                <img 
-                  src={photo.src} 
-                  alt={photo.title}
-                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                />
-                
-                {/* Overlay for glass look and readability */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60" />
-                
-                <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end z-10">
-                   <div>
-                     <span className="text-[10px] uppercase tracking-widest text-accent-violet font-bold mb-1 block">{photo.category}</span>
-                     <h3 className="text-lg font-bold text-white">{photo.title}</h3>
-                   </div>
-                   <Button size="icon" variant="ghost" className="rounded-full bg-white/5 backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity border border-white/5">
-                     <Info className="w-4 h-4 text-white" />
-                   </Button>
+      <div className="max-w-7xl mx-auto space-y-12 relative z-10">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div className="space-y-4">
+            <Link href="/" className="text-accent-violet flex items-center gap-2 text-sm font-medium hover:underline mb-4">
+              <ArrowLeft className="w-4 h-4" /> Back to Home
+            </Link>
+            <h1 className="text-6xl font-bold tracking-tight mb-4">
+              Studio <span className="premium-gradient-text tracking-tighter"><span>Gallery.</span></span>
+            </h1>
+            <p className="text-muted text-lg">A visual tour of the most premium recording spaces in Dubai.</p>
+          </div>
+          <div className="flex gap-4">
+            <Button variant="ghost" className="border border-white/10">
+              <LayoutGrid className="w-4 h-4 mr-2" /> All Photos
+            </Button>
+            <Button variant="ghost" className="border border-white/10 opacity-50">
+              <Camera className="w-4 h-4 mr-2" /> Virtual Tour
+            </Button>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {photos.map((photo, i) => (
+            <motion.div
+              key={photo.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.1 }}
+            >
+              <div className="glass-card-premium p-4 group transition-all duration-500 hover:scale-[1.02] h-full relative overflow-hidden bg-transparent border-white/5 hover:border-accent-violet/30">
+                {/* Subtle Inner Glow on Hover */}
+                <div className="absolute inset-0 bg-brand-gradient opacity-0 group-hover:opacity-20 transition-opacity duration-700 pointer-events-none" />
+
+                <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-black/40 border border-white/5">
+                  {/* Image Rendering */}
+                  <img
+                    src={photo.src}
+                    alt={photo.title}
+                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                  />
+
+                  {/* Overlay for glass look and readability */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60" />
+
+                  <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end z-10">
+                    <div>
+                      <span className="text-[10px] uppercase tracking-widest text-accent-violet font-bold mb-1 block">{photo.category}</span>
+                      <h3 className="text-lg font-bold text-white">{photo.title}</h3>
+                    </div>
+                    <Button size="icon" variant="ghost" className="rounded-full bg-white/5 backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity border border-white/5">
+                      <Info className="w-4 h-4 text-white" />
+                    </Button>
+                  </div>
                 </div>
               </div>
-            </div>
-          </motion.div>
-        ))}
+            </motion.div>
+          ))}
+        </div>
       </div>
-    </div>
+    </main>
   );
 }

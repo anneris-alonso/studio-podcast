@@ -46,15 +46,27 @@ export default function RegisterPage() {
 
   const handleVerifyOtpAndProceed = async (e: React.FormEvent) => {
     e.preventDefault();
-    // For this flow, we don't strictly "verify" against server yet, 
-    // we let them proceed to enter details and verify everything at the end.
-    // However, it's better UX to verify OTP first.
-    // Let's implement a quick verification or just move to DETAILS step 
-    // and let the final submit handle it all.
-    // Ideally we'd have a specific verify endpoint, but let's assume valid for UI 
-    // and if it fails at the end, they go back.
-    // Actually, let's just move to next step to keep it simple as per creating endpoints.
-    setStep("DETAILS");
+    setLoading(true);
+    setError("");
+
+    try {
+      const res = await fetch("/api/auth/register/verify", {
+        method: "POST",
+        body: JSON.stringify({ email, otp }),
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (res.ok) {
+        setStep("DETAILS");
+      } else {
+        const data = await res.json();
+        setError(data.message || "Invalid or expired code.");
+      }
+    } catch (err) {
+      setError("An unexpected error occurred.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleCompleteRegistration = async (e: React.FormEvent) => {
@@ -75,7 +87,7 @@ export default function RegisterPage() {
         const data = await res.json();
         setError(data.message || "Registration failed. Please check your code.");
         if (data.error === "invalid_code") {
-            setStep("OTP"); // Go back to OTP if invalid
+          setStep("OTP"); // Go back to OTP if invalid
         }
       }
     } catch (err) {
@@ -86,11 +98,11 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-black p-4 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-transparent p-4 relative overflow-hidden">
       {/* Ambient Glows (Saturated for Dark Mode) */}
       <div className="absolute top-[0%] left-[-10%] w-[40%] h-[40%] bg-accent-blue/10 blur-[120px] rounded-full pointer-events-none" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-accent-pink/10 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute inset-0 opacity-[0.03] mix-blend-overlay pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+      <div className="absolute inset-0 opacity-[0.03] mix-blend-overlay pointer-events-none bg-grain" />
 
       <div className="w-full max-w-md space-y-8 relative z-10">
         <div className="text-center space-y-4">
@@ -104,13 +116,15 @@ export default function RegisterPage() {
           {step === "EMAIL" && (
             <form onSubmit={handleRequestOtp} className="space-y-6">
               <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+                <label htmlFor="email" className="text-xs font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2 cursor-pointer">
                   <Mail className="w-3 h-3" /> Email Address
                 </label>
-                 <input
+                <input
+                  id="email"
                   type="email"
                   required
                   value={email}
+                  autoComplete="email"
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-accent-pink/50 transition-all font-sans text-white placeholder:text-slate-600"
                   placeholder="name@example.com"
@@ -133,22 +147,25 @@ export default function RegisterPage() {
                 <p className="text-xs text-muted-foreground">Sent to <span className="text-primary font-bold">{email}</span></p>
               </div>
               <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+                <label htmlFor="otp" className="text-xs font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2 cursor-pointer">
                   <ShieldCheck className="w-3 h-3" /> 6-Digit Code
                 </label>
-                 <input
-                  type="text"
+                <input
+                  id="otp"
+                  type="number"
+                  inputMode="numeric"
+                  aria-label="One-time password code"
                   required
                   maxLength={6}
                   value={otp}
-                  onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
-                  className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-2xl font-bold tracking-[0.5em] text-center focus:outline-none focus:ring-2 focus:ring-accent-pink/50 transition-all font-sans text-white placeholder:text-slate-600"
+                  onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                  className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-2xl font-bold tracking-[0.5em] text-center focus:outline-none focus:ring-2 focus:ring-accent-pink/50 transition-all font-sans text-white placeholder:text-slate-600 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   placeholder="000000"
                 />
               </div>
               {error && <p className="text-xs text-destructive bg-destructive/10 p-3 rounded-lg border border-destructive/20">{error}</p>}
               <Button type="submit" className="w-full h-14 rounded-2xl text-lg font-bold bg-brand-gradient text-white border-none shadow-[0_0_20px_rgba(122,92,255,0.3)] hover:shadow-[0_0_30px_rgba(122,92,255,0.5)] transition-all duration-300" disabled={loading}>
-                Next Step
+                {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Verify & Continue"}
               </Button>
               <button type="button" onClick={() => setStep("EMAIL")} className="w-full text-xs text-slate-400 hover:text-slate-600 mt-4 transition-colors">Change Email</button>
             </form>
@@ -157,12 +174,14 @@ export default function RegisterPage() {
           {step === "DETAILS" && (
             <form onSubmit={handleCompleteRegistration} className="space-y-6">
               <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+                <label htmlFor="name" className="text-xs font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2 cursor-pointer">
                   <User className="w-3 h-3" /> Full Name
                 </label>
-                 <input
+                <input
+                  id="name"
                   type="text"
                   required
+                  autoComplete="name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-accent-pink/50 transition-all font-sans text-white placeholder:text-slate-600"
@@ -170,12 +189,14 @@ export default function RegisterPage() {
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+                <label htmlFor="password" className="text-xs font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2 cursor-pointer">
                   <Lock className="w-3 h-3" /> Create Password
                 </label>
-                 <input
+                <input
+                  id="password"
                   type="password"
                   required
+                  autoComplete="new-password"
                   minLength={8}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -195,9 +216,9 @@ export default function RegisterPage() {
         </div>
 
         <div className="text-center">
-             <Link href="/login" className="text-l text-slate-400 hover:text-white transition-colors">
-                Already have an account? <span className="font-bold text-accent-violet">Log In</span>
-             </Link>
+          <Link href="/login" className="text-l text-slate-400 hover:text-white transition-colors">
+            Already have an account? <span className="font-bold text-accent-violet">Log In</span>
+          </Link>
         </div>
       </div>
     </div>

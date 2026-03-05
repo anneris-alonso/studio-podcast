@@ -1,7 +1,6 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Navbar } from "@/components/layout/Navbar";
 import { StudioCard } from "@/components/landing/StudioCard";
 import { ArrowRight, Mic, Video, Zap, Clock } from "lucide-react";
 import Link from "next/link";
@@ -25,14 +24,12 @@ export default function StudiosPage() {
     if (loading) {
         return (
             <main className="min-h-screen bg-black text-white pt-32 pb-20 px-6 flex items-center justify-center">
-                <Navbar />
                 <div className="text-2xl font-bold animate-pulse">Loading Studios...</div>
             </main>
         );
     }
     return (
         <main className="min-h-screen bg-black text-white pt-32 pb-20 px-6">
-            <Navbar />
             <div className="max-w-7xl mx-auto">
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
                     <div>
@@ -57,8 +54,8 @@ export default function StudiosPage() {
                                 <div className="glass-card-premium group cursor-pointer h-full">
                                     <div className="relative h-64 overflow-hidden rounded-t-2xl">
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-10" />
-                                        <img 
-                                            src={studio.coverImageUrl || "/gallery/gallery-1.jpg"} 
+                                        <img
+                                            src={studio.coverImageUrl || "/gallery/gallery-1.jpg"}
                                             alt={studio.name}
                                             className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
                                         />
@@ -71,7 +68,7 @@ export default function StudiosPage() {
                                     <div className="p-8">
                                         <h3 className="text-2xl font-bold mb-3 group-hover:text-accent-pink transition-colors">{studio.name}</h3>
                                         <p className="text-white/50 text-sm mb-6 line-clamp-2">{studio.description}</p>
-                                        
+
                                         <div className="flex gap-4 mb-8">
                                             <div className="p-2 rounded-lg bg-white/5 border border-white/10">
                                                 <Mic className="w-4 h-4 text-accent-violet" />

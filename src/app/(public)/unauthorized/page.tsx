@@ -5,24 +5,23 @@ import { ShieldAlert, ArrowLeft, Home, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { logout } from "@/lib/auth";
+import { logoutAction } from "@/app/actions/auth";
 
 export default function UnauthorizedPage() {
   const router = useRouter();
 
   const handleLogout = async () => {
-    await logout();
-    router.push("/login");
+    await logoutAction();
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-black p-4 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-transparent p-4 relative overflow-hidden">
       {/* Ambient Glows */}
       <div className="absolute top-[10%] left-[-10%] w-[50%] h-[50%] bg-red-500/10 blur-[120px] rounded-full pointer-events-none" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-accent-pink/10 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute inset-0 opacity-[0.03] mix-blend-overlay pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+      <div className="absolute inset-0 opacity-[0.03] mix-blend-overlay pointer-events-none bg-grain" />
 
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
@@ -49,12 +48,12 @@ export default function UnauthorizedPage() {
         {/* Message */}
         <div className="glass-card-premium p-8 border-white/10 bg-white/[0.03] space-y-6">
           <p className="text-slate-400 text-lg leading-relaxed">
-            It looks like you don&apos;t have the necessary administrative privileges to access this section. 
+            It looks like you don&apos;t have the necessary administrative privileges to access this section.
             If you believe this is an error, please contact your system administrator.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center gap-4 pt-4">
-            <Button 
+            <Button
               asChild
               className="w-full h-12 rounded-xl font-bold bg-white text-black hover:bg-slate-200 transition-all"
             >
@@ -62,7 +61,7 @@ export default function UnauthorizedPage() {
                 <Home className="w-4 h-4 mr-2" /> Back to Home
               </Link>
             </Button>
-            <Button 
+            <Button
               asChild
               variant="outline"
               className="w-full h-12 rounded-xl font-bold border-white/10 bg-white/5 hover:bg-white/10 text-white transition-all"
@@ -79,7 +78,7 @@ export default function UnauthorizedPage() {
           <p className="text-[10px] text-slate-500 uppercase tracking-widest font-medium">
             Logged in as a different user?
           </p>
-          <button 
+          <button
             onClick={handleLoginRedirect}
             className="flex items-center gap-2 text-sm text-slate-400 hover:text-white transition-colors group"
           >

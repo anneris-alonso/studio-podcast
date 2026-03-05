@@ -1,13 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { GlassCard } from "@/components/ui/glass-card";
 import { Button } from "@/components/ui/button";
 import { Mail, Lock, Loader2, ArrowRight } from "lucide-react";
 import Link from 'next/link';
 
-export default function LoginPage() {
+function LoginFormContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const returnTo = searchParams?.get("from") || null;
@@ -57,11 +57,11 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-black p-4 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-transparent p-4 relative overflow-hidden">
       {/* Ambient Glows (Saturated for Dark Mode) */}
       <div className="absolute top-[0%] left-[-10%] w-[40%] h-[40%] bg-accent-pink/10 blur-[120px] rounded-full pointer-events-none" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-accent-violet/10 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute inset-0 opacity-[0.03] mix-blend-overlay pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+      <div className="absolute inset-0 opacity-[0.03] mix-blend-overlay pointer-events-none bg-grain" />
 
       <div className="w-full max-w-md space-y-8 relative z-10">
         <div className="text-center space-y-4">
@@ -74,12 +74,14 @@ export default function LoginPage() {
         <div className="glass-card-premium p-8 lg:p-10 border-white/10 bg-white/[0.03] shadow-2xl shadow-black">
           <form onSubmit={handleLogin} className="space-y-6">
             <div className="space-y-2">
-              <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+              <label htmlFor="email" className="text-xs font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2 cursor-pointer">
                 <Mail className="w-3 h-3" /> Email Address
               </label>
               <input
+                id="email"
                 type="email"
                 required
+                autoComplete="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-accent-pink/50 transition-all font-sans text-white placeholder:text-slate-600"
@@ -88,12 +90,22 @@ export default function LoginPage() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
-                <Lock className="w-3 h-3" /> Password
-              </label>
+              <div className="flex justify-between items-center px-1">
+                <label htmlFor="password" title="Password" className="text-xs font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2 cursor-pointer">
+                  <Lock className="w-3 h-3" /> Password
+                </label>
+                <Link
+                  href="/forgot-password"
+                  className="text-[10px] font-bold uppercase tracking-wider text-accent-violet hover:text-accent-pink transition-colors"
+                >
+                  Forgot Password?
+                </Link>
+              </div>
               <input
+                id="password"
                 type="password"
                 required
+                autoComplete="current-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-accent-pink/50 transition-all font-sans text-white placeholder:text-slate-600"
@@ -115,7 +127,7 @@ export default function LoginPage() {
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-white/10"></div>
               </div>
-              <div className="relative flex justify-center text-[10px] uppercase tracking-widest text-white/30 font-bold bg-black/50 px-4">
+              <div className="relative flex justify-center text-[10px] uppercase tracking-widest text-white/50 font-bold bg-[#0a0a0c] px-4">
                 Or continue with
               </div>
             </div>
@@ -149,15 +161,24 @@ export default function LoginPage() {
           </form>
         </div>
 
-        <div className="text-center space-y-6">          
-            <Link href="/register" className="text-lg text-slate-400 hover:text-white transition-colors">
-              New here? <span className="font-bold text-accent-pink">Create an Account</span>
-            </Link>
-          <p className="text-[10px] text-slate-300 uppercase tracking-[0.2em] font-bold">
-            Created by <span className="text-accent-pink"><Link href="https://lexiconlore.com">LexiconLore</Link></span>
-          </p>
+        <div className="text-center space-y-6">
+          <Link href="/register" className="text-lg text-slate-400 hover:text-white transition-colors">
+            New here? <span className="font-bold text-accent-pink">Create an Account</span>
+          </Link>
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-transparent p-4 relative overflow-hidden">
+        <Loader2 className="w-12 h-12 animate-spin text-accent-pink" />
+      </div>
+    }>
+      <LoginFormContent />
+    </Suspense>
   );
 }

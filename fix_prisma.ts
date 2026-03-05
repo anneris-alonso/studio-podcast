@@ -1,4 +1,11 @@
-generator client {
+import fs from 'fs';
+import path from 'path';
+
+const envContent = `DATABASE_URL="postgresql://studio_admin:tu_password_seguro@localhost:5432/studio_suite_db?schema=public"
+APP_URL="http://localhost:3000"
+`;
+
+const schemaContent = `generator client {
   provider = "prisma-client-js"
 }
 
@@ -384,3 +391,8 @@ model Review {
   @@index([studioRoomId, isApproved])
   @@map("reviews")
 }
+`;
+
+fs.writeFileSync('.env', envContent, { encoding: 'utf8' });
+fs.writeFileSync(path.join('prisma', 'schema.prisma'), schemaContent, { encoding: 'utf8' });
+console.log('Files written successfully');

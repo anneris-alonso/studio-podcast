@@ -108,22 +108,22 @@ export default function BookingPage() {
   const renderStep = () => {
     switch (currentStep) {
       case 1:
-        return <StepStudio 
-          selected={bookingData.studio} 
-          onSelect={(studio) => setBookingData({ ...bookingData, studio, package: null })} 
-          onNext={nextStep} 
+        return <StepStudio
+          selected={bookingData.studio}
+          onSelect={(studio) => setBookingData({ ...bookingData, studio, package: null })}
+          onNext={nextStep}
         />;
       case 2:
-        return <StepPackage 
-          studioId={bookingData.studio?.id} 
-          selected={bookingData.package} 
+        return <StepPackage
+          studioId={bookingData.studio?.id}
+          selected={bookingData.package}
           packageQuantity={bookingData.packageQuantity}
-          onSelect={(pkg, qty) => setBookingData({ ...bookingData, package: pkg, packageQuantity: qty })} 
-          onNext={nextStep} 
-          onBack={prevStep} 
+          onSelect={(pkg, qty) => setBookingData({ ...bookingData, package: pkg, packageQuantity: qty })}
+          onNext={nextStep}
+          onBack={prevStep}
         />;
       case 3:
-        return <StepDateTime 
+        return <StepDateTime
           studioId={bookingData.studio?.id}
           package={bookingData.package}
           selected={bookingData.dateTime}
@@ -132,7 +132,7 @@ export default function BookingPage() {
           onBack={prevStep}
         />;
       case 4:
-        return <StepServices 
+        return <StepServices
           selected={bookingData.services}
           packageQuantity={bookingData.packageQuantity}
           packageUnit={bookingData.package?.unit || 'FIXED_MINUTES'}
@@ -141,7 +141,7 @@ export default function BookingPage() {
           onBack={prevStep}
         />;
       case 5:
-        return <StepReview 
+        return <StepReview
           data={bookingData}
           userId={currentUser?.id}
           onBack={prevStep}
@@ -173,28 +173,42 @@ export default function BookingPage() {
       <div className="max-w-5xl mx-auto space-y-12 relative z-10">
         <header className="text-center space-y-4">
           <h1 className="text-5xl md:text-7xl font-bold font-heading tracking-tight">
-             Book Your <span className="premium-gradient-text tracking-tighter"><span>Session.</span></span>
+            Book Your <span className="premium-gradient-text tracking-tighter"><span>Session.</span></span>
           </h1>
           <p className="text-white/50 text-lg max-w-xl mx-auto">Follow the steps below to reserve your studio time.</p>
         </header>
 
-        {/* Step Indicator */}
-        <div className="flex justify-between items-center mb-12 px-4 overflow-x-auto no-scrollbar gap-4 relative">
-          <div className="absolute top-5 left-12 right-12 h-[1px] bg-white/10 -z-10 hidden md:block" />
-          {STEPS.map((step, idx) => (
-            <div key={step} className="flex flex-col items-center gap-3 min-w-fit">
-              <div className={`w-10 h-10 rounded-full flex items-center justify-center border transition-all duration-500 ${
-                currentStep > idx + 1 ? "bg-accent-violet/20 border-accent-violet text-accent-violet shadow-[0_0_15px_rgba(122,92,255,0.4)]" :
-                currentStep === idx + 1 ? "bg-black border-accent-pink text-accent-pink shadow-[0_0_20px_rgba(255,42,133,0.3)] scale-110" :
-                "bg-black border-white/10 text-white/30"
-              }`}>
-                {currentStep > idx + 1 ? "✓" : idx + 1}
+        {/* Step Indicator with Mobile Scroll Cue */}
+        <div className="relative mb-12">
+          {/* Mobile Scroll Gradient Indicators */}
+          <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-black to-transparent z-10 md:hidden pointer-events-none opacity-0 group-scroll-left-visible" />
+          <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-black via-black/80 to-transparent z-10 md:hidden pointer-events-none" />
+
+          <div className="flex justify-between items-center px-4 overflow-x-auto no-scrollbar gap-8 md:gap-4 relative pb-4 mask-fade-right md:mask-none">
+            <div className="absolute top-5 left-12 right-12 h-[1px] bg-white/10 -z-10 hidden md:block" />
+            {STEPS.map((step, idx) => (
+              <div key={step} className="flex flex-col items-center gap-3 min-w-fit px-2">
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center border transition-all duration-500 ${currentStep > idx + 1 ? "bg-accent-violet/20 border-accent-violet text-accent-violet shadow-[0_0_15px_rgba(122,92,255,0.4)]" :
+                    currentStep === idx + 1 ? "bg-black border-accent-pink text-accent-pink shadow-[0_0_20px_rgba(255,42,133,0.3)] scale-110" :
+                      "bg-black border-white/10 text-white/30"
+                  }`}>
+                  {currentStep > idx + 1 ? "✓" : idx + 1}
+                </div>
+                <span className={`text-[10px] uppercase tracking-[0.2em] font-bold transition-colors duration-500 whitespace-nowrap ${currentStep === idx + 1 ? "text-accent-pink" : currentStep > idx + 1 ? "text-white/70" : "text-white/30"}`}>
+                  {step}
+                </span>
               </div>
-              <span className={`text-[10px] uppercase tracking-[0.2em] font-bold transition-colors duration-500 ${currentStep === idx + 1 ? "text-accent-pink" : currentStep > idx + 1 ? "text-white/70" : "text-white/30"}`}>
-                {step}
-              </span>
+            ))}
+          </div>
+
+          {/* Mobile Scroll Hint Icon */}
+          <div className="flex justify-center md:hidden mt-2">
+            <div className="flex gap-1 animate-pulse">
+              {[0, 1, 2, 3, 4].map(i => (
+                <div key={i} className={`h-1 w-1 rounded-full ${currentStep === i + 1 ? 'bg-accent-pink' : 'bg-white/10'}`} />
+              ))}
             </div>
-          ))}
+          </div>
         </div>
 
         <AnimatePresence mode="wait">

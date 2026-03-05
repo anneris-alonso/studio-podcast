@@ -4,13 +4,14 @@ import { z } from "zod";
 
 export async function GET(
   _req: Request,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
+    const { slug } = await params;
     // We receive the studio slug, but reviews are indexed by studioRoomId.
     // First resolve the studio by slug to get its id.
     const { getStudioRoomBySlug } = await import("@/server/data-access");
-    const studio = await getStudioRoomBySlug(params.slug);
+    const studio = await getStudioRoomBySlug(slug);
     if (!studio) return NextResponse.json({ error: "Studio not found" }, { status: 404 });
 
     const data = await getStudioReviews(studio.id);
@@ -29,11 +30,12 @@ const ReviewSchema = z.object({
 
 export async function POST(
   req: Request,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
+    const { slug } = await params;
     const { getStudioRoomBySlug } = await import("@/server/data-access");
-    const studio = await getStudioRoomBySlug(params.slug);
+    const studio = await getStudioRoomBySlug(slug);
     if (!studio) return NextResponse.json({ error: "Studio not found" }, { status: 404 });
 
     const body = await req.json();

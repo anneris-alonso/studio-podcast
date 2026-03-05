@@ -21,7 +21,7 @@ export const StudioSchema = BaseEntitySchema.extend({
     url: z.string(),
     type: z.enum(['IMAGE', 'VIDEO']),
     sortOrder: z.number().int()
-  })).default([]),
+  })),
 });
 
 // --- Package Schemas ---
@@ -47,7 +47,7 @@ export const PackageSchema = BaseEntitySchema.extend({
   // Rule 2: Fixed Minutes Rules (1, 1, 1)
   if (data.unit === PackageUnit.FIXED_MINUTES) {
     if (data.minQuantity !== 1 || data.maxQuantity !== 1 || data.stepQuantity !== 1) {
-       ctx.addIssue({
+      ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: "Fixed Minutes packages must have quantities fixed to 1",
         path: ["unit"],
