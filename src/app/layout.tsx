@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from 'sonner';
@@ -20,6 +21,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <Script src="https://accounts.google.com/gsi/client" strategy="beforeInteractive" />
       <body className={`${inter.className} antialiased transition-colors duration-500`}>
         <ThemeProvider
             attribute="class"

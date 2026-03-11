@@ -1,3 +1,5 @@
+"use client";
+
 import { useThree, useFrame } from "@react-three/fiber";
 import { useGLTF, Environment, Float, Sparkles, ContactShadows, Lightformer } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
@@ -7,7 +9,7 @@ import * as THREE from "three";
 import { motion } from "framer-motion";
 
 // --- SHADER PARA EL HUMO MULTICOLOR (Opcional para otras secciones) ---
-const SmokeShader = {
+const getSmokeShader = () => ({
   uniforms: {
     uTime: { value: 0 },
     colorPink: { value: new THREE.Color("#D936F1") },
@@ -56,10 +58,12 @@ const SmokeShader = {
       gl_FragColor = vec4(finalColor, alpha);
     }
   `
-};
+});
 
 function SmokeEffect() {
   const materialRef = useRef<THREE.ShaderMaterial>(null);
+  const [shader] = useState(() => getSmokeShader());
+  
   useFrame((state) => {
     if (materialRef.current) {
       materialRef.current.uniforms.uTime.value = state.clock.getElapsedTime();
@@ -70,7 +74,7 @@ function SmokeEffect() {
       <planeGeometry args={[1, 1]} />
       <shaderMaterial
         ref={materialRef}
-        args={[SmokeShader]}
+        args={[shader]}
         transparent
         depthWrite={false}
       />
@@ -185,15 +189,15 @@ export function Hero3D() {
             */}
             {/* 
             <Canvas
-             dpr={[1, 2]}
-             gl={{ 
-                 powerPreference: "high-performance",
-                 antialias: true,
-                 toneMapping: THREE.ACESFilmicToneMapping,
-                 outputColorSpace: THREE.SRGBColorSpace,
-                 alpha: true 
-             }}
-             camera={{ position: [0, 0, 6], fov: 45 }}
+            dpr={[1, 2]}
+            gl={{ 
+                powerPreference: "high-performance",
+                antialias: true,
+                toneMapping: THREE.ACESFilmicToneMapping,
+                outputColorSpace: THREE.SRGBColorSpace,
+                alpha: true 
+            }}
+            camera={{ position: [0, 0, 6], fov: 45 }}
             >
                 <Scene dpr={dpr} />
             </Canvas> 
