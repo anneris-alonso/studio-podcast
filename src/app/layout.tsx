@@ -12,6 +12,7 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Studio Suite | Premium Podcast Booking",
   description: "Manage your podcast studio bookings with premium glassmorphism design.",
+  icons: [],
 };
 
 export default function RootLayout({
@@ -21,7 +22,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <Script src="https://accounts.google.com/gsi/client" strategy="beforeInteractive" />
+      <head>
+        <Script src="https://accounts.google.com/gsi/client" strategy="beforeInteractive" />
+      </head>
       <body className={`${inter.className} antialiased transition-colors duration-500`}>
         <ThemeProvider
             attribute="class"

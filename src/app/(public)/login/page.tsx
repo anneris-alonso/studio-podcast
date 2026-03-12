@@ -28,7 +28,7 @@ function LoginFormContent() {
     /* global google */
     if (typeof window !== 'undefined' && window.google) {
       window.google.accounts.id.initialize({
-        client_id: "845642845607-of5d0ofbe6kiEqur0DYb6egcqo.apps.googleusercontent.com", // Hardcoded based on .env
+        client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "845642167297-cfle08prram8mjhj7sn9u914qf6egcqo.apps.googleusercontent.com",
         callback: handleGoogleResponse,
       });
     }

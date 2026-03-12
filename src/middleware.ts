@@ -79,15 +79,15 @@ export async function middleware(request: NextRequest) {
   response.headers.set('Referrer-Policy', 'no-referrer');
   response.headers.set('X-Frame-Options', 'DENY');
   
-  // Permissive CSP for development (allows framer-motion, Stripe, and fonts)
+  // Permissive CSP for development (allows framer-motion, Stripe, Google GSI, and fonts)
   response.headers.set(
     'Content-Security-Policy',
     "default-src 'self'; " +
-    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com; " +
-    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://accounts.google.com; " +
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://accounts.google.com; " +
     "font-src 'self' https://fonts.gstatic.com; " +
-    "frame-src https://js.stripe.com; " +
-    "connect-src 'self' https://api.stripe.com blob:; " +
+    "frame-src https://js.stripe.com https://accounts.google.com; " +
+    "connect-src 'self' https://api.stripe.com https://accounts.google.com blob:; " +
     "img-src 'self' data: https: blob:;"
   );
 
